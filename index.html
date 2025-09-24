@@ -4,93 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1page.tools - Simple Online Tools</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 700px;
-            margin: 3rem auto;
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-            padding: 2.5rem 2rem;
-        }
-        h1 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            color: #2d3a4a;
-        }
-        p {
-            text-align: center;
-            color: #4a5a6a;
-            margin-bottom: 2rem;
-        }
-        .tools-list {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .filter-capsules {
-            display: flex;
-            justify-content: center;
-            gap: 0.75rem;
-            margin-bottom: 2rem;
-        }
-        .filter-btn {
-            background: #eaf6fb;
-            border: none;
-            border-radius: 20px;
-            padding: 0.5rem 1.2rem;
-            font-size: 1rem;
-            color: #2980b9;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background 0.2s, color 0.2s;
-        }
-        .filter-btn.active {
-            background: #2980b9;
-            color: #fff;
-        }
-        .tool-card {
-            background: #f7fafd;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            padding: 1.2rem 1rem;
-            text-align: center;
-            transition: box-shadow 0.2s;
-        }
-        .tool-card:hover {
-            box-shadow: 0 4px 16px rgba(52,152,219,0.12);
-        }
-        .tool-card a {
-            text-decoration: none;
-            color: #2980b9;
-            font-weight: 500;
-            font-size: 1.1rem;
-        }
-        .tool-desc {
-            color: #6c7a89;
-            font-size: 0.95rem;
-            margin-top: 0.5rem;
-        }
-        @media (max-width: 600px) {
-            .tools-list {
-                grid-template-columns: 1fr;
-            }
-        }
-        .footer {
-            text-align: center;
-            color: #7b8ca0;
-            font-size: 0.95rem;
-            margin-top: 2rem;
-        }
-    </style>
+    <link rel="stylesheet" href="css/theme.css">
+    <!-- All styles are now globalized in css/theme.css -->
 </head>
 <body>
     <div class="container">
@@ -127,7 +42,8 @@
             <!-- Add more tools below as you create them, with appropriate data-category -->
         </div>
         <div class="footer">
-            &copy; 2025 1page.tools &mdash; Made for simplicity.
+              &copy; 2025 1page.tools &mdash; Made for simplicity.<br>
+              <a href="privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="terms-of-use.html" target="_blank">Terms of Use</a>
         </div>
     </div>
     <script>

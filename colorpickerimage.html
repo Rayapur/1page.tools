@@ -5,130 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Color Palette Extractor</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    <link rel="stylesheet" href="css/theme.css">
         
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            color: #333;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            margin-top: 20px;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 2.2rem;
-        }
-        
-        .subtitle {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-        }
-        
-        .main-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .upload-section {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .results-section {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .upload-area {
-            border: 3px dashed #3498db;
-            border-radius: 10px;
-            padding: 40px 20px;
-            text-align: center;
-            margin-bottom: 25px;
-            transition: all 0.3s;
-            background: #f8f9fa;
-            cursor: pointer;
-            min-height: 250px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .upload-area:hover {
-            background: #e8f4ff;
-            border-color: #2980b9;
-        }
-        
-        .upload-area.highlight {
-            background: #d4edff;
-            border-color: #1abc9c;
-        }
-        
-        .upload-icon {
-            font-size: 60px;
-            margin-bottom: 15px;
-            color: #3498db;
-        }
-        
-        .upload-text {
-            margin: 10px 0;
-            color: #7f8c8d;
-        }
-        
-        .btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-block;
-            margin: 10px 5px;
-        }
-        
-        .btn:hover:not(:disabled) {
-            background: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .btn:disabled {
-            background: #bdc3c7;
+    <!-- All styles are now globalized in css/theme.css -->
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
@@ -929,5 +808,10 @@
             };
         }
     </script>
+</body>
+    <footer class="site-footer">
+        &copy; 2025 1page.tools<br>
+        <a href="privacy-policy.md" target="_blank">Privacy Policy</a> &middot; <a href="terms-of-use.md" target="_blank">Terms of Use</a>
+    </footer>
 </body>
 </html>

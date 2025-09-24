@@ -1,0 +1,600 @@
+.palette-label {
+    margin-top: 1rem;
+}
+/* 1page.tools Main Theme CSS */
+:root {
+    --primary-bg: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+    --secondary-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    --accent-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --container-bg: #fff;
+    --container-radius: 15px;
+    --container-shadow: 0 10px 30px rgba(0,0,0,0.10);
+    --header-color: #2d3a4a;
+    --text-color: #333;
+    --footer-color: #555;
+    --button-bg: #667eea;
+    --button-hover-bg: #764ba2;
+    --button-text: #fff;
+    --border-color: #ccc;
+}
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--primary-bg);
+    min-height: 100vh;
+    color: var(--text-color);
+}
+.container {
+    max-width: 900px;
+    margin: 3rem auto;
+    background: var(--container-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+    padding: 2.5rem 2rem;
+}
+h1, header {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--header-color);
+}
+p {
+    text-align: center;
+    color: var(--footer-color);
+    margin-bottom: 2rem;
+}
+footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--footer-color);
+}
+
+.site-footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--footer-color);
+}
+
+.hidden {
+    display: none;
+}
+.button, .filter-btn {
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.button:hover, .filter-btn:hover {
+    background: var(--button-hover-bg);
+}
+.tool-card, .picker-container {
+    background: var(--container-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+}
+.palette-swatch, .color-preview {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+.status {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background: #e0eafc;
+    color: var(--header-color);
+}
+.status.success {
+    background: #d4edda;
+    color: #155724;
+}
+.status.error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Styles migrated from topdf.html */
+.upload-area {
+    border: 3px dashed #3498db;
+    border-radius: 10px;
+    padding: 40px 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+    background: #f8f9fa;
+}
+.upload-area:hover {
+    background: #e8f4ff;
+    border-color: #2980b9;
+}
+.upload-area i {
+    font-size: 50px;
+    color: #3498db;
+    margin-bottom: 15px;
+}
+.upload-area p {
+    margin: 10px 0;
+    color: #7f8c8d;
+}
+.btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-block;
+    margin: 10px 5px;
+}
+.btn:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+.btn:active {
+    transform: translateY(0);
+}
+.btn-secondary {
+    background: #2ecc71;
+}
+.btn-secondary:hover {
+    background: #27ae60;
+}
+.btn-danger {
+    background: #e74c3c;
+}
+.btn-danger:hover {
+    background: #c0392b;
+}
+.preview-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 20px 0;
+    justify-content: center;
+}
+.preview-item {
+    width: 150px;
+    height: 200px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+.preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(231, 76, 60, 0.8);
+    color: white;
+    border: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+.status {
+    text-align: center;
+    margin: 20px 0;
+    font-weight: 500;
+}
+.status.success {
+    color: #27ae60;
+}
+.status.error {
+    color: #e74c3c;
+}
+.instructions {
+    background: #f8f9fa;
+    border-left: 4px solid #3498db;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 0 8px 8px 0;
+}
+.instructions h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+.instructions ol {
+    padding-left: 20px;
+}
+.instructions li {
+    margin-bottom: 8px;
+    color: #34495e;
+}
+.site-footer {
+    margin-top: 30px;
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+/* Styles migrated from pdfsticher.html */
+h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 2.2rem;
+}
+.subtitle {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+.upload-area {
+    border: 3px dashed #3498db;
+    border-radius: 10px;
+    padding: 40px 20px;
+    text-align: center;
+    margin-bottom: 25px;
+    transition: all 0.3s;
+    background: #f8f9fa;
+    cursor: pointer;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.upload-area:hover {
+    background: #e8f4ff;
+    border-color: #2980b9;
+}
+.upload-area.highlight {
+    background: #d4edff;
+    border-color: #1abc9c;
+}
+.upload-icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+    color: #3498db;
+}
+.upload-text {
+    margin: 10px 0;
+    color: #7f8c8d;
+}
+.btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-block;
+    margin: 10px 5px;
+}
+.btn:hover:not(:disabled) {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+.btn:active {
+    transform: translateY(0);
+}
+.btn:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+.file-list {
+    margin: 25px 0;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+}
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+}
+.file-item:hover {
+    background: #e9ecef;
+}
+.file-info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+.file-icon {
+    font-size: 24px;
+    margin-right: 12px;
+    color: #e74c3c;
+}
+.file-name {
+    font-weight: 500;
+    color: #2c3e50;
+}
+.file-size {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-left: 10px;
+}
+.file-actions {
+    display: flex;
+    gap: 10px;
+}
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+.move-up {
+    color: #3498db;
+}
+.move-down {
+    color: #3498db;
+}
+.remove {
+    color: #e74c3c;
+}
+.action-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 25px;
+    gap: 10px;
+}
+.status {
+    text-align: center;
+    margin: 20px 0;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+.status-success {
+    background: #d4f8e8;
+    color: #27ae60;
+}
+.status-error {
+    background: #fde8e6;
+    color: #e74c3c;
+}
+.status-info {
+    background: #e8f4ff;
+    color: #3498db;
+}
+.instructions {
+    background: #f8f9fa;
+    border-left: 4px solid #3498db;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 0 8px 8px 0;
+}
+.instructions h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+.instructions ol {
+    padding-left: 20px;
+}
+.instructions li {
+    margin-bottom: 8px;
+    color: #34495e;
+}
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    color: #7f8c8d;
+}
+.empty-state i {
+    font-size: 50px;
+    margin-bottom: 15px;
+    color: #bdc3c7;
+}
+.site-footer {
+    margin-top: 30px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    max-width: 900px;
+}
+.drag-handle {
+    cursor: move;
+    margin-right: 10px;
+    color: #95a5a6;
+}
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    .file-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .file-actions {
+        align-self: flex-end;
+        margin-top: 10px;
+    }
+    h1 {
+        font-size: 1.8rem;
+    }
+    .input-container {
+        flex-direction: column;
+    }
+    .map-container {
+        height: 300px;
+    }
+}
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 10px;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.history-section {
+    margin-top: 30px;
+}
+.history-title {
+    text-align: center;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+.history-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+.history-item {
+    background: #f8f9fa;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+.history-item:hover {
+    background: #3498db;
+    color: white;
+}
+.leaflet-container {
+    background: #e0e8f0;
+}
+
+/* Styles migrated from index.html */
+.tools-list {
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+.filter-btn {
+    background: #eaf6fb;
+    border: none;
+    border-radius: 20px;
+    padding: 0.5rem 1.2rem;
+    font-size: 1rem;
+    color: #2980b9;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+}
+.filter-btn.active {
+    background: #2980b9;
+    color: #fff;
+}
+.tool-card {
+    background: #f7fafd;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 1.2rem 1rem;
+    text-align: center;
+    transition: box-shadow 0.2s;
+}
+.tool-card:hover {
+    box-shadow: 0 4px 16px rgba(52,152,219,0.12);
+}
+.tool-card a {
+    text-decoration: none;
+    color: #2980b9;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+.tool-desc {
+    color: #6c7a89;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+}
+@media (max-width: 600px) {
+    .tools-list {
+        grid-template-columns: 1fr;
+    }
+}
+.site-footer, .footer {
+    text-align: center;
+    color: #7b8ca0;
+    font-size: 0.95rem;
+    margin-top: 2rem;
+}
+
+/* Styles migrated from colorpicker.html */
+.values {
+    align-items: center;
+    gap: 0.5rem;
+}
+.copy-icon {
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #2980b9;
+    background: none;
+    border: none;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+.copy-icon:hover {
+    background: #eaf6fb;
+}
+.palette-section {
+    margin-top: 2rem;
+    text-align: left;
+}
+.palette-row {
+    display: flex;
+    gap: 0.3rem;
+    margin-bottom: 0.5rem;
+}
+.palette-swatch {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: #333;
+    background: #fff;
+    flex-direction: column;
+}
+input[type="color"] {
+    width: 60px;
+    height: 60px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
