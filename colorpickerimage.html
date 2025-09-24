@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Color Palette Extractor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .upload-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .results-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #3498db;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+            cursor: pointer;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .upload-area:hover {
+            background: #e8f4ff;
+            border-color: #2980b9;
+        }
+        
+        .upload-area.highlight {
+            background: #d4edff;
+            border-color: #1abc9c;
+        }
+        
+        .upload-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            color: #3498db;
+        }
+        
+        .upload-text {
+            margin: 10px 0;
+            color: #7f8c8d;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+            margin: 10px 5px;
+        }
+        
+        .btn:hover:not(:disabled) {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-success {
+            background: #2ecc71;
+        }
+        
+        .btn-success:hover:not(:disabled) {
+            background: #27ae60;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+        }
+        
+        .btn-danger:hover:not(:disabled) {
+            background: #c0392b;
+        }
+        
+        .image-preview {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .canvas-container {
+            position: relative;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        #imageCanvas {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            cursor: crosshair;
+        }
+        
+        .color-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+        
+        .color-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            border: 3px solid white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .color-values {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .color-value {
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: white;
+            font-family: monospace;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .palette-section {
+            margin-top: 30px;
+        }
+        
+        .palette-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .palette-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .palette-color {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 8px;
+            color: white;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        
+        .palette-color:hover {
+            transform: scale(1.05);
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            color: #34495e;
+        }
+        
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        
+        .status-success {
+            background: #d4f8e8;
+            color: #27ae60;
+        }
+        
+        .status-error {
+            background: #fde8e6;
+            color: #e74c3c;
+        }
+        
+        .status-info {
+            background: #e8f4ff;
+            color: #3498db;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            max-width: 1200px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+        
+        .color-scheme-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .scheme-btn {
+            padding: 8px 15px;
+            background: #ecf0f1;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .scheme-btn.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .zoom-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3498db;
+            color: white;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Image Color Palette Extractor</h1>
+            <p class="subtitle">Upload an image to pick colors and generate harmonious palettes</p>
+        </header>
+        
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Drag & drop an image or click to select one</li>
+                <li>Click on any part of the image to pick a color</li>
+                <li>View the color values in HEX, RGB, and HSL formats</li>
+                <li>Explore different color schemes generated from your image</li>
+                <li>Copy color values by clicking on them</li>
+            </ol>
+        </div>
+        
+        <div class="main-content">
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">🎨</div>
+                    <h2>Drag & Drop Image Here</h2>
+                    <p class="upload-text">or</p>
+                    <input type="file" id="fileInput" accept="image/*" class="hidden">
+                    <button class="btn" id="selectButton">Select Image</button>
+                </div>
+                
+                <div class="canvas-container" id="canvasContainer">
+                    <canvas id="imageCanvas"></canvas>
+                    <div class="zoom-controls">
+                        <button class="zoom-btn" id="zoomOut">-</button>
+                        <span id="zoomLevel">100%</span>
+                        <button class="zoom-btn" id="zoomIn">+</button>
+                    </div>
+                </div>
+                
+                <img id="imagePreview" class="image-preview" alt="Image preview">
+            </div>
+            
+            <div class="results-section">
+                <div class="color-info" id="colorInfo">
+                    <div class="color-preview" id="colorPreview"></div>
+                    <h3 id="colorName">Selected Color</h3>
+                    <div class="color-values">
+                        <div class="color-value" id="hexValue">HEX: #FFFFFF</div>
+                        <div class="color-value" id="rgbValue">RGB: 255, 255, 255</div>
+                        <div class="color-value" id="hslValue">HSL: 0°, 0%, 100%</div>
+                    </div>
+                </div>
+                
+                <div class="color-scheme-selector">
+                    <button class="scheme-btn active" data-scheme="analogous">Analogous</button>
+                    <button class="scheme-btn" data-scheme="complementary">Complementary</button>
+                    <button class="scheme-btn" data-scheme="triadic">Triadic</button>
+                    <button class="scheme-btn" data-scheme="tetradic">Tetradic</button>
+                    <button class="scheme-btn" data-scheme="monochromatic">Monochromatic</button>
+                </div>
+                
+                <div class="palette-section">
+                    <h3 class="palette-title">Color Palette</h3>
+                    <div class="palette-container" id="paletteContainer">
+                        <!-- Palette colors will be generated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status" id="statusMessage"></div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-success" id="extractBtn" disabled>Extract Dominant Colors</button>
+            <button class="btn btn-danger" id="resetBtn">Reset</button>
+        </div>
+    </div>
+    
+    <footer>
+        <p>This tool works entirely in your browser. Your images are not uploaded to any server.</p>
+    </footer>
+
+    <script>
+        // DOM elements
+        const fileInput = document.getElementById('fileInput');
+        const selectButton = document.getElementById('selectButton');
+        const uploadArea = document.getElementById('uploadArea');
+        const imagePreview = document.getElementById('imagePreview');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const imageCanvas = document.getElementById('imageCanvas');
+        const colorInfo = document.getElementById('colorInfo');
+        const colorPreview = document.getElementById('colorPreview');
+        const colorName = document.getElementById('colorName');
+        const hexValue = document.getElementById('hexValue');
+        const rgbValue = document.getElementById('rgbValue');
+        const hslValue = document.getElementById('hslValue');
+        const paletteContainer = document.getElementById('paletteContainer');
+        const extractBtn = document.getElementById('extractBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const zoomOutBtn = document.getElementById('zoomOut');
+        const zoomInBtn = document.getElementById('zoomIn');
+        const zoomLevel = document.getElementById('zoomLevel');
+        const schemeButtons = document.querySelectorAll('.scheme-btn');
+        
+        // Variables
+        let currentImage = null;
+        let canvas = null;
+        let ctx = null;
+        let currentZoom = 1;
+        let currentColor = null;
+        let currentScheme = 'analogous';
+        
+        // Event listeners
+        selectButton.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+        extractBtn.addEventListener('click', extractDominantColors);
+        resetBtn.addEventListener('click', resetAll);
+        zoomOutBtn.addEventListener('click', () => adjustZoom(0.9));
+        zoomInBtn.addEventListener('click', () => adjustZoom(1.1));
+        
+        schemeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                schemeButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentScheme = this.getAttribute('data-scheme');
+                if (currentColor) {
+                    generateColorPalette(currentColor);
+                }
+            });
+        });
+        
+        // Handle file selection
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) processFile(file);
+        }
+        
+        // Handle drag over
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.add('highlight');
+        }
+        
+        // Handle drag leave
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('highlight');
+        }
+        
+        // Handle drop
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('highlight');
+            
+            const file = e.dataTransfer.files[0];
+            if (file) processFile(file);
+        }
+        
+        // Process selected file
+        function processFile(file) {
+            if (!file.type.match('image.*')) {
+                showStatus('Please select an image file.', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                currentImage = new Image();
+                currentImage.onload = function() {
+                    setupCanvas();
+                    extractBtn.disabled = false;
+                    showStatus('Image loaded successfully. Click on the image to pick colors.', 'success');
+                };
+                currentImage.src = e.target.result;
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                uploadArea.style.display = 'none';
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        // Setup canvas for color picking
+        function setupCanvas() {
+            canvasContainer.style.display = 'block';
+            canvas = imageCanvas;
+            ctx = canvas.getContext('2d');
+            
+            // Set canvas size to match image but with max dimensions
+            const maxWidth = 500;
+            const maxHeight = 400;
+            
+            let width = currentImage.width;
+            let height = currentImage.height;
+            
+            if (width > maxWidth) {
+                height = (maxWidth / width) * height;
+                width = maxWidth;
+            }
+            
+            if (height > maxHeight) {
+                width = (maxHeight / height) * width;
+                height = maxHeight;
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            ctx.drawImage(currentImage, 0, 0, width, height);
+            
+            // Add click event listener to canvas
+            canvas.addEventListener('click', handleCanvasClick);
+        }
+        
+        // Handle canvas click for color picking
+        function handleCanvasClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / currentZoom;
+            const y = (e.clientY - rect.top) / currentZoom;
+            
+            const pixel = ctx.getImageData(x, y, 1, 1).data;
+            const r = pixel[0];
+            const g = pixel[1];
+            const b = pixel[2];
+            
+            currentColor = { r, g, b };
+            displayColorInfo(r, g, b);
+            generateColorPalette({ r, g, b });
+        }
+        
+        // Display color information
+        function displayColorInfo(r, g, b) {
+            colorInfo.style.display = 'block';
+            
+            // Set color preview
+            colorPreview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+            
+            // Generate color name (simplified)
+            colorName.textContent = getColorName(r, g, b);
+            
+            // Set color values
+            const hex = rgbToHex(r, g, b);
+            hexValue.textContent = `HEX: ${hex}`;
+            rgbValue.textContent = `RGB: ${r}, ${g}, ${b}`;
+            hslValue.textContent = `HSL: ${rgbToHsl(r, g, b)}`;
+            
+            // Add click to copy functionality
+            [hexValue, rgbValue, hslValue].forEach(el => {
+                el.onclick = function() {
+                    const text = this.textContent.split(': ')[1];
+                    navigator.clipboard.writeText(text).then(() => {
+                        const originalText = this.textContent;
+                        this.textContent = 'Copied!';
+                        setTimeout(() => {
+                            this.textContent = originalText;
+                        }, 1000);
+                    });
+                };
+            });
+        }
+        
+        // Generate color palette based on selected color and scheme
+        function generateColorPalette(baseColor) {
+            paletteContainer.innerHTML = '';
+            
+            let colors = [];
+            
+            switch(currentScheme) {
+                case 'analogous':
+                    colors = generateAnalogousColors(baseColor);
+                    break;
+                case 'complementary':
+                    colors = generateComplementaryColors(baseColor);
+                    break;
+                case 'triadic':
+                    colors = generateTriadicColors(baseColor);
+                    break;
+                case 'tetradic':
+                    colors = generateTetradicColors(baseColor);
+                    break;
+                case 'monochromatic':
+                    colors = generateMonochromaticColors(baseColor);
+                    break;
+            }
+            
+            colors.forEach(color => {
+                const colorEl = document.createElement('div');
+                colorEl.className = 'palette-color';
+                colorEl.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                
+                const hex = rgbToHex(color.r, color.g, color.b);
+                colorEl.innerHTML = `<span>${hex}</span>`;
+                
+                colorEl.onclick = function() {
+                    navigator.clipboard.writeText(hex).then(() => {
+                        const originalHTML = this.innerHTML;
+                        this.innerHTML = '<span>Copied!</span>';
+                        setTimeout(() => {
+                            this.innerHTML = originalHTML;
+                        }, 1000);
+                    });
+                };
+                
+                paletteContainer.appendChild(colorEl);
+            });
+        }
+        
+        // Extract dominant colors from image
+        function extractDominantColors() {
+            if (!currentImage) return;
+            
+            showStatus('Extracting dominant colors...', 'info');
+            
+            // Simple dominant color extraction (for demonstration)
+            // In a real application, you would use a more sophisticated algorithm
+            
+            setTimeout(() => {
+                // Get a few sample colors from the image
+                const sampleColors = [];
+                const steps = 5;
+                
+                for (let i = 0; i < steps; i++) {
+                    for (let j = 0; j < steps; j++) {
+                        const x = Math.floor((i / steps) * canvas.width);
+                        const y = Math.floor((j / steps) * canvas.height);
+                        
+                        const pixel = ctx.getImageData(x, y, 1, 1).data;
+                        sampleColors.push({
+                            r: pixel[0],
+                            g: pixel[1],
+                            b: pixel[2]
+                        });
+                    }
+                }
+                
+                // Display these as the palette
+                paletteContainer.innerHTML = '';
+                sampleColors.forEach(color => {
+                    const colorEl = document.createElement('div');
+                    colorEl.className = 'palette-color';
+                    colorEl.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                    
+                    const hex = rgbToHex(color.r, color.g, color.b);
+                    colorEl.innerHTML = `<span>${hex}</span>`;
+                    
+                    colorEl.onclick = function() {
+                        navigator.clipboard.writeText(hex).then(() => {
+                            const originalHTML = this.innerHTML;
+                            this.innerHTML = '<span>Copied!</span>';
+                            setTimeout(() => {
+                                this.innerHTML = originalHTML;
+                            }, 1000);
+                        });
+                    };
+                    
+                    paletteContainer.appendChild(colorEl);
+                });
+                
+                showStatus('Dominant colors extracted successfully!', 'success');
+            }, 500);
+        }
+        
+        // Adjust zoom level
+        function adjustZoom(factor) {
+            currentZoom *= factor;
+            currentZoom = Math.max(0.5, Math.min(3, currentZoom)); // Limit zoom range
+            
+            canvas.style.transform = `scale(${currentZoom})`;
+            zoomLevel.textContent = `${Math.round(currentZoom * 100)}%`;
+        }
+        
+        // Reset everything
+        function resetAll() {
+            fileInput.value = '';
+            currentImage = null;
+            imagePreview.style.display = 'none';
+            canvasContainer.style.display = 'none';
+            colorInfo.style.display = 'none';
+            paletteContainer.innerHTML = '';
+            uploadArea.style.display = 'flex';
+            extractBtn.disabled = true;
+            showStatus('', 'info');
+            currentZoom = 1;
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status status-${type}`;
+        }
+        
+        // Color conversion and generation functions
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        }
+        
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            
+            if (max === min) {
+                h = s = 0; // achromatic
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                
+                h /= 6;
+            }
+            
+            return `${Math.round(h * 360)}°, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%`;
+        }
+        
+        function getColorName(r, g, b) {
+            // Simplified color naming - in a real app you'd use a more comprehensive approach
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            
+            if (luminance < 0.2) return "Dark Color";
+            if (luminance > 0.8) return "Light Color";
+            
+            if (r > g && r > b) {
+                if (g > b) return "Warm Red";
+                return "Reddish Purple";
+            } else if (g > r && g > b) {
+                if (r > b) return "Yellow Green";
+                return "Bluish Green";
+            } else {
+                if (r > g) return "Purple";
+                return "Blue";
+            }
+        }
+        
+        function generateAnalogousColors(baseColor) {
+            const hsl = rgbToHslArray(baseColor.r, baseColor.g, baseColor.b);
+            const colors = [];
+            
+            for (let i = -2; i <= 2; i++) {
+                const newHue = (hsl[0] + i * 30) % 360;
+                if (newHue < 0) newHue + 360;
+                
+                const newColor = hslToRgb(newHue, hsl[1], hsl[2]);
+                colors.push(newColor);
+            }
+            
+            return colors;
+        }
+        
+        function generateComplementaryColors(baseColor) {
+            const hsl = rgbToHslArray(baseColor.r, baseColor.g, baseColor.b);
+            const compHue = (hsl[0] + 180) % 360;
+            
+            return [
+                baseColor,
+                hslToRgb(compHue, hsl[1], hsl[2])
+            ];
+        }
+        
+        function generateTriadicColors(baseColor) {
+            const hsl = rgbToHslArray(baseColor.r, baseColor.g, baseColor.b);
+            
+            return [
+                baseColor,
+                hslToRgb((hsl[0] + 120) % 360, hsl[1], hsl[2]),
+                hslToRgb((hsl[0] + 240) % 360, hsl[1], hsl[2])
+            ];
+        }
+        
+        function generateTetradicColors(baseColor) {
+            const hsl = rgbToHslArray(baseColor.r, baseColor.g, baseColor.b);
+            
+            return [
+                baseColor,
+                hslToRgb((hsl[0] + 90) % 360, hsl[1], hsl[2]),
+                hslToRgb((hsl[0] + 180) % 360, hsl[1], hsl[2]),
+                hslToRgb((hsl[0] + 270) % 360, hsl[1], hsl[2])
+            ];
+        }
+        
+        function generateMonochromaticColors(baseColor) {
+            const hsl = rgbToHslArray(baseColor.r, baseColor.g, baseColor.b);
+            const colors = [];
+            
+            for (let i = 0; i < 5; i++) {
+                const newLightness = Math.max(0.1, Math.min(0.9, hsl[2] + (i - 2) * 0.15));
+                colors.push(hslToRgb(hsl[0], hsl[1], newLightness));
+            }
+            
+            return colors;
+        }
+        
+        function rgbToHslArray(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                
+                h /= 6;
+            }
+            
+            return [h * 360, s, l];
+        }
+        
+        function hslToRgb(h, s, l) {
+            h /= 360;
+            let r, g, b;
+            
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            
+            return {
+                r: Math.round(r * 255),
+                g: Math.round(g * 255),
+                b: Math.round(b * 255)
+            };
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Address Geolocation Finder</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .search-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-field {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-success {
+            background: #2ecc71;
+        }
+        
+        .btn-success:hover {
+            background: #27ae60;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .my-ip-btn {
+            background: #9b59b6;
+            margin-top: 10px;
+        }
+        
+        .my-ip-btn:hover {
+            background: #8e44ad;
+        }
+        
+        .results-section {
+            display: none;
+            margin-bottom: 30px;
+        }
+        
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .info-card h3 {
+            color: #3498db;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .info-content {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .map-container {
+            height: 400px;
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        
+        .status-success {
+            background: #d4f8e8;
+            color: #27ae60;
+        }
+        
+        .status-error {
+            background: #fde8e6;
+            color: #e74c3c;
+        }
+        
+        .status-info {
+            background: #e8f4ff;
+            color: #3498db;
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            color: #34495e;
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .input-container {
+                flex-direction: column;
+            }
+            
+            .map-container {
+                height: 300px;
+            }
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .history-section {
+            margin-top: 30px;
+        }
+        
+        .history-title {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .history-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .history-item {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .history-item:hover {
+            background: #3498db;
+            color: white;
+        }
+        
+        /* Fix for Leaflet map tiles */
+        .leaflet-container {
+            background: #e0e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>IP Address Geolocation Finder</h1>
+            <p class="subtitle">Find the geographical location of any IP address</p>
+        </header>
+        
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Enter an IP address in the search field (e.g., 8.8.8.8 for Google DNS)</li>
+                <li>Click "Locate IP" to find its geographical location</li>
+                <li>Or click "Use My IP" to find your own location</li>
+                <li>View the results on the map and information cards</li>
+            </ol>
+        </div>
+        
+        <div class="search-section">
+            <div class="input-group">
+                <label for="ipInput">IP Address</label>
+                <div class="input-container">
+                    <input type="text" id="ipInput" class="input-field" placeholder="Enter IP address (e.g., 8.8.8.8)">
+                    <button class="btn" id="locateBtn">Locate IP</button>
+                </div>
+            </div>
+            <button class="btn my-ip-btn" id="myIpBtn">Use My IP Address</button>
+        </div>
+        
+        <div class="status" id="statusMessage"></div>
+        
+        <div class="results-section" id="resultsSection">
+            <div class="info-cards">
+                <div class="info-card">
+                    <h3>IP Address</h3>
+                    <div class="info-content" id="ipAddress">-</div>
+                </div>
+                <div class="info-card">
+                    <h3>Location</h3>
+                    <div class="info-content" id="location">-</div>
+                </div>
+                <div class="info-card">
+                    <h3>ISP</h3>
+                    <div class="info-content" id="isp">-</div>
+                </div>
+                <div class="info-card">
+                    <h3>Timezone</h3>
+                    <div class="info-content" id="timezone">-</div>
+                </div>
+            </div>
+            
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+        </div>
+        
+        <div class="history-section" id="historySection" style="display: none;">
+            <h3 class="history-title">Recent Searches</h3>
+            <div class="history-container" id="historyContainer">
+                <!-- History items will be added here -->
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>This tool uses free geolocation APIs. Accuracy may vary depending on the IP address.</p>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // DOM elements
+        const ipInput = document.getElementById('ipInput');
+        const locateBtn = document.getElementById('locateBtn');
+        const myIpBtn = document.getElementById('myIpBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const resultsSection = document.getElementById('resultsSection');
+        const historySection = document.getElementById('historySection');
+        const historyContainer = document.getElementById('historyContainer');
+        
+        // Info display elements
+        const ipAddressEl = document.getElementById('ipAddress');
+        const locationEl = document.getElementById('location');
+        const ispEl = document.getElementById('isp');
+        const timezoneEl = document.getElementById('timezone');
+        
+        // Variables
+        let map = null;
+        let marker = null;
+        let searchHistory = [];
+        
+        // Initialize
+        function init() {
+            // Load search history from localStorage
+            loadSearchHistory();
+            
+            // Add event listeners
+            locateBtn.addEventListener('click', handleLocateIp);
+            myIpBtn.addEventListener('click', handleMyIp);
+            ipInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleLocateIp();
+                }
+            });
+            
+            // Initialize map with a slight delay to ensure container is rendered
+            setTimeout(() => {
+                initMap(0, 0, 2);
+            }, 100);
+        }
+        
+        // Initialize the map
+        function initMap(lat, lng, zoom) {
+            if (map !== null) {
+                map.remove();
+            }
+            
+            // Create map with proper options
+            map = L.map('map', {
+                center: [lat, lng],
+                zoom: zoom,
+                zoomControl: true,
+                attributionControl: true
+            });
+            
+            // Add tile layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 18
+            }).addTo(map);
+            
+            // Force map to invalidate size and refresh
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 100);
+        }
+        
+        // Add marker to the map
+        function addMarker(lat, lng, title) {
+            if (marker !== null) {
+                map.removeLayer(marker);
+            }
+            
+            marker = L.marker([lat, lng]).addTo(map)
+                .bindPopup(title)
+                .openPopup();
+            
+            // Center map on marker with animation
+            map.setView([lat, lng], 10, {
+                animate: true,
+                duration: 1
+            });
+            
+            // Ensure map tiles load properly
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 300);
+        }
+        
+        // Handle IP location search
+        async function handleLocateIp() {
+            const ip = ipInput.value.trim();
+            
+            if (!ip) {
+                showStatus('Please enter an IP address', 'error');
+                return;
+            }
+            
+            // Basic IP validation
+            if (!isValidIP(ip)) {
+                showStatus('Please enter a valid IP address', 'error');
+                return;
+            }
+            
+            await locateIP(ip);
+        }
+        
+        // Handle "Use My IP" button
+        async function handleMyIp() {
+            ipInput.value = '';
+            showStatus('Detecting your IP address...', 'info');
+            locateBtn.disabled = true;
+            myIpBtn.disabled = true;
+            myIpBtn.innerHTML = '<span class="loading"></span>Detecting...';
+            
+            try {
+                // First, get the user's IP address
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                const userIP = data.ip;
+                
+                ipInput.value = userIP;
+                await locateIP(userIP);
+            } catch (error) {
+                showStatus('Failed to detect your IP address', 'error');
+                console.error('Error detecting IP:', error);
+            } finally {
+                locateBtn.disabled = false;
+                myIpBtn.disabled = false;
+                myIpBtn.innerHTML = 'Use My IP Address';
+            }
+        }
+        
+        // Locate IP using geolocation API
+        async function locateIP(ip) {
+            showStatus('Locating IP address...', 'info');
+            locateBtn.disabled = true;
+            locateBtn.innerHTML = '<span class="loading"></span>Locating...';
+            
+            try {
+                // Using ipapi.co API (free tier)
+                const response = await fetch(`https://ipapi.co/${ip}/json/`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.reason || 'Unable to locate IP address');
+                }
+                
+                // Display results
+                displayResults(data);
+                
+                // Add to search history
+                addToHistory(ip, data);
+                
+                showStatus('Location found successfully!', 'success');
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+                console.error('Error locating IP:', error);
+                
+                // Fallback API if the first one fails
+                try {
+                    showStatus('Trying alternative API...', 'info');
+                    const fallbackResponse = await fetch(`http://ip-api.com/json/${ip}`);
+                    const fallbackData = await fallbackResponse.json();
+                    
+                    if (fallbackData.status === 'success') {
+                        displayResults({
+                            ip: ip,
+                            city: fallbackData.city,
+                            country_name: fallbackData.country,
+                            latitude: fallbackData.lat,
+                            longitude: fallbackData.lon,
+                            org: fallbackData.org,
+                            timezone: fallbackData.timezone
+                        });
+                        addToHistory(ip, fallbackData);
+                        showStatus('Location found using alternative API!', 'success');
+                    } else {
+                        throw new Error(fallbackData.message || 'Alternative API also failed');
+                    }
+                } catch (fallbackError) {
+                    showStatus('All geolocation services failed. Please try again later.', 'error');
+                }
+            } finally {
+                locateBtn.disabled = false;
+                locateBtn.innerHTML = 'Locate IP';
+            }
+        }
+        
+        // Display results on the page
+        function displayResults(data) {
+            // Show results section
+            resultsSection.style.display = 'block';
+            
+            // Update info cards
+            ipAddressEl.textContent = data.ip || '-';
+            locationEl.textContent = `${data.city || ''}${data.city && data.country_name ? ', ' : ''}${data.country_name || ''}`;
+            ispEl.textContent = data.org || data.asn || '-';
+            timezoneEl.textContent = data.timezone || '-';
+            
+            // Update map
+            if (data.latitude && data.longitude) {
+                const lat = parseFloat(data.latitude);
+                const lng = parseFloat(data.longitude);
+                const title = `${data.city || 'Unknown'}, ${data.country_name || 'Unknown'}`;
+                
+                addMarker(lat, lng, title);
+                
+                // Ensure map is properly displayed
+                setTimeout(() => {
+                    if (map) {
+                        map.invalidateSize();
+                    }
+                }, 500);
+            }
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // Add IP to search history
+        function addToHistory(ip, data) {
+            // Remove if already in history
+            searchHistory = searchHistory.filter(item => item.ip !== ip);
+            
+            // Add to beginning
+            searchHistory.unshift({
+                ip: ip,
+                city: data.city,
+                country: data.country_name,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Keep only last 5 searches
+            if (searchHistory.length > 5) {
+                searchHistory.pop();
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('ipSearchHistory', JSON.stringify(searchHistory));
+            
+            // Update history display
+            updateHistoryDisplay();
+        }
+        
+        // Load search history from localStorage
+        function loadSearchHistory() {
+            const savedHistory = localStorage.getItem('ipSearchHistory');
+            if (savedHistory) {
+                searchHistory = JSON.parse(savedHistory);
+                updateHistoryDisplay();
+            }
+        }
+        
+        // Update history display
+        function updateHistoryDisplay() {
+            if (searchHistory.length === 0) {
+                historySection.style.display = 'none';
+                return;
+            }
+            
+            historySection.style.display = 'block';
+            historyContainer.innerHTML = '';
+            
+            searchHistory.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                let displayText = item.ip;
+                if (item.city && item.country) {
+                    displayText += ` (${item.city}, ${item.country})`;
+                }
+                
+                historyItem.textContent = displayText;
+                historyItem.title = `Searched on ${new Date(item.timestamp).toLocaleString()}`;
+                
+                historyItem.addEventListener('click', () => {
+                    ipInput.value = item.ip;
+                    handleLocateIp();
+                });
+                
+                historyContainer.appendChild(historyItem);
+            });
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status status-${type}`;
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusMessage.textContent = '';
+                    statusMessage.className = 'status';
+                }, 5000);
+            }
+        }
+        
+        // Validate IP address format
+        function isValidIP(ip) {
+            // IPv4 pattern
+            const ipv4Pattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+            
+            // IPv6 pattern (basic)
+            const ipv6Pattern = /^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/;
+            
+            if (ipv4Pattern.test(ip)) {
+                const parts = ip.split('.');
+                for (let part of parts) {
+                    if (parseInt(part) > 255) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            
+            // For this demo, we'll accept any IPv6 format
+            return ipv6Pattern.test(ip) || ip === 'localhost';
+        }
+        
+        // Initialize the application
+        init();
+    </script>
+</body>
+</html>

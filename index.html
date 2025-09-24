@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1page.tools - Simple Online Tools</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 700px;
+            margin: 3rem auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 2.5rem 2rem;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #2d3a4a;
+        }
+        p {
+            text-align: center;
+            color: #4a5a6a;
+            margin-bottom: 2rem;
+        }
+        .tools-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .filter-capsules {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        .filter-btn {
+            background: #eaf6fb;
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1.2rem;
+            font-size: 1rem;
+            color: #2980b9;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+        }
+        .filter-btn.active {
+            background: #2980b9;
+            color: #fff;
+        }
+        .tool-card {
+            background: #f7fafd;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 1.2rem 1rem;
+            text-align: center;
+            transition: box-shadow 0.2s;
+        }
+        .tool-card:hover {
+            box-shadow: 0 4px 16px rgba(52,152,219,0.12);
+        }
+        .tool-card a {
+            text-decoration: none;
+            color: #2980b9;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        .tool-desc {
+            color: #6c7a89;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+        @media (max-width: 600px) {
+            .tools-list {
+                grid-template-columns: 1fr;
+            }
+        }
+        .footer {
+            text-align: center;
+            color: #7b8ca0;
+            font-size: 0.95rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>1page.tools</h1>
+        <p>Simple, fast, and free online tools for everyone. No sign-up, no clutter—just what you need, on one page.</p>
+        <div class="tools-list">
+        <!-- Filter capsules -->
+        <div class="filter-capsules" id="filterCapsules">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="pdf">PDF</button>
+            <button class="filter-btn" data-filter="color">Color</button>
+            <button class="filter-btn" data-filter="geo">Geo</button>
+        </div>
+        </div>
+
+        <!-- Tool cards grouped by category -->
+        <div class="tools-list" id="toolsList">
+            <div class="tool-card" data-category="color">
+                <a href="colorpicker.html">Color Picker</a>
+                <div class="tool-desc">Pick a color and get its RGB & Hex values instantly.</div>
+            </div>
+            <div class="tool-card" data-category="pdf">
+                <a href="pdfsticher.html">PDF Stitcher</a>
+                <div class="tool-desc">Combine multiple PDFs into one seamless document.</div>
+            </div>
+            <div class="tool-card" data-category="pdf">
+                <a href="topdf.html">Image to PDF</a>
+                <div class="tool-desc">Convert images to PDF format easily.</div>
+            </div>
+            <div class="tool-card" data-category="geo">
+                <a href="ipgeoloc.html">IP Geolocation</a>
+                <div class="tool-desc">Find the location of any IP address.</div>
+            </div>
+            <!-- Add more tools below as you create them, with appropriate data-category -->
+        </div>
+        <div class="footer">
+            &copy; 2025 1page.tools &mdash; Made for simplicity.
+        </div>
+    </div>
+    <script>
+        // Filter logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterCapsules = document.getElementById('filterCapsules');
+            const filterBtns = filterCapsules.querySelectorAll('.filter-btn');
+            const toolsList = document.getElementById('toolsList');
+            const toolCards = toolsList.querySelectorAll('.tool-card');
+
+            filterCapsules.addEventListener('click', (e) => {
+                if (e.target.classList.contains('filter-btn')) {
+                    filterBtns.forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    const filter = e.target.getAttribute('data-filter');
+                    toolCards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
