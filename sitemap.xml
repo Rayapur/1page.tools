@@ -3,19 +3,19 @@
     <!-- Main Pages -->
     <url>
         <loc>https://1page.tools/</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
         <loc>https://1page.tools/privacy-policy.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.3</priority>
     </url>
     <url>
         <loc>https://1page.tools/terms-of-use.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.3</priority>
     </url>
@@ -23,13 +23,13 @@
     <!-- Color Tools -->
     <url>
         <loc>https://1page.tools/color/colorpicker.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/color/colorpickerimage.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -37,19 +37,19 @@
     <!-- Image Tools -->
     <url>
         <loc>https://1page.tools/image/imagecompressor.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/image/imageresizer.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/image/imageconverter.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -57,31 +57,31 @@
     <!-- PDF Tools -->
     <url>
         <loc>https://1page.tools/pdf/pdfsticher.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/pdf/topdf.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/pdf/pdfspliter.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/pdf/pdfpasswordremover.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/pdf/pdftoimage.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -89,25 +89,25 @@
     <!-- Text Tools -->
     <url>
         <loc>https://1page.tools/text/caseconverter.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/text/textcounter.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/text/textdiff.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/text/loremipsum.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -115,19 +115,19 @@
     <!-- Math Tools -->
     <url>
         <loc>https://1page.tools/math/calculator.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/math/unitconverter.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/math/percentage.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -135,19 +135,19 @@
     <!-- Date/Time Tools -->
     <url>
         <loc>https://1page.tools/datetime/epochconverter.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/datetime/timezoneconverter.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/datetime/countdowntimer.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -155,25 +155,25 @@
     <!-- Code Tools -->
     <url>
         <loc>https://1page.tools/code/jsonformatter.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/code/xmlformatter.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/code/csvtojson.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/code/regextester.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -181,19 +181,19 @@
     <!-- Web Tools -->
     <url>
         <loc>https://1page.tools/web/urlencoder.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/web/qrcodegenerator.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/web/favicongenerator.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -201,25 +201,25 @@
     <!-- Security Tools -->
     <url>
         <loc>https://1page.tools/security/passwordgenerator.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/security/hashgenerator.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/security/emailvalidator.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://1page.tools/security/guidgenerator.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -227,7 +227,7 @@
     <!-- CSV Tools -->
     <url>
         <loc>https://1page.tools/csv/colorcsv.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -235,7 +235,7 @@
     <!-- Geo Tools -->
     <url>
         <loc>https://1page.tools/geo/ipgeoloc.html</loc>
-        <lastmod>2025-01-27</lastmod>
+        <lastmod>2025-01-27T23:53:51+00:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
