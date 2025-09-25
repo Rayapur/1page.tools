@@ -98,9 +98,9 @@ body {
 /* Mobile/Tablet: Keep vertical layout */
 @media (max-width: 1023px) {
     .site-logo {
-        max-width: 40px;
+        max-width: 80px;
         height: auto;
-        max-height: 16px;
+        max-height: 40px;
         width: auto;
         display: block;
         margin: 0 auto;
@@ -655,8 +655,8 @@ h1 {
 
 @media (max-width: 480px) {
     .site-logo {
-        max-width: 24px;
-        max-height: 10px;
+        max-width: 60px;
+        max-height: 30px;
     }
     
     .tools-list {
