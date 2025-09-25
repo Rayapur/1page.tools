@@ -4024,3 +4024,112 @@ input[type="color"] {
         font-size: 0.8rem;
     }
 }
+
+/* CSV Tools Styles */
+.csv-tools-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.csv-options {
+    background: var(--container-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.csv-preview {
+    background: var(--container-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.preview-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.preview-container {
+    overflow-x: auto;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: white;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.colored-csv-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+    min-width: 100%;
+}
+
+.colored-csv-table th {
+    text-align: left;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.colored-csv-table td,
+.colored-csv-table th {
+    word-wrap: break-word;
+    max-width: 200px;
+    vertical-align: top;
+    line-height: 1.4;
+}
+
+.colored-csv-table tr:hover {
+    transform: scale(1.01);
+    transition: transform 0.1s ease;
+}
+
+.colored-csv-table tr:hover td {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* CSV table responsive adjustments */
+@media (max-width: 768px) {
+    .colored-csv-table {
+        font-size: 12px;
+    }
+    
+    .colored-csv-table td,
+    .colored-csv-table th {
+        padding: 4px !important;
+        max-width: 150px;
+    }
+    
+    .preview-controls {
+        flex-direction: column;
+    }
+    
+    .preview-controls .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .colored-csv-table {
+        font-size: 10px;
+    }
+    
+    .colored-csv-table td,
+    .colored-csv-table th {
+        padding: 2px !important;
+        max-width: 100px;
+    }
+    
+    .preview-container {
+        max-height: 400px;
+    }
+}

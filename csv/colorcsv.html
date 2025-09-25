@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color CSV - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>Color CSV</h1>
+            <p class="subtitle">Upload a CSV file and color each column differently for better visualization</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Upload a CSV file and each column will be automatically colored with a different color to make data easier to read and analyze.</p>
+        </div>
+        
+        <div class="csv-tools-container">
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <div class="upload-icon">📊</div>
+                        <p>Click to upload CSV file or drag and drop</p>
+                        <p class="upload-hint">Supports CSV files up to 10MB</p>
+                    </div>
+                    <input type="file" id="fileInput" accept=".csv" onchange="handleFileUpload()" style="display: none;">
+                </div>
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <div class="file-details">
+                        <strong>File:</strong> <span id="fileName">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Size:</strong> <span id="fileSize">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Rows:</strong> <span id="rowCount">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Columns:</strong> <span id="columnCount">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="csv-options" id="csvOptions" style="display: none;">
+                <h3>Color Options</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="colorScheme">Color Scheme:</label>
+                        <select id="colorScheme" onchange="updateColorScheme()">
+                            <option value="default">Default (Blue to Red)</option>
+                            <option value="rainbow">Rainbow</option>
+                            <option value="pastel">Pastel</option>
+                            <option value="dark">Dark Theme</option>
+                            <option value="monochrome">Monochrome</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="headerStyle">Header Style:</label>
+                        <select id="headerStyle">
+                            <option value="bold">Bold</option>
+                            <option value="italic">Italic</option>
+                            <option value="underline">Underline</option>
+                            <option value="normal">Normal</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="cellPadding">Cell Padding:</label>
+                        <select id="cellPadding">
+                            <option value="small">Small (4px)</option>
+                            <option value="medium" selected>Medium (8px)</option>
+                            <option value="large">Large (12px)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="borderStyle">Border Style:</label>
+                        <select id="borderStyle">
+                            <option value="solid">Solid</option>
+                            <option value="dashed">Dashed</option>
+                            <option value="dotted">Dotted</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" onclick="generateColoredCSV()">Generate Colored CSV</button>
+                    <button class="btn btn-secondary" onclick="downloadColoredCSV()" id="downloadBtn" disabled>Download HTML</button>
+                    <button class="btn btn-secondary" onclick="clearFile()">Clear File</button>
+                </div>
+            </div>
+            
+            <div class="csv-preview" id="csvPreview" style="display: none;">
+                <h3>Colored CSV Preview</h3>
+                <div class="preview-controls">
+                    <button class="btn btn-secondary" onclick="toggleFullscreen()">Toggle Fullscreen</button>
+                    <button class="btn btn-secondary" onclick="copyHTML()">Copy HTML</button>
+                </div>
+                <div class="preview-container" id="previewContainer">
+                    <!-- Colored CSV table will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="csv-info">
+                <h3>CSV Coloring Information</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>Column Coloring</strong>
+                        <p>Each column gets a unique color to make data easier to read and distinguish between different data types.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Color Schemes</strong>
+                        <p>Choose from multiple color schemes including rainbow, pastel, dark theme, and monochrome options.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Customization</strong>
+                        <p>Adjust header styles, cell padding, and border styles to match your preferences.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Export Options</strong>
+                        <p>Download the colored CSV as an HTML file that can be opened in any web browser.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let csvData = [];
+        let headers = [];
+        let coloredHTML = '';
+
+        const colorSchemes = {
+            default: [
+                '#e3f2fd', '#bbdefb', '#90caf9', '#64b5f6', '#42a5f5',
+                '#2196f3', '#1e88e5', '#1976d2', '#1565c0', '#0d47a1',
+                '#ffebee', '#ffcdd2', '#ef9a9a', '#e57373', '#ef5350',
+                '#f44336', '#e53935', '#d32f2f', '#c62828', '#b71c1c'
+            ],
+            rainbow: [
+                '#ff0000', '#ff8000', '#ffff00', '#80ff00', '#00ff00',
+                '#00ff80', '#00ffff', '#0080ff', '#0000ff', '#8000ff',
+                '#ff0080', '#ff4040', '#ff8040', '#ffbf40', '#ffff40',
+                '#bfff40', '#80ff40', '#40ff40', '#40ff80', '#40ffbf'
+            ],
+            pastel: [
+                '#ffb3ba', '#ffdfba', '#ffffba', '#baffc9', '#bae1ff',
+                '#e6b3ff', '#ffb3e6', '#ffcccb', '#ffe4e1', '#f0f8ff',
+                '#f5f5dc', '#ffe4b5', '#dda0dd', '#98fb98', '#f0e68c',
+                '#ffa07a', '#87ceeb', '#dda0dd', '#f0e68c', '#ffb6c1'
+            ],
+            dark: [
+                '#2d3748', '#4a5568', '#718096', '#a0aec0', '#cbd5e0',
+                '#e2e8f0', '#edf2f7', '#f7fafc', '#1a202c', '#2d3748',
+                '#4a5568', '#718096', '#a0aec0', '#cbd5e0', '#e2e8f0',
+                '#edf2f7', '#f7fafc', '#1a202c', '#2d3748', '#4a5568'
+            ],
+            monochrome: [
+                '#f8f9fa', '#e9ecef', '#dee2e6', '#ced4da', '#adb5bd',
+                '#6c757d', '#495057', '#343a40', '#212529', '#000000',
+                '#f8f9fa', '#e9ecef', '#dee2e6', '#ced4da', '#adb5bd',
+                '#6c757d', '#495057', '#343a40', '#212529', '#000000'
+            ]
+        };
+
+        function handleFileUpload() {
+            const file = document.getElementById('fileInput').files[0];
+            if (file) {
+                if (!file.name.toLowerCase().endsWith('.csv')) {
+                    alert('Please select a CSV file');
+                    return;
+                }
+                
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('File size must be less than 10MB');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        parseCSV(e.target.result);
+                        
+                        document.getElementById('fileName').textContent = file.name;
+                        document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                        document.getElementById('fileInfo').style.display = 'block';
+                        document.getElementById('csvOptions').style.display = 'block';
+                        
+                    } catch (error) {
+                        alert('Error parsing CSV: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            csvData = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line) {
+                    // Simple CSV parsing - handles basic cases
+                    const row = parseCSVLine(line);
+                    csvData.push(row);
+                }
+            }
+            
+            if (csvData.length > 0) {
+                headers = csvData[0];
+                document.getElementById('rowCount').textContent = csvData.length;
+                document.getElementById('columnCount').textContent = headers.length;
+            }
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            
+            result.push(current.trim());
+            return result;
+        }
+
+        function updateColorScheme() {
+            // This function can be used to preview color changes
+            if (csvData.length > 0) {
+                generateColoredCSV();
+            }
+        }
+
+        function generateColoredCSV() {
+            if (csvData.length === 0) {
+                alert('Please upload a CSV file first');
+                return;
+            }
+            
+            const colorScheme = document.getElementById('colorScheme').value;
+            const headerStyle = document.getElementById('headerStyle').value;
+            const cellPadding = document.getElementById('cellPadding').value;
+            const borderStyle = document.getElementById('borderStyle').value;
+            
+            const colors = colorSchemes[colorScheme];
+            const paddingMap = { small: '4px', medium: '8px', large: '12px' };
+            const padding = paddingMap[cellPadding];
+            
+            let html = '<table class="colored-csv-table" style="border-collapse: collapse; width: 100%;">';
+            
+            // Generate header row
+            html += '<thead><tr>';
+            for (let i = 0; i < headers.length; i++) {
+                const color = colors[i % colors.length];
+                const style = `background-color: ${color}; padding: ${padding}; border: 1px ${borderStyle} #ccc; font-weight: ${headerStyle === 'bold' ? 'bold' : 'normal'}; font-style: ${headerStyle === 'italic' ? 'italic' : 'normal'}; text-decoration: ${headerStyle === 'underline' ? 'underline' : 'none'};`;
+                html += `<th style="${style}">${headers[i]}</th>`;
+            }
+            html += '</tr></thead>';
+            
+            // Generate data rows
+            html += '<tbody>';
+            for (let i = 1; i < csvData.length; i++) {
+                html += '<tr>';
+                for (let j = 0; j < csvData[i].length; j++) {
+                    const color = colors[j % colors.length];
+                    const style = `background-color: ${color}; padding: ${padding}; border: 1px ${borderStyle} #ccc;`;
+                    html += `<td style="${style}">${csvData[i][j]}</td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+            
+            coloredHTML = html;
+            
+            // Display preview
+            document.getElementById('previewContainer').innerHTML = html;
+            document.getElementById('csvPreview').style.display = 'block';
+            document.getElementById('downloadBtn').disabled = false;
+        }
+
+        function downloadColoredCSV() {
+            if (!coloredHTML) {
+                alert('Please generate colored CSV first');
+                return;
+            }
+            
+            const fullHTML = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colored CSV - 1Page Tools</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .colored-csv-table { background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .colored-csv-table th { text-align: left; }
+        .colored-csv-table td, .colored-csv-table th { word-wrap: break-word; max-width: 200px; }
+        @media (max-width: 768px) {
+            .colored-csv-table { font-size: 12px; }
+            .colored-csv-table td, .colored-csv-table th { padding: 4px !important; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Colored CSV Data</h1>
+    <p>Generated by 1Page Tools - Color CSV</p>
+    ${coloredHTML}
+</body>
+</html>`;
+            
+            const blob = new Blob([fullHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'colored-csv.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function copyHTML() {
+            if (!coloredHTML) {
+                alert('Please generate colored CSV first');
+                return;
+            }
+            
+            navigator.clipboard.writeText(coloredHTML).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+
+        function toggleFullscreen() {
+            const container = document.getElementById('previewContainer');
+            if (container.style.position === 'fixed') {
+                container.style.position = 'relative';
+                container.style.top = 'auto';
+                container.style.left = 'auto';
+                container.style.width = 'auto';
+                container.style.height = 'auto';
+                container.style.zIndex = 'auto';
+                container.style.background = 'transparent';
+                container.style.padding = '0';
+            } else {
+                container.style.position = 'fixed';
+                container.style.top = '0';
+                container.style.left = '0';
+                container.style.width = '100vw';
+                container.style.height = '100vh';
+                container.style.zIndex = '9999';
+                container.style.background = 'white';
+                container.style.padding = '20px';
+                container.style.overflow = 'auto';
+            }
+        }
+
+        function clearFile() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('csvOptions').style.display = 'none';
+            document.getElementById('csvPreview').style.display = 'none';
+            document.getElementById('downloadBtn').disabled = true;
+            csvData = [];
+            headers = [];
+            coloredHTML = '';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Handle drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('click', () => document.getElementById('fileInput').click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('fileInput').files = files;
+                handleFileUpload();
+            }
+        });
+    </script>
+</body>
+</html>
