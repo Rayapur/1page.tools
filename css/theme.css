@@ -68,14 +68,44 @@ body {
     margin-bottom: 1rem;
 }
 
-.site-logo {
-    max-width: 40px;
-    height: auto;
-    max-height: 16px;
-    width: auto;
-    display: block;
-    margin: 0 auto;
-    transition: transform 0.3s ease;
+/* Desktop: Logo and heading in same row */
+@media (min-width: 1024px) {
+    .header-logo {
+        display: inline-block;
+        margin-bottom: 0;
+        margin-right: 1rem;
+        vertical-align: middle;
+    }
+    
+    .site-logo {
+        max-width: none;
+        max-height: 2.5rem; /* Match h1 font-size */
+        height: 2.5rem;
+        width: auto;
+        display: inline-block;
+        margin: 0;
+        vertical-align: middle;
+        transition: transform 0.3s ease;
+    }
+    
+    h1 {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0;
+    }
+}
+
+/* Mobile/Tablet: Keep vertical layout */
+@media (max-width: 1023px) {
+    .site-logo {
+        max-width: 40px;
+        height: auto;
+        max-height: 16px;
+        width: auto;
+        display: block;
+        margin: 0 auto;
+        transition: transform 0.3s ease;
+    }
 }
 
 .site-logo:hover {
