@@ -3883,3 +3883,144 @@ input[type="color"] {
         width: 100%;
     }
 }
+
+/* GUID Generator Styles */
+.guid-options {
+    background: var(--container-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.guid-results {
+    background: var(--container-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.guid-presets {
+    background: var(--container-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.presets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.preset-btn {
+    padding: 0.75rem 1rem;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.preset-btn:hover {
+    background: var(--button-bg);
+    color: white;
+    border-color: var(--button-bg);
+}
+
+.guids-list {
+    margin: 1rem 0;
+}
+
+.guid-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--card-bg);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid var(--button-bg);
+}
+
+.guid-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.guid-number {
+    font-weight: 600;
+    color: var(--button-bg);
+    font-size: 0.9rem;
+    min-width: 2rem;
+}
+
+.guid-value {
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    color: var(--text-color);
+    word-break: break-all;
+    line-height: 1.4;
+}
+
+.guid-timestamp {
+    font-size: 0.8rem;
+    color: var(--footer-color);
+    font-style: italic;
+}
+
+.guid-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.guid-actions .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    min-width: 60px;
+}
+
+/* Responsive adjustments for GUID generator */
+@media (max-width: 768px) {
+    .presets-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .guid-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .guid-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .guid-actions .btn {
+        flex: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .presets-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .guid-value {
+        font-size: 0.9rem;
+    }
+    
+    .preset-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}

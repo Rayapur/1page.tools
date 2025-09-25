@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUID Generator - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>GUID Generator</h1>
+            <p class="subtitle">Generate unique GUIDs (Globally Unique Identifiers) for your applications</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Generate unique GUIDs (UUIDs) for your applications. Choose from different formats and generate single or multiple GUIDs.</p>
+        </div>
+        
+        <div class="security-tools-container">
+            <div class="guid-options">
+                <h3>GUID Options</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="guidFormat">GUID Format:</label>
+                        <select id="guidFormat">
+                            <option value="standard">Standard (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)</option>
+                            <option value="uppercase">Uppercase (XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX)</option>
+                            <option value="lowercase">Lowercase (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)</option>
+                            <option value="no-hyphens">No Hyphens (xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)</option>
+                            <option value="braces">With Braces ({xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx})</option>
+                            <option value="parentheses">With Parentheses ((xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx))</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="guidVersion">GUID Version:</label>
+                        <select id="guidVersion">
+                            <option value="4" selected>Version 4 (Random)</option>
+                            <option value="1">Version 1 (Time-based)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="guidCount">Number of GUIDs:</label>
+                        <input type="number" id="guidCount" min="1" max="1000" value="1" onchange="updateCount()">
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="includeTimestamp">Include Timestamp:</label>
+                        <input type="checkbox" id="includeTimestamp" onchange="updateTimestamp()">
+                    </div>
+                    
+                    <div class="option-group" id="timestampFormat" style="display: none;">
+                        <label for="timestampType">Timestamp Format:</label>
+                        <select id="timestampType">
+                            <option value="iso">ISO 8601 (2025-01-27T10:30:45.123Z)</option>
+                            <option value="unix">Unix Timestamp (1738058445123)</option>
+                            <option value="readable">Readable (Jan 27, 2025 10:30:45)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" onclick="generateGUIDs()">Generate GUIDs</button>
+                    <button class="btn btn-secondary" onclick="copyAllGUIDs()" id="copyAllBtn" disabled>Copy All</button>
+                    <button class="btn btn-secondary" onclick="downloadGUIDs()" id="downloadBtn" disabled>Download as Text</button>
+                </div>
+            </div>
+            
+            <div class="guid-results" id="guidResults" style="display: none;">
+                <h3>Generated GUIDs</h3>
+                <div class="results-summary" id="resultsSummary">
+                    <div class="summary-item">
+                        <strong>Total GUIDs:</strong>
+                        <span id="totalGUIDs">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <strong>Format:</strong>
+                        <span id="resultFormat">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <strong>Version:</strong>
+                        <span id="resultVersion">-</span>
+                    </div>
+                </div>
+                
+                <div class="guids-list" id="guidsList">
+                    <!-- Generated GUIDs will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="guid-presets">
+                <h3>Quick Presets</h3>
+                <div class="presets-grid">
+                    <button class="preset-btn" onclick="applyPreset('single')">Single GUID</button>
+                    <button class="preset-btn" onclick="applyPreset('multiple')">10 GUIDs</button>
+                    <button class="preset-btn" onclick="applyPreset('batch')">100 GUIDs</button>
+                    <button class="preset-btn" onclick="applyPreset('database')">Database Format</button>
+                    <button class="preset-btn" onclick="applyPreset('api')">API Format</button>
+                    <button class="preset-btn" onclick="applyPreset('registry')">Registry Format</button>
+                </div>
+            </div>
+            
+            <div class="security-info">
+                <h3>GUID Information</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>What is a GUID?</strong>
+                        <p>GUID (Globally Unique Identifier) is a 128-bit identifier that's virtually guaranteed to be unique across time and space.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Version 4 (Random)</strong>
+                        <p>Most common type, generated using random or pseudo-random numbers. Recommended for most applications.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Version 1 (Time-based)</strong>
+                        <p>Generated using MAC address and timestamp. Includes machine and time information.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Common Uses</strong>
+                        <p>Database primary keys, API identifiers, file names, registry entries, and distributed systems.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let generatedGUIDs = [];
+
+        function generateGUID() {
+            const version = document.getElementById('guidVersion').value;
+            
+            if (version === '4') {
+                return generateV4GUID();
+            } else if (version === '1') {
+                return generateV1GUID();
+            }
+        }
+
+        function generateV4GUID() {
+            // Generate a random GUID (Version 4)
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        function generateV1GUID() {
+            // Generate a time-based GUID (Version 1)
+            const timestamp = Date.now();
+            const clockSeq = Math.floor(Math.random() * 0x3fff) | 0x8000;
+            const node = Array.from({length: 6}, () => Math.floor(Math.random() * 256));
+            
+            // Convert timestamp to GUID format
+            const timeLow = (timestamp & 0xffffffff).toString(16).padStart(8, '0');
+            const timeMid = ((timestamp >> 32) & 0xffff).toString(16).padStart(4, '0');
+            const timeHigh = (((timestamp >> 48) & 0x0fff) | 0x1000).toString(16).padStart(4, '0');
+            
+            const clockSeqStr = clockSeq.toString(16).padStart(4, '0');
+            const nodeStr = node.map(n => n.toString(16).padStart(2, '0')).join('');
+            
+            return `${timeLow}-${timeMid}-${timeHigh}-${clockSeqStr}-${nodeStr}`;
+        }
+
+        function formatGUID(guid, format) {
+            switch (format) {
+                case 'uppercase':
+                    return guid.toUpperCase();
+                case 'lowercase':
+                    return guid.toLowerCase();
+                case 'no-hyphens':
+                    return guid.replace(/-/g, '');
+                case 'braces':
+                    return `{${guid}}`;
+                case 'parentheses':
+                    return `(${guid})`;
+                default:
+                    return guid;
+            }
+        }
+
+        function generateGUIDs() {
+            const count = parseInt(document.getElementById('guidCount').value);
+            const format = document.getElementById('guidFormat').value;
+            const version = document.getElementById('guidVersion').value;
+            const includeTimestamp = document.getElementById('includeTimestamp').checked;
+            const timestampType = document.getElementById('timestampType').value;
+            
+            if (count < 1 || count > 1000) {
+                alert('Please enter a number between 1 and 1000');
+                return;
+            }
+            
+            generatedGUIDs = [];
+            
+            for (let i = 0; i < count; i++) {
+                const guid = generateGUID();
+                const formattedGUID = formatGUID(guid, format);
+                
+                let result = {
+                    guid: formattedGUID,
+                    index: i + 1,
+                    timestamp: null
+                };
+                
+                if (includeTimestamp) {
+                    result.timestamp = getTimestamp(timestampType);
+                }
+                
+                generatedGUIDs.push(result);
+            }
+            
+            displayResults(format, version);
+        }
+
+        function getTimestamp(type) {
+            const now = new Date();
+            
+            switch (type) {
+                case 'iso':
+                    return now.toISOString();
+                case 'unix':
+                    return now.getTime().toString();
+                case 'readable':
+                    return now.toLocaleString();
+                default:
+                    return now.toISOString();
+            }
+        }
+
+        function displayResults(format, version) {
+            const container = document.getElementById('guidsList');
+            container.innerHTML = '';
+            
+            generatedGUIDs.forEach((item, index) => {
+                const guidItem = document.createElement('div');
+                guidItem.className = 'guid-item';
+                
+                let content = `
+                    <div class="guid-info">
+                        <div class="guid-number">${item.index}.</div>
+                        <div class="guid-value">${item.guid}</div>
+                        ${item.timestamp ? `<div class="guid-timestamp">${item.timestamp}</div>` : ''}
+                    </div>
+                    <div class="guid-actions">
+                        <button class="btn btn-secondary" onclick="copySingleGUID(${index})">Copy</button>
+                    </div>
+                `;
+                
+                guidItem.innerHTML = content;
+                container.appendChild(guidItem);
+            });
+            
+            // Update summary
+            document.getElementById('totalGUIDs').textContent = generatedGUIDs.length;
+            document.getElementById('resultFormat').textContent = format.charAt(0).toUpperCase() + format.slice(1);
+            document.getElementById('resultVersion').textContent = `Version ${version}`;
+            
+            document.getElementById('guidResults').style.display = 'block';
+            document.getElementById('copyAllBtn').disabled = false;
+            document.getElementById('downloadBtn').disabled = false;
+        }
+
+        function copySingleGUID(index) {
+            const guid = generatedGUIDs[index];
+            const text = guid.timestamp ? `${guid.guid} - ${guid.timestamp}` : guid.guid;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+
+        function copyAllGUIDs() {
+            const text = generatedGUIDs.map(item => {
+                return item.timestamp ? `${item.guid} - ${item.timestamp}` : item.guid;
+            }).join('\n');
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copyAllBtn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+
+        function downloadGUIDs() {
+            const content = generatedGUIDs.map(item => {
+                return item.timestamp ? `${item.guid} - ${item.timestamp}` : item.guid;
+            }).join('\n');
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'guids.txt';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function applyPreset(preset) {
+            switch (preset) {
+                case 'single':
+                    document.getElementById('guidCount').value = 1;
+                    document.getElementById('guidFormat').value = 'standard';
+                    document.getElementById('guidVersion').value = '4';
+                    document.getElementById('includeTimestamp').checked = false;
+                    break;
+                case 'multiple':
+                    document.getElementById('guidCount').value = 10;
+                    document.getElementById('guidFormat').value = 'standard';
+                    document.getElementById('guidVersion').value = '4';
+                    document.getElementById('includeTimestamp').checked = false;
+                    break;
+                case 'batch':
+                    document.getElementById('guidCount').value = 100;
+                    document.getElementById('guidFormat').value = 'standard';
+                    document.getElementById('guidVersion').value = '4';
+                    document.getElementById('includeTimestamp').checked = false;
+                    break;
+                case 'database':
+                    document.getElementById('guidCount').value = 1;
+                    document.getElementById('guidFormat').value = 'no-hyphens';
+                    document.getElementById('guidVersion').value = '4';
+                    document.getElementById('includeTimestamp').checked = true;
+                    document.getElementById('timestampType').value = 'iso';
+                    break;
+                case 'api':
+                    document.getElementById('guidCount').value = 1;
+                    document.getElementById('guidFormat').value = 'lowercase';
+                    document.getElementById('guidVersion').value = '4';
+                    document.getElementById('includeTimestamp').checked = true;
+                    document.getElementById('timestampType').value = 'unix';
+                    break;
+                case 'registry':
+                    document.getElementById('guidCount').value = 1;
+                    document.getElementById('guidFormat').value = 'braces';
+                    document.getElementById('guidVersion').value = '4';
+                    document.getElementById('includeTimestamp').checked = false;
+                    break;
+            }
+            
+            updateCount();
+            updateTimestamp();
+        }
+
+        function updateCount() {
+            const count = document.getElementById('guidCount').value;
+            if (count < 1) {
+                document.getElementById('guidCount').value = 1;
+            } else if (count > 1000) {
+                document.getElementById('guidCount').value = 1000;
+            }
+        }
+
+        function updateTimestamp() {
+            const includeTimestamp = document.getElementById('includeTimestamp').checked;
+            const timestampFormat = document.getElementById('timestampFormat');
+            
+            if (includeTimestamp) {
+                timestampFormat.style.display = 'block';
+            } else {
+                timestampFormat.style.display = 'none';
+            }
+        }
+
+        // Initialize
+        updateTimestamp();
+    </script>
+</body>
+</html>
