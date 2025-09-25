@@ -79,8 +79,8 @@ body {
     
     .site-logo {
         max-width: none;
-        max-height: 2.5rem; /* Match h1 font-size */
-        height: 2.5rem;
+        max-height: 100px;
+        height: 100px;
         width: auto;
         display: inline-block;
         margin: 0;
