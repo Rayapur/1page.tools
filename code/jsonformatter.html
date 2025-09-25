@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Formatter & Validator - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>JSON Formatter & Validator</h1>
+            <p class="subtitle">Format, validate, and beautify JSON data</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Paste your JSON data below to format, validate, and beautify it. Get detailed error messages for invalid JSON.</p>
+        </div>
+        
+        <div class="code-tools-container">
+            <div class="input-section">
+                <div class="input-header">
+                    <label for="jsonInput">JSON Input:</label>
+                    <div class="input-actions">
+                        <button class="btn btn-secondary" onclick="clearInput()">Clear</button>
+                        <button class="btn btn-secondary" onclick="loadSample()">Load Sample</button>
+                        <button class="btn btn-secondary" onclick="minifyInput()">Minify</button>
+                    </div>
+                </div>
+                <textarea id="jsonInput" placeholder="Paste your JSON data here..." oninput="validateJSON()"></textarea>
+                <div class="input-stats" id="inputStats">
+                    <span id="inputLines">Lines: 0</span>
+                    <span id="inputChars">Characters: 0</span>
+                </div>
+            </div>
+            
+            <div class="validation-section">
+                <div class="validation-status" id="validationStatus">
+                    <div class="status-indicator" id="statusIndicator"></div>
+                    <span id="statusText">Enter JSON to validate</span>
+                </div>
+                <div class="error-details" id="errorDetails" style="display: none;">
+                    <h4>Error Details:</h4>
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
+            </div>
+            
+            <div class="formatting-options">
+                <h3>Formatting Options</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="indentSize">Indent Size:</label>
+                        <select id="indentSize">
+                            <option value="2">2 spaces</option>
+                            <option value="4" selected>4 spaces</option>
+                            <option value="8">8 spaces</option>
+                            <option value="tab">Tab</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="sortKeys">Sort Keys:</label>
+                        <input type="checkbox" id="sortKeys">
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="removeComments">Remove Comments:</label>
+                        <input type="checkbox" id="removeComments" checked>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="escapeUnicode">Escape Unicode:</label>
+                        <input type="checkbox" id="escapeUnicode">
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" id="formatBtn" onclick="formatJSON()" disabled>Format JSON</button>
+                    <button class="btn btn-secondary" onclick="copyFormatted()" id="copyBtn" disabled>Copy Formatted</button>
+                    <button class="btn btn-secondary" onclick="downloadJSON()" id="downloadBtn" disabled>Download</button>
+                </div>
+            </div>
+            
+            <div class="output-section" id="outputSection" style="display: none;">
+                <div class="output-header">
+                    <label for="jsonOutput">Formatted JSON:</label>
+                    <div class="output-actions">
+                        <button class="btn btn-secondary" onclick="copyOutput()">Copy</button>
+                        <button class="btn btn-secondary" onclick="downloadOutput()">Download</button>
+                    </div>
+                </div>
+                <textarea id="jsonOutput" readonly></textarea>
+                <div class="output-stats" id="outputStats">
+                    <span id="outputLines">Lines: 0</span>
+                    <span id="outputChars">Characters: 0</span>
+                    <span id="outputSize">Size: 0 bytes</span>
+                </div>
+            </div>
+            
+            <div class="json-info">
+                <h3>JSON Information</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>What is JSON?</strong>
+                        <p>JSON (JavaScript Object Notation) is a lightweight data interchange format that's easy for humans to read and write.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Common Uses</strong>
+                        <p>APIs, configuration files, data storage, and communication between web services.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>JSON Rules</strong>
+                        <p>Keys must be strings, values can be strings, numbers, booleans, null, objects, or arrays.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Validation</strong>
+                        <p>Our validator checks for proper syntax, correct data types, and valid JSON structure.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let formattedJSON = '';
+
+        function validateJSON() {
+            const input = document.getElementById('jsonInput').value;
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const errorDetails = document.getElementById('errorDetails');
+            const formatBtn = document.getElementById('formatBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            updateInputStats();
+            
+            if (!input.trim()) {
+                statusIndicator.className = 'status-indicator';
+                statusText.textContent = 'Enter JSON to validate';
+                errorDetails.style.display = 'none';
+                formatBtn.disabled = true;
+                copyBtn.disabled = true;
+                downloadBtn.disabled = true;
+                return;
+            }
+            
+            try {
+                JSON.parse(input);
+                statusIndicator.className = 'status-indicator valid';
+                statusText.textContent = 'Valid JSON ✓';
+                errorDetails.style.display = 'none';
+                formatBtn.disabled = false;
+            } catch (error) {
+                statusIndicator.className = 'status-indicator invalid';
+                statusText.textContent = 'Invalid JSON ✗';
+                document.getElementById('errorMessage').textContent = error.message;
+                errorDetails.style.display = 'block';
+                formatBtn.disabled = true;
+                copyBtn.disabled = true;
+                downloadBtn.disabled = true;
+            }
+        }
+
+        function formatJSON() {
+            const input = document.getElementById('jsonInput').value;
+            const indentSize = document.getElementById('indentSize').value;
+            const sortKeys = document.getElementById('sortKeys').checked;
+            const removeComments = document.getElementById('removeComments').checked;
+            const escapeUnicode = document.getElementById('escapeUnicode').checked;
+            
+            try {
+                let jsonData = input;
+                
+                // Remove comments if requested
+                if (removeComments) {
+                    jsonData = jsonData.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+                }
+                
+                let parsed = JSON.parse(jsonData);
+                
+                // Sort keys if requested
+                if (sortKeys) {
+                    parsed = sortObjectKeys(parsed);
+                }
+                
+                // Format with indentation
+                let indent = indentSize === 'tab' ? '\t' : ' '.repeat(parseInt(indentSize));
+                formattedJSON = JSON.stringify(parsed, null, indent);
+                
+                // Escape unicode if requested
+                if (escapeUnicode) {
+                    formattedJSON = formattedJSON.replace(/[\u007F-\uFFFF]/g, function(match) {
+                        return '\\u' + ('0000' + match.charCodeAt(0).toString(16)).slice(-4);
+                    });
+                }
+                
+                document.getElementById('jsonOutput').value = formattedJSON;
+                document.getElementById('outputSection').style.display = 'block';
+                updateOutputStats();
+                
+                // Scroll to output
+                document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+                
+            } catch (error) {
+                alert('Error formatting JSON: ' + error.message);
+            }
+        }
+
+        function sortObjectKeys(obj) {
+            if (Array.isArray(obj)) {
+                return obj.map(sortObjectKeys);
+            } else if (obj !== null && typeof obj === 'object') {
+                const sorted = {};
+                Object.keys(obj).sort().forEach(key => {
+                    sorted[key] = sortObjectKeys(obj[key]);
+                });
+                return sorted;
+            }
+            return obj;
+        }
+
+        function copyFormatted() {
+            if (formattedJSON) {
+                navigator.clipboard.writeText(formattedJSON).then(() => {
+                    const btn = document.getElementById('copyBtn');
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+
+        function copyOutput() {
+            const output = document.getElementById('jsonOutput').value;
+            if (output) {
+                navigator.clipboard.writeText(output).then(() => {
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+
+        function downloadJSON() {
+            if (formattedJSON) {
+                const blob = new Blob([formattedJSON], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'formatted.json';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        function downloadOutput() {
+            const output = document.getElementById('jsonOutput').value;
+            if (output) {
+                const blob = new Blob([output], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'formatted.json';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('jsonInput').value = '';
+            document.getElementById('outputSection').style.display = 'none';
+            validateJSON();
+        }
+
+        function loadSample() {
+            const sampleJSON = {
+                "name": "John Doe",
+                "age": 30,
+                "email": "john@example.com",
+                "address": {
+                    "street": "123 Main St",
+                    "city": "New York",
+                    "zipCode": "10001"
+                },
+                "hobbies": ["reading", "swimming", "coding"],
+                "isActive": true,
+                "lastLogin": null
+            };
+            
+            document.getElementById('jsonInput').value = JSON.stringify(sampleJSON, null, 2);
+            validateJSON();
+        }
+
+        function minifyInput() {
+            const input = document.getElementById('jsonInput').value;
+            try {
+                const parsed = JSON.parse(input);
+                const minified = JSON.stringify(parsed);
+                document.getElementById('jsonInput').value = minified;
+                validateJSON();
+            } catch (error) {
+                alert('Error minifying JSON: ' + error.message);
+            }
+        }
+
+        function updateInputStats() {
+            const input = document.getElementById('jsonInput').value;
+            const lines = input.split('\n').length;
+            const chars = input.length;
+            
+            document.getElementById('inputLines').textContent = `Lines: ${lines}`;
+            document.getElementById('inputChars').textContent = `Characters: ${chars}`;
+        }
+
+        function updateOutputStats() {
+            const output = document.getElementById('jsonOutput').value;
+            const lines = output.split('\n').length;
+            const chars = output.length;
+            const size = new Blob([output]).size;
+            
+            document.getElementById('outputLines').textContent = `Lines: ${lines}`;
+            document.getElementById('outputChars').textContent = `Characters: ${chars}`;
+            document.getElementById('outputSize').textContent = `Size: ${formatFileSize(size)}`;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>

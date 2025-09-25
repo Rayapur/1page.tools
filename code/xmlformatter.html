@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML Formatter - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>XML Formatter</h1>
+            <p class="subtitle">Format, validate, and beautify XML documents</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Paste your XML data below to format, validate, and beautify it. Get detailed error messages for invalid XML.</p>
+        </div>
+        
+        <div class="code-tools-container">
+            <div class="input-section">
+                <div class="input-header">
+                    <label for="xmlInput">XML Input:</label>
+                    <div class="input-actions">
+                        <button class="btn btn-secondary" onclick="clearInput()">Clear</button>
+                        <button class="btn btn-secondary" onclick="loadSample()">Load Sample</button>
+                        <button class="btn btn-secondary" onclick="minifyInput()">Minify</button>
+                    </div>
+                </div>
+                <textarea id="xmlInput" placeholder="Paste your XML data here..." oninput="validateXML()"></textarea>
+                <div class="input-stats" id="inputStats">
+                    <span id="inputLines">Lines: 0</span>
+                    <span id="inputChars">Characters: 0</span>
+                </div>
+            </div>
+            
+            <div class="validation-section">
+                <div class="validation-status" id="validationStatus">
+                    <div class="status-indicator" id="statusIndicator"></div>
+                    <span id="statusText">Enter XML to validate</span>
+                </div>
+                <div class="error-details" id="errorDetails" style="display: none;">
+                    <h4>Error Details:</h4>
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
+            </div>
+            
+            <div class="formatting-options">
+                <h3>Formatting Options</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="indentSize">Indent Size:</label>
+                        <select id="indentSize">
+                            <option value="2">2 spaces</option>
+                            <option value="4" selected>4 spaces</option>
+                            <option value="8">8 spaces</option>
+                            <option value="tab">Tab</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="sortAttributes">Sort Attributes:</label>
+                        <input type="checkbox" id="sortAttributes">
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="removeComments">Remove Comments:</label>
+                        <input type="checkbox" id="removeComments">
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="collapseEmpty">Collapse Empty Elements:</label>
+                        <input type="checkbox" id="collapseEmpty">
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" id="formatBtn" onclick="formatXML()" disabled>Format XML</button>
+                    <button class="btn btn-secondary" onclick="copyFormatted()" id="copyBtn" disabled>Copy Formatted</button>
+                    <button class="btn btn-secondary" onclick="downloadXML()" id="downloadBtn" disabled>Download</button>
+                </div>
+            </div>
+            
+            <div class="output-section" id="outputSection" style="display: none;">
+                <div class="output-header">
+                    <label for="xmlOutput">Formatted XML:</label>
+                    <div class="output-actions">
+                        <button class="btn btn-secondary" onclick="copyOutput()">Copy</button>
+                        <button class="btn btn-secondary" onclick="downloadOutput()">Download</button>
+                    </div>
+                </div>
+                <textarea id="xmlOutput" readonly></textarea>
+                <div class="output-stats" id="outputStats">
+                    <span id="outputLines">Lines: 0</span>
+                    <span id="outputChars">Characters: 0</span>
+                    <span id="outputSize">Size: 0 bytes</span>
+                </div>
+            </div>
+            
+            <div class="xml-info">
+                <h3>XML Information</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>What is XML?</strong>
+                        <p>XML (eXtensible Markup Language) is a markup language that defines rules for encoding documents in a format that is both human-readable and machine-readable.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Common Uses</strong>
+                        <p>Data storage, configuration files, web services (SOAP), document formats, and data exchange between systems.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>XML Rules</strong>
+                        <p>Must have a root element, all tags must be closed, attributes must be quoted, and case-sensitive.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Validation</strong>
+                        <p>Our formatter checks for proper syntax, well-formed structure, and valid XML format.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let formattedXML = '';
+
+        function validateXML() {
+            const input = document.getElementById('xmlInput').value;
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const errorDetails = document.getElementById('errorDetails');
+            const formatBtn = document.getElementById('formatBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            updateInputStats();
+            
+            if (!input.trim()) {
+                statusIndicator.className = 'status-indicator';
+                statusText.textContent = 'Enter XML to validate';
+                errorDetails.style.display = 'none';
+                formatBtn.disabled = true;
+                copyBtn.disabled = true;
+                downloadBtn.disabled = true;
+                return;
+            }
+            
+            try {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(input, 'text/xml');
+                const parseError = xmlDoc.getElementsByTagName('parsererror')[0];
+                
+                if (parseError) {
+                    statusIndicator.className = 'status-indicator invalid';
+                    statusText.textContent = 'Invalid XML ✗';
+                    document.getElementById('errorMessage').textContent = parseError.textContent;
+                    errorDetails.style.display = 'block';
+                    formatBtn.disabled = true;
+                    copyBtn.disabled = true;
+                    downloadBtn.disabled = true;
+                } else {
+                    statusIndicator.className = 'status-indicator valid';
+                    statusText.textContent = 'Valid XML ✓';
+                    errorDetails.style.display = 'none';
+                    formatBtn.disabled = false;
+                }
+            } catch (error) {
+                statusIndicator.className = 'status-indicator invalid';
+                statusText.textContent = 'Invalid XML ✗';
+                document.getElementById('errorMessage').textContent = error.message;
+                errorDetails.style.display = 'block';
+                formatBtn.disabled = true;
+                copyBtn.disabled = true;
+                downloadBtn.disabled = true;
+            }
+        }
+
+        function formatXML() {
+            const input = document.getElementById('xmlInput').value;
+            const indentSize = document.getElementById('indentSize').value;
+            const sortAttributes = document.getElementById('sortAttributes').checked;
+            const removeComments = document.getElementById('removeComments').checked;
+            const collapseEmpty = document.getElementById('collapseEmpty').checked;
+            
+            try {
+                let xmlData = input;
+                
+                // Remove comments if requested
+                if (removeComments) {
+                    xmlData = xmlData.replace(/<!--[\s\S]*?-->/g, '');
+                }
+                
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlData, 'text/xml');
+                const parseError = xmlDoc.getElementsByTagName('parsererror')[0];
+                
+                if (parseError) {
+                    throw new Error('Invalid XML: ' + parseError.textContent);
+                }
+                
+                // Format the XML
+                formattedXML = formatXMLNode(xmlDoc.documentElement, 0, indentSize, sortAttributes, collapseEmpty);
+                
+                document.getElementById('xmlOutput').value = formattedXML;
+                document.getElementById('outputSection').style.display = 'block';
+                updateOutputStats();
+                
+                // Scroll to output
+                document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+                
+            } catch (error) {
+                alert('Error formatting XML: ' + error.message);
+            }
+        }
+
+        function formatXMLNode(node, depth, indentSize, sortAttributes, collapseEmpty) {
+            const indent = indentSize === 'tab' ? '\t' : ' '.repeat(parseInt(indentSize));
+            const currentIndent = indent.repeat(depth);
+            const childIndent = indent.repeat(depth + 1);
+            
+            let result = currentIndent + '<' + node.tagName;
+            
+            // Handle attributes
+            if (node.attributes && node.attributes.length > 0) {
+                const attributes = Array.from(node.attributes);
+                if (sortAttributes) {
+                    attributes.sort((a, b) => a.name.localeCompare(b.name));
+                }
+                
+                attributes.forEach(attr => {
+                    result += ' ' + attr.name + '="' + attr.value + '"';
+                });
+            }
+            
+            // Handle child nodes
+            const childNodes = Array.from(node.childNodes).filter(child => 
+                child.nodeType === Node.ELEMENT_NODE || 
+                (child.nodeType === Node.TEXT_NODE && child.textContent.trim())
+            );
+            
+            if (childNodes.length === 0) {
+                // Empty element
+                if (collapseEmpty) {
+                    result += ' />';
+                } else {
+                    result += '></' + node.tagName + '>';
+                }
+            } else if (childNodes.length === 1 && childNodes[0].nodeType === Node.TEXT_NODE) {
+                // Element with only text content
+                result += '>' + childNodes[0].textContent.trim() + '</' + node.tagName + '>';
+            } else {
+                // Element with child elements
+                result += '>\n';
+                childNodes.forEach(child => {
+                    if (child.nodeType === Node.ELEMENT_NODE) {
+                        result += formatXMLNode(child, depth + 1, indentSize, sortAttributes, collapseEmpty) + '\n';
+                    } else if (child.nodeType === Node.TEXT_NODE && child.textContent.trim()) {
+                        result += childIndent + child.textContent.trim() + '\n';
+                    }
+                });
+                result += currentIndent + '</' + node.tagName + '>';
+            }
+            
+            return result;
+        }
+
+        function copyFormatted() {
+            if (formattedXML) {
+                navigator.clipboard.writeText(formattedXML).then(() => {
+                    const btn = document.getElementById('copyBtn');
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+
+        function copyOutput() {
+            const output = document.getElementById('xmlOutput').value;
+            if (output) {
+                navigator.clipboard.writeText(output).then(() => {
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+
+        function downloadXML() {
+            if (formattedXML) {
+                const blob = new Blob([formattedXML], { type: 'application/xml' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'formatted.xml';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        function downloadOutput() {
+            const output = document.getElementById('xmlOutput').value;
+            if (output) {
+                const blob = new Blob([output], { type: 'application/xml' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'formatted.xml';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('xmlInput').value = '';
+            document.getElementById('outputSection').style.display = 'none';
+            validateXML();
+        }
+
+        function loadSample() {
+            const sampleXML = `<?xml version="1.0" encoding="UTF-8"?>
+<bookstore>
+    <book id="1">
+        <title>The Great Gatsby</title>
+        <author>F. Scott Fitzgerald</author>
+        <year>1925</year>
+        <price currency="USD">10.99</price>
+        <category>Fiction</category>
+    </book>
+    <book id="2">
+        <title>To Kill a Mockingbird</title>
+        <author>Harper Lee</author>
+        <year>1960</year>
+        <price currency="USD">12.99</price>
+        <category>Fiction</category>
+    </book>
+</bookstore>`;
+            
+            document.getElementById('xmlInput').value = sampleXML;
+            validateXML();
+        }
+
+        function minifyInput() {
+            const input = document.getElementById('xmlInput').value;
+            try {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(input, 'text/xml');
+                const parseError = xmlDoc.getElementsByTagName('parsererror')[0];
+                
+                if (parseError) {
+                    throw new Error('Invalid XML: ' + parseError.textContent);
+                }
+                
+                const serializer = new XMLSerializer();
+                const minified = serializer.serializeToString(xmlDoc);
+                document.getElementById('xmlInput').value = minified;
+                validateXML();
+            } catch (error) {
+                alert('Error minifying XML: ' + error.message);
+            }
+        }
+
+        function updateInputStats() {
+            const input = document.getElementById('xmlInput').value;
+            const lines = input.split('\n').length;
+            const chars = input.length;
+            
+            document.getElementById('inputLines').textContent = `Lines: ${lines}`;
+            document.getElementById('inputChars').textContent = `Characters: ${chars}`;
+        }
+
+        function updateOutputStats() {
+            const output = document.getElementById('xmlOutput').value;
+            const lines = output.split('\n').length;
+            const chars = output.length;
+            const size = new Blob([output]).size;
+            
+            document.getElementById('outputLines').textContent = `Lines: ${lines}`;
+            document.getElementById('outputChars').textContent = `Characters: ${chars}`;
+            document.getElementById('outputSize').textContent = `Size: ${formatFileSize(size)}`;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
