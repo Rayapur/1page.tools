@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>Simple Calculator</h1>
+            <p class="subtitle">Perform basic arithmetic operations with ease</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Use the calculator below to perform addition, subtraction, multiplication, and division operations.</p>
+        </div>
+        
+        <div class="calculator-container">
+            <div class="calculator">
+                <div class="calculator-display">
+                    <input type="text" id="display" readonly placeholder="0">
+                </div>
+                
+                <div class="calculator-buttons">
+                    <button class="calc-btn calc-btn-clear" onclick="clearDisplay()">C</button>
+                    <button class="calc-btn calc-btn-operator" onclick="deleteLast()">⌫</button>
+                    <button class="calc-btn calc-btn-operator" onclick="appendToDisplay('/')">/</button>
+                    <button class="calc-btn calc-btn-operator" onclick="appendToDisplay('*')">×</button>
+                    
+                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('7')">7</button>
+                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('8')">8</button>
+                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('9')">9</button>
+                    <button class="calc-btn calc-btn-operator" onclick="appendToDisplay('-')">-</button>
+                    
+                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('4')">4</button>
+                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('5')">5</button>
+                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('6')">6</button>
+                    <button class="calc-btn calc-btn-operator" onclick="appendToDisplay('+')">+</button>
+                    
+                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('1')">1</button>
+                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('2')">2</button>
+                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('3')">3</button>
+                    <button class="calc-btn calc-btn-equals" onclick="calculate()" rowspan="2">=</button>
+                    
+                    <button class="calc-btn calc-btn-number calc-btn-zero" onclick="appendToDisplay('0')">0</button>
+                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('.')">.</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let display = document.getElementById('display');
+        let currentInput = '';
+        let operator = '';
+        let previousInput = '';
+        let shouldResetDisplay = false;
+
+        function updateDisplay(value) {
+            display.value = value;
+        }
+
+        function clearDisplay() {
+            currentInput = '';
+            operator = '';
+            previousInput = '';
+            shouldResetDisplay = false;
+            updateDisplay('0');
+        }
+
+        function deleteLast() {
+            if (currentInput.length > 0) {
+                currentInput = currentInput.slice(0, -1);
+                updateDisplay(currentInput || '0');
+            }
+        }
+
+        function appendToDisplay(value) {
+            if (shouldResetDisplay) {
+                currentInput = '';
+                shouldResetDisplay = false;
+            }
+
+            if (value === '.' && currentInput.includes('.')) {
+                return; // Prevent multiple decimal points
+            }
+
+            if (currentInput === '0' && value !== '.') {
+                currentInput = value;
+            } else {
+                currentInput += value;
+            }
+
+            updateDisplay(currentInput);
+        }
+
+        function setOperator(op) {
+            if (currentInput === '') return;
+
+            if (operator !== '' && previousInput !== '') {
+                calculate();
+            }
+
+            operator = op;
+            previousInput = currentInput;
+            currentInput = '';
+            shouldResetDisplay = true;
+        }
+
+        function calculate() {
+            if (operator === '' || previousInput === '' || currentInput === '') {
+                return;
+            }
+
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+            let result;
+
+            switch (operator) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    if (current === 0) {
+                        updateDisplay('Error');
+                        return;
+                    }
+                    result = prev / current;
+                    break;
+                default:
+                    return;
+            }
+
+            // Round to avoid floating point precision issues
+            result = Math.round(result * 100000000) / 100000000;
+            
+            currentInput = result.toString();
+            operator = '';
+            previousInput = '';
+            shouldResetDisplay = true;
+            updateDisplay(currentInput);
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            if (key >= '0' && key <= '9' || key === '.') {
+                appendToDisplay(key);
+            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                setOperator(key);
+            } else if (key === 'Enter' || key === '=') {
+                calculate();
+            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                clearDisplay();
+            } else if (key === 'Backspace') {
+                deleteLast();
+            }
+        });
+
+        // Initialize display
+        clearDisplay();
+    </script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Counter - Word & Character Counter</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <!-- All styles are now globalized in css/theme.css -->
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    <div class="container">
+        <header>
+            <h1>Text Counter</h1>
+            <p class="subtitle">Count words, characters, sentences, and paragraphs in your text</p>
+        </header>
+        
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Type or paste your text in the input area</li>
+                <li>View real-time statistics as you type</li>
+                <li>Get detailed breakdown of your text composition</li>
+                <li>Copy your text or clear to start over</li>
+            </ol>
+        </div>
+        
+        <div class="text-tools-container">
+            <div class="input-section">
+                <label for="textInput">Enter your text:</label>
+                <textarea id="textInput" placeholder="Type or paste your text here..."></textarea>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="charCount">0</div>
+                    <div class="stat-label">Characters</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="charNoSpacesCount">0</div>
+                    <div class="stat-label">Characters (no spaces)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="wordCount">0</div>
+                    <div class="stat-label">Words</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="sentenceCount">0</div>
+                    <div class="stat-label">Sentences</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="paragraphCount">0</div>
+                    <div class="stat-label">Paragraphs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="lineCount">0</div>
+                    <div class="stat-label">Lines</div>
+                </div>
+            </div>
+            
+            <div class="additional-stats">
+                <div class="stat-row">
+                    <span class="stat-label">Average words per sentence:</span>
+                    <span class="stat-value" id="avgWordsPerSentence">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Average characters per word:</span>
+                    <span class="stat-value" id="avgCharsPerWord">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Reading time (average):</span>
+                    <span class="stat-value" id="readingTime">0 min</span>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="copyBtn" disabled>Copy Text</button>
+                <button class="btn btn-danger" id="clearBtn">Clear All</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        &copy; 2025 1page.tools<br>
+        <a href="../privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="../terms-of-use.html" target="_blank">Terms of Use</a>
+    </footer>
+
+    <script>
+        const textInput = document.getElementById('textInput');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        
+        // Stat elements
+        const charCount = document.getElementById('charCount');
+        const charNoSpacesCount = document.getElementById('charNoSpacesCount');
+        const wordCount = document.getElementById('wordCount');
+        const sentenceCount = document.getElementById('sentenceCount');
+        const paragraphCount = document.getElementById('paragraphCount');
+        const lineCount = document.getElementById('lineCount');
+        const avgWordsPerSentence = document.getElementById('avgWordsPerSentence');
+        const avgCharsPerWord = document.getElementById('avgCharsPerWord');
+        const readingTime = document.getElementById('readingTime');
+        
+        // Event listeners
+        textInput.addEventListener('input', updateStats);
+        copyBtn.addEventListener('click', copyToClipboard);
+        clearBtn.addEventListener('click', clearAll);
+        
+        function updateStats() {
+            const text = textInput.value;
+            
+            // Basic counts
+            const characters = text.length;
+            const charactersNoSpaces = text.replace(/\s/g, '').length;
+            const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+            const sentences = text.trim() ? text.split(/[.!?]+/).filter(s => s.trim().length > 0).length : 0;
+            const paragraphs = text.trim() ? text.split(/\n\s*\n/).filter(p => p.trim().length > 0).length : 0;
+            const lines = text.split('\n').length;
+            
+            // Update display
+            charCount.textContent = characters;
+            charNoSpacesCount.textContent = charactersNoSpaces;
+            wordCount.textContent = words;
+            sentenceCount.textContent = sentences;
+            paragraphCount.textContent = paragraphs;
+            lineCount.textContent = lines;
+            
+            // Calculate averages
+            const avgWordsPerSentenceValue = sentences > 0 ? (words / sentences).toFixed(1) : 0;
+            const avgCharsPerWordValue = words > 0 ? (charactersNoSpaces / words).toFixed(1) : 0;
+            
+            avgWordsPerSentence.textContent = avgWordsPerSentenceValue;
+            avgCharsPerWord.textContent = avgCharsPerWordValue;
+            
+            // Calculate reading time (average 200 words per minute)
+            const readingTimeMinutes = words > 0 ? (words / 200).toFixed(1) : 0;
+            readingTime.textContent = readingTimeMinutes + ' min';
+            
+            // Enable/disable copy button
+            copyBtn.disabled = !text.trim();
+        }
+        
+        function copyToClipboard() {
+            const text = textInput.value;
+            if (text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copied!';
+                    copyBtn.style.background = '#27ae60';
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                        copyBtn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+        
+        function clearAll() {
+            textInput.value = '';
+            updateStats();
+            textInput.focus();
+        }
+        
+        // Initialize
+        updateStats();
+    </script>
+</body>
+</html>

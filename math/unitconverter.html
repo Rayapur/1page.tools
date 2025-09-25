@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>Unit Converter</h1>
+            <p class="subtitle">Convert between different units of measurement</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Select a category and convert between different units of measurement instantly.</p>
+        </div>
+        
+        <div class="converter-container">
+            <div class="converter-category">
+                <label for="categorySelect">Select Category:</label>
+                <select id="categorySelect" onchange="updateUnits()">
+                    <option value="length">Length</option>
+                    <option value="weight">Weight</option>
+                    <option value="temperature">Temperature</option>
+                    <option value="area">Area</option>
+                    <option value="volume">Volume</option>
+                </select>
+            </div>
+            
+            <div class="converter-inputs">
+                <div class="input-group">
+                    <label for="fromValue">Value:</label>
+                    <input type="number" id="fromValue" placeholder="Enter value" step="any" oninput="convert()">
+                </div>
+                
+                <div class="input-group">
+                    <label for="fromUnit">From:</label>
+                    <select id="fromUnit" onchange="convert()">
+                        <!-- Units will be populated by JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="toUnit">To:</label>
+                    <select id="toUnit" onchange="convert()">
+                        <!-- Units will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+            
+            <div class="converter-result">
+                <label for="result">Result:</label>
+                <input type="text" id="result" readonly placeholder="Converted value will appear here">
+                <button class="btn btn-secondary" id="copyBtn" onclick="copyResult()" disabled>Copy Result</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        const conversionData = {
+            length: {
+                'meter': 1,
+                'kilometer': 1000,
+                'centimeter': 0.01,
+                'millimeter': 0.001,
+                'inch': 0.0254,
+                'foot': 0.3048,
+                'yard': 0.9144,
+                'mile': 1609.34
+            },
+            weight: {
+                'kilogram': 1,
+                'gram': 0.001,
+                'pound': 0.453592,
+                'ounce': 0.0283495,
+                'ton': 1000,
+                'stone': 6.35029
+            },
+            temperature: {
+                'celsius': 'celsius',
+                'fahrenheit': 'fahrenheit',
+                'kelvin': 'kelvin'
+            },
+            area: {
+                'square meter': 1,
+                'square kilometer': 1000000,
+                'square centimeter': 0.0001,
+                'square inch': 0.00064516,
+                'square foot': 0.092903,
+                'square yard': 0.836127,
+                'acre': 4046.86,
+                'hectare': 10000
+            },
+            volume: {
+                'liter': 1,
+                'milliliter': 0.001,
+                'cubic meter': 1000,
+                'cubic centimeter': 0.001,
+                'gallon (US)': 3.78541,
+                'gallon (UK)': 4.54609,
+                'quart': 0.946353,
+                'pint': 0.473176,
+                'cup': 0.236588,
+                'fluid ounce': 0.0295735
+            }
+        };
+
+        function updateUnits() {
+            const category = document.getElementById('categorySelect').value;
+            const fromUnit = document.getElementById('fromUnit');
+            const toUnit = document.getElementById('toUnit');
+            
+            // Clear existing options
+            fromUnit.innerHTML = '';
+            toUnit.innerHTML = '';
+            
+            // Add units for selected category
+            Object.keys(conversionData[category]).forEach(unit => {
+                const option1 = new Option(unit, unit);
+                const option2 = new Option(unit, unit);
+                fromUnit.add(option1);
+                toUnit.add(option2);
+            });
+            
+            // Reset result
+            document.getElementById('result').value = '';
+            document.getElementById('copyBtn').disabled = true;
+        }
+
+        function convert() {
+            const category = document.getElementById('categorySelect').value;
+            const fromValue = parseFloat(document.getElementById('fromValue').value);
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            const resultField = document.getElementById('result');
+            const copyBtn = document.getElementById('copyBtn');
+            
+            if (isNaN(fromValue) || fromUnit === '' || toUnit === '') {
+                resultField.value = '';
+                copyBtn.disabled = true;
+                return;
+            }
+            
+            let result;
+            
+            if (category === 'temperature') {
+                result = convertTemperature(fromValue, fromUnit, toUnit);
+            } else {
+                const fromFactor = conversionData[category][fromUnit];
+                const toFactor = conversionData[category][toUnit];
+                result = (fromValue * fromFactor) / toFactor;
+            }
+            
+            // Round to 6 decimal places to avoid floating point precision issues
+            result = Math.round(result * 1000000) / 1000000;
+            
+            resultField.value = result;
+            copyBtn.disabled = false;
+        }
+
+        function convertTemperature(value, fromUnit, toUnit) {
+            let celsius;
+            
+            // Convert to Celsius first
+            switch (fromUnit) {
+                case 'celsius':
+                    celsius = value;
+                    break;
+                case 'fahrenheit':
+                    celsius = (value - 32) * 5/9;
+                    break;
+                case 'kelvin':
+                    celsius = value - 273.15;
+                    break;
+            }
+            
+            // Convert from Celsius to target unit
+            switch (toUnit) {
+                case 'celsius':
+                    return celsius;
+                case 'fahrenheit':
+                    return (celsius * 9/5) + 32;
+                case 'kelvin':
+                    return celsius + 273.15;
+            }
+        }
+
+        function copyResult() {
+            const result = document.getElementById('result').value;
+            if (result) {
+                navigator.clipboard.writeText(result).then(() => {
+                    const btn = document.getElementById('copyBtn');
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+
+        // Initialize units
+        updateUnits();
+    </script>
+</body>
+</html>

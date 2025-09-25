@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Diff Checker - Compare Text Differences</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <!-- All styles are now globalized in css/theme.css -->
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    <div class="container">
+        <header>
+            <h1>Text Diff Checker</h1>
+            <p class="subtitle">Compare two texts and highlight the differences</p>
+        </header>
+        
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Enter your original text in the first textarea</li>
+                <li>Enter the modified text in the second textarea</li>
+                <li>View the differences highlighted in the comparison</li>
+                <li>Copy the results or clear to start over</li>
+            </ol>
+        </div>
+        
+        <div class="text-tools-container">
+            <div class="diff-inputs">
+                <div class="input-section">
+                    <label for="originalText">Original Text:</label>
+                    <textarea id="originalText" placeholder="Enter your original text here..."></textarea>
+                </div>
+                
+                <div class="input-section">
+                    <label for="modifiedText">Modified Text:</label>
+                    <textarea id="modifiedText" placeholder="Enter your modified text here..."></textarea>
+                </div>
+            </div>
+            
+            <div class="diff-options">
+                <label>
+                    <input type="checkbox" id="ignoreWhitespace" checked>
+                    Ignore whitespace differences
+                </label>
+                <label>
+                    <input type="checkbox" id="ignoreCase">
+                    Ignore case differences
+                </label>
+                <button class="btn" id="compareBtn">Compare Texts</button>
+            </div>
+            
+            <div class="diff-results" id="diffResults" style="display: none;">
+                <h3>Comparison Results:</h3>
+                <div class="diff-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Added:</span>
+                        <span class="stat-value added" id="addedCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Removed:</span>
+                        <span class="stat-value removed" id="removedCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Modified:</span>
+                        <span class="stat-value modified" id="modifiedCount">0</span>
+                    </div>
+                </div>
+                <div class="diff-output" id="diffOutput"></div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="copyBtn" disabled>Copy Results</button>
+                <button class="btn btn-danger" id="clearBtn">Clear All</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        &copy; 2025 1page.tools<br>
+        <a href="../privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="../terms-of-use.html" target="_blank">Terms of Use</a>
+    </footer>
+
+    <script>
+        const originalText = document.getElementById('originalText');
+        const modifiedText = document.getElementById('modifiedText');
+        const ignoreWhitespace = document.getElementById('ignoreWhitespace');
+        const ignoreCase = document.getElementById('ignoreCase');
+        const compareBtn = document.getElementById('compareBtn');
+        const diffResults = document.getElementById('diffResults');
+        const diffOutput = document.getElementById('diffOutput');
+        const addedCount = document.getElementById('addedCount');
+        const removedCount = document.getElementById('removedCount');
+        const modifiedCount = document.getElementById('modifiedCount');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        
+        // Event listeners
+        compareBtn.addEventListener('click', compareTexts);
+        copyBtn.addEventListener('click', copyResults);
+        clearBtn.addEventListener('click', clearAll);
+        
+        function compareTexts() {
+            const original = originalText.value;
+            const modified = modifiedText.value;
+            
+            if (!original && !modified) {
+                alert('Please enter at least one text to compare.');
+                return;
+            }
+            
+            let text1 = original;
+            let text2 = modified;
+            
+            // Apply filters
+            if (ignoreWhitespace.checked) {
+                text1 = text1.replace(/\s+/g, ' ').trim();
+                text2 = text2.replace(/\s+/g, ' ').trim();
+            }
+            
+            if (ignoreCase.checked) {
+                text1 = text1.toLowerCase();
+                text2 = text2.toLowerCase();
+            }
+            
+            // Simple diff algorithm
+            const diff = computeDiff(text1, text2);
+            displayDiff(diff);
+            
+            diffResults.style.display = 'block';
+            copyBtn.disabled = false;
+        }
+        
+        function computeDiff(text1, text2) {
+            const lines1 = text1.split('\n');
+            const lines2 = text2.split('\n');
+            const diff = [];
+            
+            let i = 0, j = 0;
+            let added = 0, removed = 0, modified = 0;
+            
+            while (i < lines1.length || j < lines2.length) {
+                if (i >= lines1.length) {
+                    // Only text2 has content
+                    diff.push({ type: 'added', content: lines2[j] });
+                    added++;
+                    j++;
+                } else if (j >= lines2.length) {
+                    // Only text1 has content
+                    diff.push({ type: 'removed', content: lines1[i] });
+                    removed++;
+                    i++;
+                } else if (lines1[i] === lines2[j]) {
+                    // Lines are identical
+                    diff.push({ type: 'unchanged', content: lines1[i] });
+                    i++;
+                    j++;
+                } else {
+                    // Lines are different - check if it's a modification or addition/removal
+                    const nextMatch1 = lines2.indexOf(lines1[i], j + 1);
+                    const nextMatch2 = lines1.indexOf(lines2[j], i + 1);
+                    
+                    if (nextMatch1 !== -1 && (nextMatch2 === -1 || nextMatch1 - j < nextMatch2 - i)) {
+                        // Line was added
+                        diff.push({ type: 'added', content: lines2[j] });
+                        added++;
+                        j++;
+                    } else if (nextMatch2 !== -1) {
+                        // Line was removed
+                        diff.push({ type: 'removed', content: lines1[i] });
+                        removed++;
+                        i++;
+                    } else {
+                        // Line was modified
+                        diff.push({ type: 'removed', content: lines1[i] });
+                        diff.push({ type: 'added', content: lines2[j] });
+                        removed++;
+                        added++;
+                        modified++;
+                        i++;
+                        j++;
+                    }
+                }
+            }
+            
+            return { diff, stats: { added, removed, modified } };
+        }
+        
+        function displayDiff(result) {
+            const { diff, stats } = result;
+            
+            // Update stats
+            addedCount.textContent = stats.added;
+            removedCount.textContent = stats.removed;
+            modifiedCount.textContent = stats.modified;
+            
+            // Display diff
+            let html = '';
+            diff.forEach(item => {
+                const className = `diff-${item.type}`;
+                const prefix = item.type === 'added' ? '+' : 
+                              item.type === 'removed' ? '-' : ' ';
+                html += `<div class="diff-line ${className}">${prefix} ${escapeHtml(item.content)}</div>`;
+            });
+            
+            diffOutput.innerHTML = html;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function copyResults() {
+            const diffText = diffOutput.textContent;
+            if (diffText) {
+                navigator.clipboard.writeText(diffText).then(() => {
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copied!';
+                    copyBtn.style.background = '#27ae60';
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                        copyBtn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+        
+        function clearAll() {
+            originalText.value = '';
+            modifiedText.value = '';
+            diffResults.style.display = 'none';
+            copyBtn.disabled = true;
+            originalText.focus();
+        }
+    </script>
+</body>
+</html>

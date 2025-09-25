@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Percentage Calculator - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>Percentage Calculator</h1>
+            <p class="subtitle">Calculate percentages, increases, decreases, and more</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Choose a calculation type and enter the values to get instant percentage calculations.</p>
+        </div>
+        
+        <div class="percentage-container">
+            <div class="calculation-type">
+                <label for="calcType">Calculation Type:</label>
+                <select id="calcType" onchange="updateCalculationType()">
+                    <option value="basic">What is X% of Y?</option>
+                    <option value="percentage">X is what % of Y?</option>
+                    <option value="increase">X increased by Y% = ?</option>
+                    <option value="decrease">X decreased by Y% = ?</option>
+                    <option value="change">Percentage change from X to Y</option>
+                </select>
+            </div>
+            
+            <div class="calculation-inputs">
+                <div class="input-group">
+                    <label for="value1" id="label1">Value 1:</label>
+                    <input type="number" id="value1" placeholder="Enter value" step="any" oninput="calculate()">
+                </div>
+                
+                <div class="input-group">
+                    <label for="value2" id="label2">Value 2:</label>
+                    <input type="number" id="value2" placeholder="Enter value" step="any" oninput="calculate()">
+                </div>
+            </div>
+            
+            <div class="calculation-result">
+                <div class="result-display" id="resultDisplay">
+                    <p>Enter values above to see the result</p>
+                </div>
+                <button class="btn btn-secondary" id="copyBtn" onclick="copyResult()" disabled>Copy Result</button>
+            </div>
+            
+            <div class="calculation-examples">
+                <h3>Examples:</h3>
+                <div class="examples-grid">
+                    <div class="example-card">
+                        <strong>What is 20% of 150?</strong>
+                        <p>Answer: 30</p>
+                    </div>
+                    <div class="example-card">
+                        <strong>25 is what % of 200?</strong>
+                        <p>Answer: 12.5%</p>
+                    </div>
+                    <div class="example-card">
+                        <strong>100 increased by 15%</strong>
+                        <p>Answer: 115</p>
+                    </div>
+                    <div class="example-card">
+                        <strong>80 decreased by 20%</strong>
+                        <p>Answer: 64</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let currentResult = '';
+
+        function updateCalculationType() {
+            const calcType = document.getElementById('calcType').value;
+            const label1 = document.getElementById('label1');
+            const label2 = document.getElementById('label2');
+            const value1 = document.getElementById('value1');
+            const value2 = document.getElementById('value2');
+            
+            // Clear inputs
+            value1.value = '';
+            value2.value = '';
+            document.getElementById('resultDisplay').innerHTML = '<p>Enter values above to see the result</p>';
+            document.getElementById('copyBtn').disabled = true;
+            
+            // Update labels based on calculation type
+            switch (calcType) {
+                case 'basic':
+                    label1.textContent = 'Percentage (%):';
+                    label2.textContent = 'Number:';
+                    value1.placeholder = 'Enter percentage';
+                    value2.placeholder = 'Enter number';
+                    break;
+                case 'percentage':
+                    label1.textContent = 'Part:';
+                    label2.textContent = 'Whole:';
+                    value1.placeholder = 'Enter part value';
+                    value2.placeholder = 'Enter whole value';
+                    break;
+                case 'increase':
+                    label1.textContent = 'Original Number:';
+                    label2.textContent = 'Increase %:';
+                    value1.placeholder = 'Enter original number';
+                    value2.placeholder = 'Enter increase percentage';
+                    break;
+                case 'decrease':
+                    label1.textContent = 'Original Number:';
+                    label2.textContent = 'Decrease %:';
+                    value1.placeholder = 'Enter original number';
+                    value2.placeholder = 'Enter decrease percentage';
+                    break;
+                case 'change':
+                    label1.textContent = 'Original Value:';
+                    label2.textContent = 'New Value:';
+                    value1.placeholder = 'Enter original value';
+                    value2.placeholder = 'Enter new value';
+                    break;
+            }
+        }
+
+        function calculate() {
+            const calcType = document.getElementById('calcType').value;
+            const value1 = parseFloat(document.getElementById('value1').value);
+            const value2 = parseFloat(document.getElementById('value2').value);
+            const resultDisplay = document.getElementById('resultDisplay');
+            const copyBtn = document.getElementById('copyBtn');
+            
+            if (isNaN(value1) || isNaN(value2)) {
+                resultDisplay.innerHTML = '<p>Enter values above to see the result</p>';
+                copyBtn.disabled = true;
+                return;
+            }
+            
+            let result, explanation;
+            
+            switch (calcType) {
+                case 'basic':
+                    result = (value1 / 100) * value2;
+                    explanation = `${value1}% of ${value2} = ${result}`;
+                    break;
+                case 'percentage':
+                    result = (value1 / value2) * 100;
+                    explanation = `${value1} is ${result}% of ${value2}`;
+                    break;
+                case 'increase':
+                    result = value1 + (value1 * value2 / 100);
+                    explanation = `${value1} increased by ${value2}% = ${result}`;
+                    break;
+                case 'decrease':
+                    result = value1 - (value1 * value2 / 100);
+                    explanation = `${value1} decreased by ${value2}% = ${result}`;
+                    break;
+                case 'change':
+                    result = ((value2 - value1) / value1) * 100;
+                    const changeType = result >= 0 ? 'increased' : 'decreased';
+                    explanation = `From ${value1} to ${value2} is a ${Math.abs(result)}% ${changeType}`;
+                    break;
+            }
+            
+            // Round result to 2 decimal places
+            result = Math.round(result * 100) / 100;
+            
+            resultDisplay.innerHTML = `
+                <div class="result-value">${result}</div>
+                <div class="result-explanation">${explanation}</div>
+            `;
+            
+            currentResult = result.toString();
+            copyBtn.disabled = false;
+        }
+
+        function copyResult() {
+            if (currentResult) {
+                navigator.clipboard.writeText(currentResult).then(() => {
+                    const btn = document.getElementById('copyBtn');
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+
+        // Initialize
+        updateCalculationType();
+    </script>
+</body>
+</html>

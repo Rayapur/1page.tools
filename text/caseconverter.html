@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Converter - Text Case Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <!-- All styles are now globalized in css/theme.css -->
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    <div class="container">
+        <header>
+            <h1>Case Converter</h1>
+            <p class="subtitle">Convert text between different cases instantly</p>
+        </header>
+        
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Type or paste your text in the input area</li>
+                <li>Click any case conversion button to transform your text</li>
+                <li>Copy the converted text using the copy button</li>
+                <li>Clear the text to start over</li>
+            </ol>
+        </div>
+        
+        <div class="text-tools-container">
+            <div class="input-section">
+                <label for="textInput">Enter your text:</label>
+                <textarea id="textInput" placeholder="Type or paste your text here..."></textarea>
+            </div>
+            
+            <div class="conversion-buttons">
+                <button class="btn" id="uppercaseBtn">UPPERCASE</button>
+                <button class="btn" id="lowercaseBtn">lowercase</button>
+                <button class="btn" id="titleCaseBtn">Title Case</button>
+                <button class="btn" id="camelCaseBtn">camelCase</button>
+                <button class="btn" id="pascalCaseBtn">PascalCase</button>
+                <button class="btn" id="snakeCaseBtn">snake_case</button>
+                <button class="btn" id="kebabCaseBtn">kebab-case</button>
+                <button class="btn" id="alternatingCaseBtn">aLtErNaTiNg CaSe</button>
+            </div>
+            
+            <div class="output-section">
+                <label for="textOutput">Converted text:</label>
+                <textarea id="textOutput" placeholder="Converted text will appear here..." readonly></textarea>
+                <button class="btn btn-secondary" id="copyBtn" disabled>Copy Text</button>
+                <button class="btn btn-danger" id="clearBtn">Clear All</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        &copy; 2025 1page.tools<br>
+        <a href="../privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="../terms-of-use.html" target="_blank">Terms of Use</a>
+    </footer>
+
+    <script>
+        const textInput = document.getElementById('textInput');
+        const textOutput = document.getElementById('textOutput');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        
+        // Case conversion buttons
+        const uppercaseBtn = document.getElementById('uppercaseBtn');
+        const lowercaseBtn = document.getElementById('lowercaseBtn');
+        const titleCaseBtn = document.getElementById('titleCaseBtn');
+        const camelCaseBtn = document.getElementById('camelCaseBtn');
+        const pascalCaseBtn = document.getElementById('pascalCaseBtn');
+        const snakeCaseBtn = document.getElementById('snakeCaseBtn');
+        const kebabCaseBtn = document.getElementById('kebabCaseBtn');
+        const alternatingCaseBtn = document.getElementById('alternatingCaseBtn');
+        
+        // Event listeners
+        textInput.addEventListener('input', updateOutput);
+        copyBtn.addEventListener('click', copyToClipboard);
+        clearBtn.addEventListener('click', clearAll);
+        
+        // Case conversion event listeners
+        uppercaseBtn.addEventListener('click', () => convertCase('uppercase'));
+        lowercaseBtn.addEventListener('click', () => convertCase('lowercase'));
+        titleCaseBtn.addEventListener('click', () => convertCase('title'));
+        camelCaseBtn.addEventListener('click', () => convertCase('camel'));
+        pascalCaseBtn.addEventListener('click', () => convertCase('pascal'));
+        snakeCaseBtn.addEventListener('click', () => convertCase('snake'));
+        kebabCaseBtn.addEventListener('click', () => convertCase('kebab'));
+        alternatingCaseBtn.addEventListener('click', () => convertCase('alternating'));
+        
+        function updateOutput() {
+            const text = textInput.value;
+            if (text.trim()) {
+                copyBtn.disabled = false;
+            } else {
+                copyBtn.disabled = true;
+                textOutput.value = '';
+            }
+        }
+        
+        function convertCase(type) {
+            const text = textInput.value;
+            if (!text.trim()) return;
+            
+            let converted = '';
+            
+            switch(type) {
+                case 'uppercase':
+                    converted = text.toUpperCase();
+                    break;
+                case 'lowercase':
+                    converted = text.toLowerCase();
+                    break;
+                case 'title':
+                    converted = text.replace(/\w\S*/g, (txt) => 
+                        txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+                    );
+                    break;
+                case 'camel':
+                    converted = text.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
+                        return index === 0 ? word.toLowerCase() : word.toUpperCase();
+                    }).replace(/\s+/g, '');
+                    break;
+                case 'pascal':
+                    converted = text.replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => {
+                        return word.toUpperCase();
+                    }).replace(/\s+/g, '');
+                    break;
+                case 'snake':
+                    converted = text.replace(/\W+/g, ' ')
+                        .split(/ |\B(?=[A-Z])/)
+                        .map(word => word.toLowerCase())
+                        .join('_');
+                    break;
+                case 'kebab':
+                    converted = text.replace(/\W+/g, ' ')
+                        .split(/ |\B(?=[A-Z])/)
+                        .map(word => word.toLowerCase())
+                        .join('-');
+                    break;
+                case 'alternating':
+                    converted = text.split('').map((char, index) => 
+                        index % 2 === 0 ? char.toLowerCase() : char.toUpperCase()
+                    ).join('');
+                    break;
+            }
+            
+            textOutput.value = converted;
+            copyBtn.disabled = false;
+        }
+        
+        function copyToClipboard() {
+            const text = textOutput.value;
+            if (text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copied!';
+                    copyBtn.style.background = '#27ae60';
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                        copyBtn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+        
+        function clearAll() {
+            textInput.value = '';
+            textOutput.value = '';
+            copyBtn.disabled = true;
+            textInput.focus();
+        }
+    </script>
+</body>
+</html>

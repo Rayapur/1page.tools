@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lorem Ipsum Generator - Placeholder Text Generator</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <!-- All styles are now globalized in css/theme.css -->
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    <div class="container">
+        <header>
+            <h1>Lorem Ipsum Generator</h1>
+            <p class="subtitle">Generate placeholder text for your projects</p>
+        </header>
+        
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Choose the type of text you want to generate</li>
+                <li>Set the number of paragraphs or words</li>
+                <li>Click "Generate" to create your placeholder text</li>
+                <li>Copy the generated text to use in your projects</li>
+            </ol>
+        </div>
+        
+        <div class="text-tools-container">
+            <div class="generator-options">
+                <div class="option-group">
+                    <label for="textType">Text Type:</label>
+                    <select id="textType">
+                        <option value="lorem">Lorem Ipsum (Classic)</option>
+                        <option value="hipster">Hipster Ipsum</option>
+                        <option value="bacon">Bacon Ipsum</option>
+                        <option value="cupcake">Cupcake Ipsum</option>
+                        <option value="pirate">Pirate Ipsum</option>
+                        <option value="corporate">Corporate Ipsum</option>
+                    </select>
+                </div>
+                
+                <div class="option-group">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" value="3" min="1" max="50">
+                </div>
+                
+                <div class="option-group">
+                    <label for="unit">Unit:</label>
+                    <select id="unit">
+                        <option value="paragraphs">Paragraphs</option>
+                        <option value="words">Words</option>
+                        <option value="sentences">Sentences</option>
+                    </select>
+                </div>
+                
+                <div class="option-group">
+                    <label>
+                        <input type="checkbox" id="startWithLorem">
+                        Start with "Lorem ipsum dolor sit amet"
+                    </label>
+                </div>
+                
+                <button class="btn" id="generateBtn">Generate Text</button>
+            </div>
+            
+            <div class="output-section">
+                <label for="generatedText">Generated Text:</label>
+                <textarea id="generatedText" placeholder="Generated text will appear here..." readonly></textarea>
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="copyBtn" disabled>Copy Text</button>
+                    <button class="btn btn-danger" id="clearBtn">Clear</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        &copy; 2025 1page.tools<br>
+        <a href="../privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="../terms-of-use.html" target="_blank">Terms of Use</a>
+    </footer>
+
+    <script>
+        const textType = document.getElementById('textType');
+        const quantity = document.getElementById('quantity');
+        const unit = document.getElementById('unit');
+        const startWithLorem = document.getElementById('startWithLorem');
+        const generateBtn = document.getElementById('generateBtn');
+        const generatedText = document.getElementById('generatedText');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        
+        // Text libraries
+        const textLibraries = {
+            lorem: [
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+                "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
+                "Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
+            ],
+            hipster: [
+                "VHS mustache chia, sustainable banh mi aesthetic.",
+                "Truffaut 8-bit cred, iPhone umami ethical.",
+                "Bespoke keffiyeh hashtag, banjo wayfarers.",
+                "Gentrify semiotics, sustainable bicycle rights.",
+                "PBR&B squid, ethical hashtag.",
+                "Tattooed meditation, sustainable aesthetic."
+            ],
+            bacon: [
+                "Bacon ipsum dolor amet pork belly brisket, beef ribs.",
+                "Pork chop tenderloin, beef ribs bacon.",
+                "Sirloin pork belly, beef ribs bacon.",
+                "Pork chop tenderloin, beef ribs bacon.",
+                "Bacon ipsum dolor amet pork belly.",
+                "Beef ribs bacon, pork chop tenderloin."
+            ],
+            cupcake: [
+                "Cupcake ipsum dolor sit amet, candy canes.",
+                "Gingerbread marshmallow, candy canes cupcake.",
+                "Chocolate cake marshmallow, candy canes.",
+                "Cupcake ipsum dolor sit amet, candy.",
+                "Gingerbread marshmallow, candy canes cupcake.",
+                "Chocolate cake marshmallow, candy canes."
+            ],
+            pirate: [
+                "Pirate ipsum dolor sit amet, scallywag.",
+                "Bilge rat scallywag, pirate ship.",
+                "Pirate ship scallywag, bilge rat.",
+                "Scallywag pirate ship, bilge rat.",
+                "Pirate ship scallywag, bilge rat.",
+                "Bilge rat scallywag, pirate ship."
+            ],
+            corporate: [
+                "Leverage agile frameworks to provide a robust synopsis.",
+                "Iterative approaches to corporate strategy foster.",
+                "Organically grow the holistic world view.",
+                "Bring to the table win-win survival strategies.",
+                "Capitalize on low hanging fruit to identify.",
+                "Override the digital divide with additional."
+            ]
+        };
+        
+        // Event listeners
+        generateBtn.addEventListener('click', generateText);
+        copyBtn.addEventListener('click', copyToClipboard);
+        clearBtn.addEventListener('click', clearText);
+        
+        function generateText() {
+            const type = textType.value;
+            const qty = parseInt(quantity.value);
+            const unitType = unit.value;
+            const startLorem = startWithLorem.checked;
+            
+            let result = '';
+            
+            if (startLorem && type === 'lorem') {
+                result = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ";
+            }
+            
+            const library = textLibraries[type];
+            
+            switch(unitType) {
+                case 'paragraphs':
+                    result += generateParagraphs(library, qty);
+                    break;
+                case 'words':
+                    result += generateWords(library, qty);
+                    break;
+                case 'sentences':
+                    result += generateSentences(library, qty);
+                    break;
+            }
+            
+            generatedText.value = result;
+            copyBtn.disabled = false;
+        }
+        
+        function generateParagraphs(library, count) {
+            let result = '';
+            for (let i = 0; i < count; i++) {
+                const sentences = [];
+                const sentenceCount = Math.floor(Math.random() * 3) + 2; // 2-4 sentences per paragraph
+                
+                for (let j = 0; j < sentenceCount; j++) {
+                    sentences.push(library[Math.floor(Math.random() * library.length)]);
+                }
+                
+                result += sentences.join(' ') + '\n\n';
+            }
+            return result.trim();
+        }
+        
+        function generateWords(library, count) {
+            const words = [];
+            const sentences = library.join(' ').split(' ');
+            
+            for (let i = 0; i < count; i++) {
+                words.push(sentences[Math.floor(Math.random() * sentences.length)]);
+            }
+            
+            return words.join(' ');
+        }
+        
+        function generateSentences(library, count) {
+            const sentences = [];
+            
+            for (let i = 0; i < count; i++) {
+                sentences.push(library[Math.floor(Math.random() * library.length)]);
+            }
+            
+            return sentences.join(' ');
+        }
+        
+        function copyToClipboard() {
+            const text = generatedText.value;
+            if (text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copied!';
+                    copyBtn.style.background = '#27ae60';
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                        copyBtn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+        
+        function clearText() {
+            generatedText.value = '';
+            copyBtn.disabled = true;
+        }
+        
+        // Generate initial text
+        generateText();
+    </script>
+</body>
+</html>

@@ -4,30 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Color Picker</title>
-    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="../css/theme.css">
     <!-- All styles are now globalized in css/theme.css -->
 </head>
 <body>
-    <div class="picker-container">
-        <h2>HTML Color Picker</h2>
-        <input type="color" id="colorInput" value="#3498db">
-        <div class="color-preview" id="colorPreview"></div>
-        <div class="values">
-            <div class="value-row">Hex: <span id="hexValue">#3498db</span> <button class="copy-icon" data-copy="hex" title="Copy">📋</button></div>
-            <div class="value-row">RGB: <span id="rgbValue">rgb(52, 152, 219)</span> <button class="copy-icon" data-copy="rgb" title="Copy">📋</button></div>
-            <div class="value-row">CMYK: <span id="cmykValue"></span> <button class="copy-icon" data-copy="cmyk" title="Copy">📋</button></div>
-            <div class="value-row">LAB: <span id="labValue"></span> <button class="copy-icon" data-copy="lab" title="Copy">📋</button></div>
-            <div class="value-row">HSL: <span id="hslValue"></span> <button class="copy-icon" data-copy="hsl" title="Copy">📋</button></div>
-            <div class="value-row">XYZ: <span id="xyzValue"></span> <button class="copy-icon" data-copy="xyz" title="Copy">📋</button></div>
-            <div class="value-row">LUV: <span id="luvValue"></span> <button class="copy-icon" data-copy="luv" title="Copy">📋</button></div>
-            <div class="value-row">HWB: <span id="hwbValue"></span> <button class="copy-icon" data-copy="hwb" title="Copy">📋</button></div>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    <div class="container">
+        <header>
+            <h1>HTML Color Picker</h1>
+            <p class="subtitle">Pick a color and get its values in multiple formats</p>
+        </header>
+        
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Click on the color picker to select a color</li>
+                <li>View color values in HEX, RGB, CMYK, LAB, HSL, XYZ, LUV, and HWB formats</li>
+                <li>Click the copy icon next to any value to copy it to clipboard</li>
+                <li>Explore lighter and darker variations of your selected color</li>
+            </ol>
         </div>
-        <div class="palette-section">
-            <h3>Color Palette</h3>
-            <div><strong>Lighter Variations</strong></div>
-            <div class="palette-row" id="lighterPalette"></div>
-            <div class="palette-label"><strong>Darker Variations</strong></div>
-            <div class="palette-row" id="darkerPalette"></div>
+        
+        <div class="picker-container">
+            <input type="color" id="colorInput" value="#3498db">
+            <div class="color-preview" id="colorPreview"></div>
+            <div class="values">
+                <div class="value-row">Hex: <span id="hexValue">#3498db</span> <button class="copy-icon" data-copy="hex" title="Copy">⧉</button></div>
+                <div class="value-row">RGB: <span id="rgbValue">rgb(52, 152, 219)</span> <button class="copy-icon" data-copy="rgb" title="Copy">⧉</button></div>
+                <div class="value-row">CMYK: <span id="cmykValue"></span> <button class="copy-icon" data-copy="cmyk" title="Copy">⧉</button></div>
+                <div class="value-row">LAB: <span id="labValue"></span> <button class="copy-icon" data-copy="lab" title="Copy">⧉</button></div>
+                <div class="value-row">HSL: <span id="hslValue"></span> <button class="copy-icon" data-copy="hsl" title="Copy">⧉</button></div>
+                <div class="value-row">XYZ: <span id="xyzValue"></span> <button class="copy-icon" data-copy="xyz" title="Copy">⧉</button></div>
+                <div class="value-row">LUV: <span id="luvValue"></span> <button class="copy-icon" data-copy="luv" title="Copy">⧉</button></div>
+                <div class="value-row">HWB: <span id="hwbValue"></span> <button class="copy-icon" data-copy="hwb" title="Copy">⧉</button></div>
+            </div>
+            <div class="palette-section">
+                <h3>Color Palette</h3>
+                <div><strong>Lighter Variations</strong></div>
+                <div class="palette-row" id="lighterPalette"></div>
+                <div class="palette-label"><strong>Darker Variations</strong></div>
+                <div class="palette-row" id="darkerPalette"></div>
+            </div>
         </div>
     </div>
     <script>
@@ -179,7 +196,7 @@
                 }
                 copyToClipboard(value);
                 btn.textContent = '✅';
-                setTimeout(() => btn.textContent = '📋', 1000);
+                setTimeout(() => btn.textContent = '⧉', 1000);
             });
         });
         function blend(hex, percent) {
@@ -219,10 +236,10 @@
         colorInput.addEventListener('input', updateColor);
         updateColor();
     </script>
-</body>
+    
     <footer class="site-footer">
         &copy; 2025 1page.tools<br>
-        <a href="privacy-policy.md" target="_blank">Privacy Policy</a> &middot; <a href="terms-of-use.md" target="_blank">Terms of Use</a>
+        <a href="../privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="../terms-of-use.html" target="_blank">Terms of Use</a>
     </footer>
 </body>
 </html>
