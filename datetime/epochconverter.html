@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epoch Converter - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>Epoch Converter</h1>
+            <p class="subtitle">Convert between Unix timestamp and human-readable date/time</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Convert Unix timestamps (seconds since January 1, 1970) to readable dates and vice versa.</p>
+        </div>
+        
+        <div class="epoch-container">
+            <div class="conversion-section">
+                <div class="input-group">
+                    <label for="epochInput">Unix Timestamp (seconds):</label>
+                    <input type="number" id="epochInput" placeholder="Enter Unix timestamp" oninput="convertEpochToDate()">
+                    <button class="btn btn-secondary" onclick="useCurrentTime()">Use Current Time</button>
+                </div>
+                
+                <div class="result-group">
+                    <label>Converted Date/Time:</label>
+                    <div class="result-display" id="dateResult">
+                        <div class="result-item">
+                            <strong>Local Time:</strong>
+                            <span id="localTime">-</span>
+                        </div>
+                        <div class="result-item">
+                            <strong>UTC Time:</strong>
+                            <span id="utcTime">-</span>
+                        </div>
+                        <div class="result-item">
+                            <strong>ISO 8601:</strong>
+                            <span id="isoTime">-</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" id="copyDateBtn" onclick="copyDateResult()" disabled>Copy Date</button>
+                </div>
+            </div>
+            
+            <div class="conversion-section">
+                <div class="input-group">
+                    <label for="dateInput">Date/Time:</label>
+                    <input type="datetime-local" id="dateInput" onchange="convertDateToEpoch()">
+                    <button class="btn btn-secondary" onclick="useCurrentDateTime()">Use Current</button>
+                </div>
+                
+                <div class="result-group">
+                    <label>Unix Timestamp:</label>
+                    <div class="result-display" id="epochResult">
+                        <div class="result-item">
+                            <strong>Seconds:</strong>
+                            <span id="epochSeconds">-</span>
+                        </div>
+                        <div class="result-item">
+                            <strong>Milliseconds:</strong>
+                            <span id="epochMilliseconds">-</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" id="copyEpochBtn" onclick="copyEpochResult()" disabled>Copy Timestamp</button>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>About Unix Timestamps</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>What is Unix Time?</strong>
+                        <p>Unix time is the number of seconds that have elapsed since January 1, 1970, 00:00:00 UTC.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Common Uses</strong>
+                        <p>Used in programming, databases, and APIs for storing and comparing dates.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Year 2038 Problem</strong>
+                        <p>32-bit systems will overflow on January 19, 2038 at 03:14:07 UTC.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Current Timestamp</strong>
+                        <p id="currentTimestamp">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let currentDateResult = '';
+        let currentEpochResult = '';
+
+        function updateCurrentTimestamp() {
+            const now = Math.floor(Date.now() / 1000);
+            document.getElementById('currentTimestamp').textContent = now + ' seconds';
+        }
+
+        function convertEpochToDate() {
+            const epochInput = document.getElementById('epochInput').value;
+            const copyBtn = document.getElementById('copyDateBtn');
+            
+            if (!epochInput) {
+                document.getElementById('localTime').textContent = '-';
+                document.getElementById('utcTime').textContent = '-';
+                document.getElementById('isoTime').textContent = '-';
+                copyBtn.disabled = true;
+                return;
+            }
+            
+            const epoch = parseInt(epochInput);
+            if (isNaN(epoch)) {
+                alert('Please enter a valid number');
+                return;
+            }
+            
+            const date = new Date(epoch * 1000);
+            
+            // Check if date is valid
+            if (isNaN(date.getTime())) {
+                alert('Invalid timestamp');
+                return;
+            }
+            
+            // Local time
+            const localTime = date.toLocaleString();
+            document.getElementById('localTime').textContent = localTime;
+            
+            // UTC time
+            const utcTime = date.toUTCString();
+            document.getElementById('utcTime').textContent = utcTime;
+            
+            // ISO 8601
+            const isoTime = date.toISOString();
+            document.getElementById('isoTime').textContent = isoTime;
+            
+            currentDateResult = `Local: ${localTime}\nUTC: ${utcTime}\nISO: ${isoTime}`;
+            copyBtn.disabled = false;
+        }
+
+        function convertDateToEpoch() {
+            const dateInput = document.getElementById('dateInput').value;
+            const copyBtn = document.getElementById('copyEpochBtn');
+            
+            if (!dateInput) {
+                document.getElementById('epochSeconds').textContent = '-';
+                document.getElementById('epochMilliseconds').textContent = '-';
+                copyBtn.disabled = true;
+                return;
+            }
+            
+            const date = new Date(dateInput);
+            const epochSeconds = Math.floor(date.getTime() / 1000);
+            const epochMilliseconds = date.getTime();
+            
+            document.getElementById('epochSeconds').textContent = epochSeconds;
+            document.getElementById('epochMilliseconds').textContent = epochMilliseconds;
+            
+            currentEpochResult = `Seconds: ${epochSeconds}\nMilliseconds: ${epochMilliseconds}`;
+            copyBtn.disabled = false;
+        }
+
+        function useCurrentTime() {
+            const now = Math.floor(Date.now() / 1000);
+            document.getElementById('epochInput').value = now;
+            convertEpochToDate();
+        }
+
+        function useCurrentDateTime() {
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            document.getElementById('dateInput').value = localDateTime;
+            convertDateToEpoch();
+        }
+
+        function copyDateResult() {
+            if (currentDateResult) {
+                navigator.clipboard.writeText(currentDateResult).then(() => {
+                    const btn = document.getElementById('copyDateBtn');
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+
+        function copyEpochResult() {
+            if (currentEpochResult) {
+                navigator.clipboard.writeText(currentEpochResult).then(() => {
+                    const btn = document.getElementById('copyEpochBtn');
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+
+        // Initialize
+        updateCurrentTimestamp();
+        setInterval(updateCurrentTimestamp, 1000);
+    </script>
+</body>
+</html>

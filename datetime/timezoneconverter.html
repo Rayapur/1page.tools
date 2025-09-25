@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timezone Converter - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>Timezone Converter</h1>
+            <p class="subtitle">Convert time between different timezones around the world</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Select a date and time, then convert it to different timezones instantly.</p>
+        </div>
+        
+        <div class="timezone-container">
+            <div class="conversion-section">
+                <div class="input-group">
+                    <label for="dateInput">Date & Time:</label>
+                    <input type="datetime-local" id="dateInput" onchange="convertTimezones()">
+                    <button class="btn btn-secondary" onclick="useCurrentTime()">Use Current Time</button>
+                </div>
+                
+                <div class="input-group">
+                    <label for="fromTimezone">From Timezone:</label>
+                    <select id="fromTimezone" onchange="convertTimezones()">
+                        <option value="UTC">UTC (Coordinated Universal Time)</option>
+                        <option value="America/New_York">New York (EST/EDT)</option>
+                        <option value="America/Los_Angeles">Los Angeles (PST/PDT)</option>
+                        <option value="America/Chicago">Chicago (CST/CDT)</option>
+                        <option value="America/Denver">Denver (MST/MDT)</option>
+                        <option value="Europe/London">London (GMT/BST)</option>
+                        <option value="Europe/Paris">Paris (CET/CEST)</option>
+                        <option value="Europe/Berlin">Berlin (CET/CEST)</option>
+                        <option value="Europe/Rome">Rome (CET/CEST)</option>
+                        <option value="Europe/Madrid">Madrid (CET/CEST)</option>
+                        <option value="Asia/Tokyo">Tokyo (JST)</option>
+                        <option value="Asia/Shanghai">Shanghai (CST)</option>
+                        <option value="Asia/Kolkata">Mumbai/Delhi (IST)</option>
+                        <option value="Asia/Dubai">Dubai (GST)</option>
+                        <option value="Asia/Singapore">Singapore (SGT)</option>
+                        <option value="Australia/Sydney">Sydney (AEST/AEDT)</option>
+                        <option value="Australia/Melbourne">Melbourne (AEST/AEDT)</option>
+                        <option value="Pacific/Auckland">Auckland (NZST/NZDT)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h3>Converted Times</h3>
+                <div class="timezone-results" id="timezoneResults">
+                    <p>Select a date and time to see conversions</p>
+                </div>
+                <button class="btn btn-secondary" id="copyAllBtn" onclick="copyAllResults()" disabled>Copy All Times</button>
+            </div>
+            
+            <div class="world-clock-section">
+                <h3>World Clock</h3>
+                <div class="world-clock-grid" id="worldClockGrid">
+                    <!-- World clock will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>Timezone Information</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>UTC</strong>
+                        <p>Coordinated Universal Time - the primary time standard by which the world regulates clocks and time.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>DST</strong>
+                        <p>Daylight Saving Time - the practice of advancing clocks during warmer months to extend evening daylight.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>GMT</strong>
+                        <p>Greenwich Mean Time - the mean solar time at the Royal Observatory in Greenwich, London.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>ISO 8601</strong>
+                        <p>International standard for representing dates and times in a consistent format.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        const timezones = [
+            { id: 'UTC', name: 'UTC (Coordinated Universal Time)', city: 'UTC' },
+            { id: 'America/New_York', name: 'New York (EST/EDT)', city: 'New York' },
+            { id: 'America/Los_Angeles', name: 'Los Angeles (PST/PDT)', city: 'Los Angeles' },
+            { id: 'America/Chicago', name: 'Chicago (CST/CDT)', city: 'Chicago' },
+            { id: 'America/Denver', name: 'Denver (MST/MDT)', city: 'Denver' },
+            { id: 'Europe/London', name: 'London (GMT/BST)', city: 'London' },
+            { id: 'Europe/Paris', name: 'Paris (CET/CEST)', city: 'Paris' },
+            { id: 'Europe/Berlin', name: 'Berlin (CET/CEST)', city: 'Berlin' },
+            { id: 'Europe/Rome', name: 'Rome (CET/CEST)', city: 'Rome' },
+            { id: 'Europe/Madrid', name: 'Madrid (CET/CEST)', city: 'Madrid' },
+            { id: 'Asia/Tokyo', name: 'Tokyo (JST)', city: 'Tokyo' },
+            { id: 'Asia/Shanghai', name: 'Shanghai (CST)', city: 'Shanghai' },
+            { id: 'Asia/Kolkata', name: 'Mumbai/Delhi (IST)', city: 'Mumbai' },
+            { id: 'Asia/Dubai', name: 'Dubai (GST)', city: 'Dubai' },
+            { id: 'Asia/Singapore', name: 'Singapore (SGT)', city: 'Singapore' },
+            { id: 'Australia/Sydney', name: 'Sydney (AEST/AEDT)', city: 'Sydney' },
+            { id: 'Australia/Melbourne', name: 'Melbourne (AEST/AEDT)', city: 'Melbourne' },
+            { id: 'Pacific/Auckland', name: 'Auckland (NZST/NZDT)', city: 'Auckland' }
+        ];
+
+        let allResults = '';
+
+        function formatTimeInTimezone(date, timezone) {
+            try {
+                return new Intl.DateTimeFormat('en-US', {
+                    timeZone: timezone,
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                }).format(date);
+            } catch (error) {
+                return 'Invalid timezone';
+            }
+        }
+
+        function getTimezoneOffset(timezone) {
+            try {
+                const now = new Date();
+                const utc = new Date(now.getTime() + (now.getTimezoneOffset() * 60000));
+                const target = new Date(utc.toLocaleString('en-US', { timeZone: timezone }));
+                const offset = (target.getTime() - utc.getTime()) / (1000 * 60 * 60);
+                return offset;
+            } catch (error) {
+                return 0;
+            }
+        }
+
+        function convertTimezones() {
+            const dateInput = document.getElementById('dateInput').value;
+            const fromTimezone = document.getElementById('fromTimezone').value;
+            const resultsDiv = document.getElementById('timezoneResults');
+            const copyBtn = document.getElementById('copyAllBtn');
+            
+            if (!dateInput) {
+                resultsDiv.innerHTML = '<p>Select a date and time to see conversions</p>';
+                copyBtn.disabled = true;
+                return;
+            }
+            
+            // Create date object from input
+            const inputDate = new Date(dateInput);
+            
+            // Convert to UTC first
+            const utcDate = new Date(inputDate.getTime() - (inputDate.getTimezoneOffset() * 60000));
+            
+            // Adjust for the source timezone
+            const sourceOffset = getTimezoneOffset(fromTimezone);
+            const adjustedDate = new Date(utcDate.getTime() - (sourceOffset * 60 * 60 * 1000));
+            
+            let resultsHTML = '';
+            let resultsText = '';
+            
+            timezones.forEach(tz => {
+                const formattedTime = formatTimeInTimezone(adjustedDate, tz.id);
+                const offset = getTimezoneOffset(tz.id);
+                const offsetStr = offset >= 0 ? `+${offset}` : `${offset}`;
+                
+                resultsHTML += `
+                    <div class="timezone-result">
+                        <div class="timezone-name">${tz.city}</div>
+                        <div class="timezone-time">${formattedTime}</div>
+                        <div class="timezone-offset">UTC${offsetStr}</div>
+                    </div>
+                `;
+                
+                resultsText += `${tz.city}: ${formattedTime} (UTC${offsetStr})\n`;
+            });
+            
+            resultsDiv.innerHTML = resultsHTML;
+            allResults = resultsText;
+            copyBtn.disabled = false;
+        }
+
+        function useCurrentTime() {
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            document.getElementById('dateInput').value = localDateTime;
+            convertTimezones();
+        }
+
+        function copyAllResults() {
+            if (allResults) {
+                navigator.clipboard.writeText(allResults).then(() => {
+                    const btn = document.getElementById('copyAllBtn');
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+
+        function updateWorldClock() {
+            const now = new Date();
+            const worldClockGrid = document.getElementById('worldClockGrid');
+            
+            let clockHTML = '';
+            
+            timezones.slice(0, 8).forEach(tz => { // Show first 8 timezones for world clock
+                const formattedTime = formatTimeInTimezone(now, tz.id);
+                const offset = getTimezoneOffset(tz.id);
+                const offsetStr = offset >= 0 ? `+${offset}` : `${offset}`;
+                
+                clockHTML += `
+                    <div class="world-clock-item">
+                        <div class="clock-city">${tz.city}</div>
+                        <div class="clock-time">${formattedTime}</div>
+                        <div class="clock-offset">UTC${offsetStr}</div>
+                    </div>
+                `;
+            });
+            
+            worldClockGrid.innerHTML = clockHTML;
+        }
+
+        // Initialize
+        updateWorldClock();
+        setInterval(updateWorldClock, 1000);
+    </script>
+</body>
+</html>

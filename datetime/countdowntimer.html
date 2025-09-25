@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>Countdown Timer</h1>
+            <p class="subtitle">Create and manage countdown timers for events and deadlines</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Set up countdown timers for important events, deadlines, or any future date and time.</p>
+        </div>
+        
+        <div class="timer-container">
+            <div class="timer-setup">
+                <div class="input-group">
+                    <label for="timerName">Timer Name:</label>
+                    <input type="text" id="timerName" placeholder="Enter timer name (e.g., New Year, Birthday)" maxlength="50">
+                </div>
+                
+                <div class="input-group">
+                    <label for="targetDateTime">Target Date & Time:</label>
+                    <input type="datetime-local" id="targetDateTime" onchange="updateTimer()">
+                </div>
+                
+                <div class="timer-actions">
+                    <button class="btn" id="startBtn" onclick="startTimer()" disabled>Start Timer</button>
+                    <button class="btn btn-secondary" onclick="useCurrentTime()">Use Current Time</button>
+                    <button class="btn btn-danger" onclick="resetTimer()">Reset</button>
+                </div>
+            </div>
+            
+            <div class="timer-display" id="timerDisplay" style="display: none;">
+                <div class="timer-title" id="timerTitle">Timer</div>
+                <div class="countdown-display">
+                    <div class="time-unit">
+                        <div class="time-value" id="days">00</div>
+                        <div class="time-label">Days</div>
+                    </div>
+                    <div class="time-unit">
+                        <div class="time-value" id="hours">00</div>
+                        <div class="time-label">Hours</div>
+                    </div>
+                    <div class="time-unit">
+                        <div class="time-value" id="minutes">00</div>
+                        <div class="time-label">Minutes</div>
+                    </div>
+                    <div class="time-unit">
+                        <div class="time-value" id="seconds">00</div>
+                        <div class="time-label">Seconds</div>
+                    </div>
+                </div>
+                <div class="timer-status" id="timerStatus">Counting down...</div>
+                <div class="timer-actions">
+                    <button class="btn btn-secondary" onclick="pauseTimer()" id="pauseBtn">Pause</button>
+                    <button class="btn btn-danger" onclick="stopTimer()">Stop</button>
+                </div>
+            </div>
+            
+            <div class="preset-timers">
+                <h3>Quick Presets</h3>
+                <div class="preset-grid">
+                    <button class="preset-btn" onclick="setPresetTimer('New Year', getNewYear())">New Year</button>
+                    <button class="preset-btn" onclick="setPresetTimer('Christmas', getChristmas())">Christmas</button>
+                    <button class="preset-btn" onclick="setPresetTimer('1 Hour', getOneHour())">1 Hour</button>
+                    <button class="preset-btn" onclick="setPresetTimer('1 Day', getOneDay())">1 Day</button>
+                    <button class="preset-btn" onclick="setPresetTimer('1 Week', getOneWeek())">1 Week</button>
+                    <button class="preset-btn" onclick="setPresetTimer('1 Month', getOneMonth())">1 Month</button>
+                </div>
+            </div>
+            
+            <div class="timer-history">
+                <h3>Timer History</h3>
+                <div class="history-list" id="historyList">
+                    <p>No timers completed yet</p>
+                </div>
+                <button class="btn btn-secondary" onclick="clearHistory()">Clear History</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let timerInterval = null;
+        let isPaused = false;
+        let targetTime = null;
+        let timerHistory = JSON.parse(localStorage.getItem('timerHistory') || '[]');
+
+        function updateTimer() {
+            const targetDateTime = document.getElementById('targetDateTime').value;
+            const startBtn = document.getElementById('startBtn');
+            
+            if (targetDateTime) {
+                targetTime = new Date(targetDateTime);
+                const now = new Date();
+                
+                if (targetTime <= now) {
+                    startBtn.disabled = true;
+                    alert('Please select a future date and time');
+                } else {
+                    startBtn.disabled = false;
+                }
+            } else {
+                startBtn.disabled = true;
+            }
+        }
+
+        function startTimer() {
+            const timerName = document.getElementById('timerName').value || 'Untitled Timer';
+            const targetDateTime = document.getElementById('targetDateTime').value;
+            
+            if (!targetDateTime) {
+                alert('Please select a target date and time');
+                return;
+            }
+            
+            targetTime = new Date(targetDateTime);
+            const now = new Date();
+            
+            if (targetTime <= now) {
+                alert('Please select a future date and time');
+                return;
+            }
+            
+            document.getElementById('timerTitle').textContent = timerName;
+            document.getElementById('timerDisplay').style.display = 'block';
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            isPaused = false;
+            updateCountdown();
+            timerInterval = setInterval(updateCountdown, 1000);
+        }
+
+        function updateCountdown() {
+            if (isPaused) return;
+            
+            const now = new Date();
+            const timeLeft = targetTime - now;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                showTimerComplete();
+                return;
+            }
+            
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        function showTimerComplete() {
+            document.getElementById('timerStatus').textContent = 'Timer Complete! 🎉';
+            document.getElementById('timerStatus').style.color = '#28a745';
+            document.getElementById('timerStatus').style.fontWeight = 'bold';
+            
+            // Add to history
+            const timerName = document.getElementById('timerName').value || 'Untitled Timer';
+            const completedTime = new Date().toLocaleString();
+            timerHistory.unshift({
+                name: timerName,
+                completed: completedTime
+            });
+            
+            // Keep only last 10 entries
+            if (timerHistory.length > 10) {
+                timerHistory = timerHistory.slice(0, 10);
+            }
+            
+            localStorage.setItem('timerHistory', JSON.stringify(timerHistory));
+            updateHistoryDisplay();
+            
+            // Play notification sound (if supported)
+            try {
+                const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
+                audio.play();
+            } catch (e) {
+                // Ignore audio errors
+            }
+        }
+
+        function pauseTimer() {
+            isPaused = !isPaused;
+            const pauseBtn = document.getElementById('pauseBtn');
+            const status = document.getElementById('timerStatus');
+            
+            if (isPaused) {
+                pauseBtn.textContent = 'Resume';
+                status.textContent = 'Paused';
+                status.style.color = '#ffc107';
+            } else {
+                pauseBtn.textContent = 'Pause';
+                status.textContent = 'Counting down...';
+                status.style.color = '';
+            }
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
+            document.getElementById('timerDisplay').style.display = 'none';
+            document.getElementById('timerStatus').textContent = 'Counting down...';
+            document.getElementById('timerStatus').style.color = '';
+            document.getElementById('timerStatus').style.fontWeight = '';
+            isPaused = false;
+        }
+
+        function resetTimer() {
+            stopTimer();
+            document.getElementById('timerName').value = '';
+            document.getElementById('targetDateTime').value = '';
+            document.getElementById('startBtn').disabled = true;
+        }
+
+        function useCurrentTime() {
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            document.getElementById('targetDateTime').value = localDateTime;
+            updateTimer();
+        }
+
+        function setPresetTimer(name, date) {
+            document.getElementById('timerName').value = name;
+            const localDateTime = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            document.getElementById('targetDateTime').value = localDateTime;
+            updateTimer();
+        }
+
+        function getNewYear() {
+            const now = new Date();
+            const year = now.getFullYear() + 1;
+            return new Date(year, 0, 1, 0, 0, 0);
+        }
+
+        function getChristmas() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const christmas = new Date(year, 11, 25, 0, 0, 0);
+            if (christmas <= now) {
+                christmas.setFullYear(year + 1);
+            }
+            return christmas;
+        }
+
+        function getOneHour() {
+            return new Date(Date.now() + 60 * 60 * 1000);
+        }
+
+        function getOneDay() {
+            return new Date(Date.now() + 24 * 60 * 60 * 1000);
+        }
+
+        function getOneWeek() {
+            return new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        }
+
+        function getOneMonth() {
+            const date = new Date();
+            date.setMonth(date.getMonth() + 1);
+            return date;
+        }
+
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            
+            if (timerHistory.length === 0) {
+                historyList.innerHTML = '<p>No timers completed yet</p>';
+                return;
+            }
+            
+            let historyHTML = '';
+            timerHistory.forEach((entry, index) => {
+                historyHTML += `
+                    <div class="history-item">
+                        <div class="history-name">${entry.name}</div>
+                        <div class="history-time">${entry.completed}</div>
+                    </div>
+                `;
+            });
+            
+            historyList.innerHTML = historyHTML;
+        }
+
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear the timer history?')) {
+                timerHistory = [];
+                localStorage.setItem('timerHistory', JSON.stringify(timerHistory));
+                updateHistoryDisplay();
+            }
+        }
+
+        // Initialize
+        updateHistoryDisplay();
+    </script>
+</body>
+</html>

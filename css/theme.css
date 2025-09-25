@@ -1291,3 +1291,301 @@ input[type="color"] {
         height: 0;
     }
 }
+
+/* Date/Time Tools Styles */
+.epoch-container,
+.timezone-container,
+.timer-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.conversion-section {
+    background: var(--container-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.result-group {
+    margin-top: 1rem;
+}
+
+.result-display {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-item strong {
+    color: var(--text-color);
+    min-width: 100px;
+}
+
+.result-item span {
+    color: var(--button-bg);
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+/* Timezone Converter Styles */
+.timezone-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.timezone-result {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    border-left: 4px solid var(--button-bg);
+}
+
+.timezone-name {
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.timezone-time {
+    font-size: 1.1rem;
+    color: var(--button-bg);
+    font-family: 'Courier New', monospace;
+    margin-bottom: 0.25rem;
+}
+
+.timezone-offset {
+    font-size: 0.9rem;
+    color: var(--footer-color);
+}
+
+.world-clock-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.world-clock-item {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.clock-city {
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.clock-time {
+    font-size: 1.2rem;
+    color: var(--button-bg);
+    font-family: 'Courier New', monospace;
+    margin-bottom: 0.25rem;
+}
+
+.clock-offset {
+    font-size: 0.8rem;
+    color: var(--footer-color);
+}
+
+/* Countdown Timer Styles */
+.timer-setup {
+    background: var(--container-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.timer-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.timer-display {
+    background: var(--container-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.timer-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+
+.countdown-display {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.time-unit {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 1rem;
+    border: 2px solid var(--button-bg);
+}
+
+.time-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--button-bg);
+    font-family: 'Courier New', monospace;
+    margin-bottom: 0.5rem;
+}
+
+.time-label {
+    font-size: 0.9rem;
+    color: var(--footer-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.timer-status {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.preset-timers {
+    background: var(--container-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.preset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.preset-btn {
+    padding: 0.75rem;
+    border: 2px solid var(--button-bg);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--button-bg);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+}
+
+.preset-btn:hover {
+    background: var(--button-bg);
+    color: var(--button-text);
+}
+
+.timer-history {
+    background: var(--container-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.history-list {
+    margin: 1rem 0;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: var(--card-bg);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.history-name {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.history-time {
+    color: var(--footer-color);
+    font-size: 0.9rem;
+}
+
+/* Responsive adjustments for date/time tools */
+@media (max-width: 768px) {
+    .timezone-results {
+        grid-template-columns: 1fr;
+    }
+    
+    .world-clock-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .countdown-display {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .time-value {
+        font-size: 2rem;
+    }
+    
+    .preset-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .timer-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .world-clock-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .countdown-display {
+        grid-template-columns: 1fr;
+    }
+    
+    .time-value {
+        font-size: 1.8rem;
+    }
+    
+    .preset-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+}
