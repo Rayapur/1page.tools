@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Encoder/Decoder - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>URL Encoder/Decoder</h1>
+            <p class="subtitle">Encode and decode URLs, query parameters, and special characters</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Encode URLs to make them safe for transmission, or decode encoded URLs to read them. Supports various encoding formats.</p>
+        </div>
+        
+        <div class="web-tools-container">
+            <div class="input-section">
+                <div class="input-header">
+                    <label for="urlInput">URL or Text Input:</label>
+                    <div class="input-actions">
+                        <button class="btn btn-secondary" onclick="clearInput()">Clear</button>
+                        <button class="btn btn-secondary" onclick="loadSample()">Load Sample</button>
+                    </div>
+                </div>
+                <textarea id="urlInput" placeholder="Enter URL or text to encode/decode..." oninput="updateStats()"></textarea>
+                <div class="input-stats" id="inputStats">
+                    <span id="inputLength">Length: 0</span>
+                    <span id="inputType">Type: Text</span>
+                </div>
+            </div>
+            
+            <div class="encoding-options">
+                <h3>Encoding Options</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="encodingType">Encoding Type:</label>
+                        <select id="encodingType" onchange="updateEncodingType()">
+                            <option value="url">URL Encoding</option>
+                            <option value="component">URL Component</option>
+                            <option value="base64">Base64</option>
+                            <option value="html">HTML Entities</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group" id="urlOptions">
+                        <label for="encodeSpaces">Encode Spaces As:</label>
+                        <select id="encodeSpaces">
+                            <option value="%20">%20 (Standard)</option>
+                            <option value="+">+ (Plus)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group" id="base64Options" style="display: none;">
+                        <label for="base64Format">Base64 Format:</label>
+                        <select id="base64Format">
+                            <option value="standard">Standard</option>
+                            <option value="urlsafe">URL Safe</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group" id="htmlOptions" style="display: none;">
+                        <label for="htmlFormat">HTML Format:</label>
+                        <select id="htmlFormat">
+                            <option value="named">Named Entities (&amp;)</option>
+                            <option value="numeric">Numeric Entities (&#38;)</option>
+                            <option value="hex">Hex Entities (&#x26;)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" onclick="encodeText()">Encode</button>
+                    <button class="btn btn-secondary" onclick="decodeText()">Decode</button>
+                    <button class="btn btn-secondary" onclick="copyResult()" id="copyBtn" disabled>Copy Result</button>
+                </div>
+            </div>
+            
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-header">
+                    <label for="urlOutput">Result:</label>
+                    <div class="results-actions">
+                        <button class="btn btn-secondary" onclick="copyOutput()">Copy</button>
+                        <button class="btn btn-secondary" onclick="clearResult()">Clear</button>
+                    </div>
+                </div>
+                <textarea id="urlOutput" readonly></textarea>
+                <div class="output-stats" id="outputStats">
+                    <span id="outputLength">Length: 0</span>
+                    <span id="outputType">Type: Encoded</span>
+                    <span id="outputSize">Size: 0 bytes</span>
+                </div>
+            </div>
+            
+            <div class="url-analyzer" id="urlAnalyzer" style="display: none;">
+                <h3>URL Analysis</h3>
+                <div class="analysis-grid">
+                    <div class="analysis-item">
+                        <strong>Protocol:</strong>
+                        <span id="protocol">-</span>
+                    </div>
+                    <div class="analysis-item">
+                        <strong>Domain:</strong>
+                        <span id="domain">-</span>
+                    </div>
+                    <div class="analysis-item">
+                        <strong>Path:</strong>
+                        <span id="path">-</span>
+                    </div>
+                    <div class="analysis-item">
+                        <strong>Query:</strong>
+                        <span id="query">-</span>
+                    </div>
+                    <div class="analysis-item">
+                        <strong>Fragment:</strong>
+                        <span id="fragment">-</span>
+                    </div>
+                    <div class="analysis-item">
+                        <strong>Port:</strong>
+                        <span id="port">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="web-info">
+                <h3>URL Encoding Information</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>URL Encoding</strong>
+                        <p>Replaces unsafe characters with % followed by two hexadecimal digits. Used for entire URLs.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Component Encoding</strong>
+                        <p>Encodes individual URL components (query parameters, paths) without affecting URL structure.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Base64 Encoding</strong>
+                        <p>Converts binary data to ASCII string using 64 characters. Used for data transmission.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>HTML Entities</strong>
+                        <p>Replaces special characters with HTML entity codes for safe display in web pages.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-actions">
+                <h3>Quick Actions</h3>
+                <div class="quick-buttons">
+                    <button class="quick-btn" onclick="encodeQuery()">Encode Query String</button>
+                    <button class="quick-btn" onclick="decodeQuery()">Decode Query String</button>
+                    <button class="quick-btn" onclick="encodeEmail()">Encode Email</button>
+                    <button class="quick-btn" onclick="encodeSpecial()">Encode Special Chars</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let currentResult = '';
+
+        function updateStats() {
+            const input = document.getElementById('urlInput').value;
+            const length = input.length;
+            const isUrl = isValidUrl(input);
+            
+            document.getElementById('inputLength').textContent = `Length: ${length}`;
+            document.getElementById('inputType').textContent = `Type: ${isUrl ? 'URL' : 'Text'}`;
+            
+            // Show URL analyzer if it's a valid URL
+            const analyzer = document.getElementById('urlAnalyzer');
+            if (isUrl && input.trim()) {
+                analyzeUrl(input);
+                analyzer.style.display = 'block';
+            } else {
+                analyzer.style.display = 'none';
+            }
+        }
+
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function analyzeUrl(urlString) {
+            try {
+                const url = new URL(urlString);
+                document.getElementById('protocol').textContent = url.protocol;
+                document.getElementById('domain').textContent = url.hostname;
+                document.getElementById('path').textContent = url.pathname;
+                document.getElementById('query').textContent = url.search;
+                document.getElementById('fragment').textContent = url.hash;
+                document.getElementById('port').textContent = url.port || 'Default';
+            } catch (error) {
+                // URL analysis failed
+            }
+        }
+
+        function updateEncodingType() {
+            const type = document.getElementById('encodingType').value;
+            const urlOptions = document.getElementById('urlOptions');
+            const base64Options = document.getElementById('base64Options');
+            const htmlOptions = document.getElementById('htmlOptions');
+            
+            // Hide all option groups
+            urlOptions.style.display = 'none';
+            base64Options.style.display = 'none';
+            htmlOptions.style.display = 'none';
+            
+            // Show relevant options
+            if (type === 'url' || type === 'component') {
+                urlOptions.style.display = 'block';
+            } else if (type === 'base64') {
+                base64Options.style.display = 'block';
+            } else if (type === 'html') {
+                htmlOptions.style.display = 'block';
+            }
+        }
+
+        function encodeText() {
+            const input = document.getElementById('urlInput').value;
+            const encodingType = document.getElementById('encodingType').value;
+            
+            if (!input.trim()) {
+                alert('Please enter text to encode');
+                return;
+            }
+            
+            let result = '';
+            
+            switch (encodingType) {
+                case 'url':
+                    result = encodeURI(input);
+                    break;
+                case 'component':
+                    result = encodeURIComponent(input);
+                    break;
+                case 'base64':
+                    const format = document.getElementById('base64Format').value;
+                    result = btoa(input);
+                    if (format === 'urlsafe') {
+                        result = result.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+                    }
+                    break;
+                case 'html':
+                    result = encodeHtmlEntities(input);
+                    break;
+            }
+            
+            displayResult(result, 'Encoded');
+        }
+
+        function decodeText() {
+            const input = document.getElementById('urlInput').value;
+            const encodingType = document.getElementById('encodingType').value;
+            
+            if (!input.trim()) {
+                alert('Please enter text to decode');
+                return;
+            }
+            
+            let result = '';
+            
+            try {
+                switch (encodingType) {
+                    case 'url':
+                        result = decodeURI(input);
+                        break;
+                    case 'component':
+                        result = decodeURIComponent(input);
+                        break;
+                    case 'base64':
+                        const format = document.getElementById('base64Format').value;
+                        let base64Input = input;
+                        if (format === 'urlsafe') {
+                            base64Input = base64Input.replace(/-/g, '+').replace(/_/g, '/');
+                            // Add padding if needed
+                            while (base64Input.length % 4) {
+                                base64Input += '=';
+                            }
+                        }
+                        result = atob(base64Input);
+                        break;
+                    case 'html':
+                        result = decodeHtmlEntities(input);
+                        break;
+                }
+                
+                displayResult(result, 'Decoded');
+            } catch (error) {
+                alert('Error decoding: ' + error.message);
+            }
+        }
+
+        function encodeHtmlEntities(text) {
+            const format = document.getElementById('htmlFormat').value;
+            const div = document.createElement('div');
+            div.textContent = text;
+            let encoded = div.innerHTML;
+            
+            if (format === 'numeric') {
+                encoded = encoded.replace(/&([a-zA-Z]+);/g, function(match, entity) {
+                    const charCode = getEntityCharCode(entity);
+                    return charCode ? `&#${charCode};` : match;
+                });
+            } else if (format === 'hex') {
+                encoded = encoded.replace(/&([a-zA-Z]+);/g, function(match, entity) {
+                    const charCode = getEntityCharCode(entity);
+                    return charCode ? `&#x${charCode.toString(16)};` : match;
+                });
+            }
+            
+            return encoded;
+        }
+
+        function decodeHtmlEntities(text) {
+            const div = document.createElement('div');
+            div.innerHTML = text;
+            return div.textContent;
+        }
+
+        function getEntityCharCode(entity) {
+            const entities = {
+                'amp': 38, 'lt': 60, 'gt': 62, 'quot': 34, 'apos': 39,
+                'nbsp': 160, 'copy': 169, 'reg': 174, 'trade': 8482
+            };
+            return entities[entity] || null;
+        }
+
+        function displayResult(result, type) {
+            currentResult = result;
+            document.getElementById('urlOutput').value = result;
+            document.getElementById('resultsSection').style.display = 'block';
+            
+            // Update output stats
+            const length = result.length;
+            const size = new Blob([result]).size;
+            
+            document.getElementById('outputLength').textContent = `Length: ${length}`;
+            document.getElementById('outputType').textContent = `Type: ${type}`;
+            document.getElementById('outputSize').textContent = `Size: ${formatFileSize(size)}`;
+            
+            // Enable copy button
+            document.getElementById('copyBtn').disabled = false;
+            
+            // Scroll to results
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyResult() {
+            if (currentResult) {
+                navigator.clipboard.writeText(currentResult).then(() => {
+                    const btn = document.getElementById('copyBtn');
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+
+        function copyOutput() {
+            const output = document.getElementById('urlOutput').value;
+            if (output) {
+                navigator.clipboard.writeText(output).then(() => {
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('urlInput').value = '';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('urlAnalyzer').style.display = 'none';
+            updateStats();
+        }
+
+        function clearResult() {
+            document.getElementById('urlOutput').value = '';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('copyBtn').disabled = true;
+        }
+
+        function loadSample() {
+            const sampleUrl = 'https://example.com/search?q=hello world&category=web tools';
+            document.getElementById('urlInput').value = sampleUrl;
+            updateStats();
+        }
+
+        function encodeQuery() {
+            document.getElementById('encodingType').value = 'component';
+            updateEncodingType();
+            encodeText();
+        }
+
+        function decodeQuery() {
+            document.getElementById('encodingType').value = 'component';
+            updateEncodingType();
+            decodeText();
+        }
+
+        function encodeEmail() {
+            const email = 'user@example.com';
+            document.getElementById('urlInput').value = email;
+            document.getElementById('encodingType').value = 'component';
+            updateEncodingType();
+            updateStats();
+        }
+
+        function encodeSpecial() {
+            const special = 'Hello World! @#$%^&*()';
+            document.getElementById('urlInput').value = special;
+            document.getElementById('encodingType').value = 'url';
+            updateEncodingType();
+            updateStats();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Initialize
+        updateEncodingType();
+    </script>
+</body>
+</html>

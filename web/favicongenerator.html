@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favicon Generator - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>Favicon Generator</h1>
+            <p class="subtitle">Create favicons from text, images, or emojis for your website</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Generate favicons for your website. Upload an image, use text/emoji, or create from scratch with customizable options.</p>
+        </div>
+        
+        <div class="web-tools-container">
+            <div class="input-section">
+                <div class="input-header">
+                    <label>Favicon Source:</label>
+                    <div class="input-actions">
+                        <button class="btn btn-secondary" onclick="clearAll()">Clear All</button>
+                        <button class="btn btn-secondary" onclick="loadSample()">Load Sample</button>
+                    </div>
+                </div>
+                
+                <div class="source-tabs">
+                    <button class="tab-btn active" onclick="switchTab('text')">Text/Emoji</button>
+                    <button class="tab-btn" onclick="switchTab('image')">Upload Image</button>
+                    <button class="tab-btn" onclick="switchTab('color')">Solid Color</button>
+                </div>
+                
+                <div class="tab-content" id="textTab">
+                    <div class="text-input-group">
+                        <label for="faviconText">Text or Emoji:</label>
+                        <input type="text" id="faviconText" placeholder="Enter text or emoji (e.g., 🚀, A, 1)" maxlength="2" oninput="updateTextPreview()">
+                    </div>
+                    <div class="text-preview" id="textPreview">
+                        <div class="preview-favicon" id="previewFavicon">A</div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="imageTab" style="display: none;">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-content">
+                            <div class="upload-icon">📁</div>
+                            <p>Click to upload image or drag and drop</p>
+                            <p class="upload-hint">Supports JPG, PNG, GIF, SVG (max 5MB)</p>
+                        </div>
+                        <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload()" style="display: none;">
+                    </div>
+                    <div class="image-preview" id="imagePreview" style="display: none;">
+                        <img id="previewImage" alt="Preview">
+                        <div class="image-info">
+                            <span id="imageSize">Size: -</span>
+                            <span id="imageFormat">Format: -</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="colorTab" style="display: none;">
+                    <div class="color-input-group">
+                        <label for="faviconColor">Background Color:</label>
+                        <input type="color" id="faviconColor" value="#007bff" onchange="updateColorPreview()">
+                    </div>
+                    <div class="color-preview" id="colorPreview">
+                        <div class="preview-favicon color-favicon" style="background-color: #007bff;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="favicon-options">
+                <h3>Favicon Options</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="faviconSize">Size:</label>
+                        <select id="faviconSize" onchange="updateSizePreview()">
+                            <option value="16">16x16 (Classic)</option>
+                            <option value="32" selected>32x32 (Standard)</option>
+                            <option value="48">48x48 (High-res)</option>
+                            <option value="64">64x64 (Retina)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group" id="textOptions">
+                        <label for="fontFamily">Font:</label>
+                        <select id="fontFamily" onchange="updateTextPreview()">
+                            <option value="Arial">Arial</option>
+                            <option value="Helvetica">Helvetica</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Verdana">Verdana</option>
+                            <option value="Courier New">Courier New</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group" id="textColorOptions">
+                        <label for="textColor">Text Color:</label>
+                        <input type="color" id="textColor" value="#ffffff" onchange="updateTextPreview()">
+                    </div>
+                    
+                    <div class="option-group" id="backgroundColorOptions">
+                        <label for="backgroundColor">Background Color:</label>
+                        <input type="color" id="backgroundColor" value="#007bff" onchange="updateTextPreview()">
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="borderRadius">Border Radius:</label>
+                        <select id="borderRadius" onchange="updatePreview()">
+                            <option value="0">None (Square)</option>
+                            <option value="2">Small (2px)</option>
+                            <option value="4">Medium (4px)</option>
+                            <option value="8">Large (8px)</option>
+                            <option value="50">Circle</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="outputFormat">Output Format:</label>
+                        <select id="outputFormat">
+                            <option value="png">PNG</option>
+                            <option value="ico">ICO</option>
+                            <option value="svg">SVG</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" onclick="generateFavicon()">Generate Favicon</button>
+                    <button class="btn btn-secondary" onclick="downloadFavicon()" id="downloadBtn" disabled>Download</button>
+                    <button class="btn btn-secondary" onclick="copyFavicon()" id="copyBtn" disabled>Copy to Clipboard</button>
+                </div>
+            </div>
+            
+            <div class="favicon-result" id="faviconResult" style="display: none;">
+                <h3>Generated Favicon</h3>
+                <div class="result-display">
+                    <canvas id="faviconCanvas" width="32" height="32"></canvas>
+                    <div class="result-info">
+                        <div class="info-item">
+                            <strong>Size:</strong>
+                            <span id="resultSize">32x32</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Format:</strong>
+                            <span id="resultFormat">PNG</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>File Size:</strong>
+                            <span id="resultFileSize">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="usage-examples">
+                    <h4>HTML Usage:</h4>
+                    <div class="code-example">
+                        <code>&lt;link rel="icon" type="image/png" sizes="32x32" href="favicon.png"&gt;</code>
+                        <button class="copy-code-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="web-info">
+                <h3>Favicon Information</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>What is a Favicon?</strong>
+                        <p>A favicon is a small icon displayed in browser tabs, bookmarks, and address bars to represent your website.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Standard Sizes</strong>
+                        <p>16x16 (classic), 32x32 (standard), 48x48 (high-res), 64x64 (retina displays).</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Best Practices</strong>
+                        <p>Use simple designs, high contrast, and test on different backgrounds and sizes.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>File Formats</strong>
+                        <p>PNG (modern), ICO (legacy), SVG (vector). Most browsers support PNG favicons.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let currentFaviconData = '';
+        let currentTab = 'text';
+
+        function switchTab(tab) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tab + 'Tab').style.display = 'block';
+            event.target.classList.add('active');
+            
+            currentTab = tab;
+            updatePreview();
+        }
+
+        function updateTextPreview() {
+            const text = document.getElementById('faviconText').value || 'A';
+            const fontFamily = document.getElementById('fontFamily').value;
+            const textColor = document.getElementById('textColor').value;
+            const backgroundColor = document.getElementById('backgroundColor').value;
+            const borderRadius = document.getElementById('borderRadius').value;
+            
+            const preview = document.getElementById('previewFavicon');
+            preview.textContent = text;
+            preview.style.fontFamily = fontFamily;
+            preview.style.color = textColor;
+            preview.style.backgroundColor = backgroundColor;
+            preview.style.borderRadius = borderRadius + 'px';
+        }
+
+        function updateColorPreview() {
+            const color = document.getElementById('faviconColor').value;
+            const preview = document.querySelector('.color-favicon');
+            preview.style.backgroundColor = color;
+        }
+
+        function updateSizePreview() {
+            const size = document.getElementById('faviconSize').value;
+            document.querySelectorAll('.preview-favicon').forEach(preview => {
+                preview.style.width = size + 'px';
+                preview.style.height = size + 'px';
+                preview.style.fontSize = (size * 0.6) + 'px';
+            });
+        }
+
+        function updatePreview() {
+            if (currentTab === 'text') {
+                updateTextPreview();
+            } else if (currentTab === 'color') {
+                updateColorPreview();
+            }
+        }
+
+        function handleImageUpload() {
+            const file = document.getElementById('imageInput').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('previewImage');
+                    img.src = e.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                    
+                    // Update image info
+                    document.getElementById('imageSize').textContent = `Size: ${file.size} bytes`;
+                    document.getElementById('imageFormat').textContent = `Format: ${file.type}`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function generateFavicon() {
+            const size = parseInt(document.getElementById('faviconSize').value);
+            const format = document.getElementById('outputFormat').value;
+            const borderRadius = parseInt(document.getElementById('borderRadius').value);
+            
+            const canvas = document.getElementById('faviconCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            canvas.width = size;
+            canvas.height = size;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            if (currentTab === 'text') {
+                generateTextFavicon(ctx, size, borderRadius);
+            } else if (currentTab === 'image') {
+                generateImageFavicon(ctx, size, borderRadius);
+            } else if (currentTab === 'color') {
+                generateColorFavicon(ctx, size, borderRadius);
+            }
+            
+            // Update result info
+            document.getElementById('resultSize').textContent = `${size}x${size}`;
+            document.getElementById('resultFormat').textContent = format.toUpperCase();
+            
+            // Calculate file size
+            const dataURL = canvas.toDataURL(`image/${format === 'ico' ? 'png' : format}`);
+            const fileSize = Math.round((dataURL.length * 3) / 4);
+            document.getElementById('resultFileSize').textContent = formatFileSize(fileSize);
+            
+            currentFaviconData = dataURL;
+            
+            // Show result
+            document.getElementById('faviconResult').style.display = 'block';
+            
+            // Enable buttons
+            document.getElementById('downloadBtn').disabled = false;
+            document.getElementById('copyBtn').disabled = false;
+            
+            // Scroll to result
+            document.getElementById('faviconResult').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function generateTextFavicon(ctx, size, borderRadius) {
+            const text = document.getElementById('faviconText').value || 'A';
+            const fontFamily = document.getElementById('fontFamily').value;
+            const textColor = document.getElementById('textColor').value;
+            const backgroundColor = document.getElementById('backgroundColor').value;
+            
+            // Draw background
+            ctx.fillStyle = backgroundColor;
+            if (borderRadius > 0) {
+                drawRoundedRect(ctx, 0, 0, size, size, borderRadius);
+                ctx.fill();
+            } else {
+                ctx.fillRect(0, 0, size, size);
+            }
+            
+            // Draw text
+            ctx.fillStyle = textColor;
+            ctx.font = `bold ${size * 0.6}px ${fontFamily}`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, size / 2, size / 2);
+        }
+
+        function generateImageFavicon(ctx, size, borderRadius) {
+            const img = document.getElementById('previewImage');
+            if (!img.src) {
+                alert('Please upload an image first');
+                return;
+            }
+            
+            // Create a temporary canvas to handle the image
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = size;
+            tempCanvas.height = size;
+            
+            // Draw image to fill the canvas
+            tempCtx.drawImage(img, 0, 0, size, size);
+            
+            // Apply border radius if needed
+            if (borderRadius > 0) {
+                ctx.save();
+                drawRoundedRect(ctx, 0, 0, size, size, borderRadius);
+                ctx.clip();
+            }
+            
+            ctx.drawImage(tempCanvas, 0, 0);
+            
+            if (borderRadius > 0) {
+                ctx.restore();
+            }
+        }
+
+        function generateColorFavicon(ctx, size, borderRadius) {
+            const color = document.getElementById('faviconColor').value;
+            
+            ctx.fillStyle = color;
+            if (borderRadius > 0) {
+                drawRoundedRect(ctx, 0, 0, size, size, borderRadius);
+                ctx.fill();
+            } else {
+                ctx.fillRect(0, 0, size, size);
+            }
+        }
+
+        function drawRoundedRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+
+        function downloadFavicon() {
+            const format = document.getElementById('outputFormat').value;
+            const canvas = document.getElementById('faviconCanvas');
+            
+            const link = document.createElement('a');
+            link.download = `favicon.${format}`;
+            link.href = canvas.toDataURL(`image/${format === 'ico' ? 'png' : format}`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function copyFavicon() {
+            const canvas = document.getElementById('faviconCanvas');
+            canvas.toBlob(function(blob) {
+                navigator.clipboard.write([
+                    new ClipboardItem({
+                        'image/png': blob
+                    })
+                ]).then(() => {
+                    const btn = document.getElementById('copyBtn');
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            });
+        }
+
+        function copyCode(button) {
+            const code = button.previousElementSibling.textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.background = '#28a745';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 2000);
+            });
+        }
+
+        function clearAll() {
+            document.getElementById('faviconText').value = '';
+            document.getElementById('imageInput').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('faviconResult').style.display = 'none';
+            document.getElementById('downloadBtn').disabled = true;
+            document.getElementById('copyBtn').disabled = true;
+            updateTextPreview();
+        }
+
+        function loadSample() {
+            document.getElementById('faviconText').value = '🚀';
+            updateTextPreview();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Initialize
+        updateTextPreview();
+        updateSizePreview();
+        
+        // Handle drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('click', () => document.getElementById('imageInput').click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('imageInput').files = files;
+                handleImageUpload();
+            }
+        });
+    </script>
+</body>
+</html>
