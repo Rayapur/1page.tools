@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Format Converter - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>Image Format Converter</h1>
+            <p class="subtitle">Convert images between PNG, JPEG, and WebP formats</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Upload an image and convert it to PNG, JPEG, or WebP format. Choose quality settings for optimal results.</p>
+        </div>
+        
+        <div class="image-tools-container">
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <div class="upload-icon">📁</div>
+                        <h3>Drop your image here</h3>
+                        <p>or click to browse</p>
+                        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <div class="file-details">
+                        <strong>Selected File:</strong>
+                        <span id="fileName">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Original Size:</strong>
+                        <span id="originalSize">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Format:</strong>
+                        <span id="originalFormat">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Dimensions:</strong>
+                        <span id="imageDimensions">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="conversion-settings">
+                <h3>Conversion Settings</h3>
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <label for="outputFormat">Convert to:</label>
+                        <select id="outputFormat" onchange="updateFormatSettings()">
+                            <option value="jpeg">JPEG</option>
+                            <option value="png">PNG</option>
+                            <option value="webp">WebP</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-group" id="qualityGroup">
+                        <label for="qualitySlider">Quality: <span id="qualityValue">90</span>%</label>
+                        <input type="range" id="qualitySlider" min="10" max="100" value="90" oninput="updateQuality()">
+                    </div>
+                    
+                    <div class="setting-group" id="pngSettings" style="display: none;">
+                        <label for="pngCompression">PNG Compression:</label>
+                        <select id="pngCompression">
+                            <option value="0">None (Fastest)</option>
+                            <option value="1">Low</option>
+                            <option value="2">Medium</option>
+                            <option value="3">High</option>
+                            <option value="4">Maximum (Slowest)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label for="removeBackground">Remove Background (PNG only):</label>
+                        <input type="checkbox" id="removeBackground">
+                        <small>Note: This is a basic feature. For complex backgrounds, use professional tools.</small>
+                    </div>
+                </div>
+                
+                <div class="format-info">
+                    <h4>Format Information</h4>
+                    <div class="format-cards">
+                        <div class="format-card" id="jpegInfo">
+                            <h5>JPEG</h5>
+                            <ul>
+                                <li>Best for photos and complex images</li>
+                                <li>Lossy compression</li>
+                                <li>Smaller file sizes</li>
+                                <li>No transparency support</li>
+                            </ul>
+                        </div>
+                        <div class="format-card" id="pngInfo">
+                            <h5>PNG</h5>
+                            <ul>
+                                <li>Best for graphics and images with transparency</li>
+                                <li>Lossless compression</li>
+                                <li>Larger file sizes</li>
+                                <li>Full transparency support</li>
+                            </ul>
+                        </div>
+                        <div class="format-card" id="webpInfo">
+                            <h5>WebP</h5>
+                            <ul>
+                                <li>Modern format by Google</li>
+                                <li>Better compression than JPEG/PNG</li>
+                                <li>Supports transparency</li>
+                                <li>Good browser support</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" id="convertBtn" onclick="convertImage()" disabled>Convert Image</button>
+                    <button class="btn btn-secondary" onclick="resetSettings()">Reset Settings</button>
+                </div>
+            </div>
+            
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h3>Conversion Results</h3>
+                <div class="results-grid">
+                    <div class="result-card">
+                        <h4>Original</h4>
+                        <div class="image-preview" id="originalPreview"></div>
+                        <div class="file-stats">
+                            <div class="stat">Size: <span id="originalFileSize">-</span></div>
+                            <div class="stat">Format: <span id="originalFormatResult">-</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h4>Converted</h4>
+                        <div class="image-preview" id="convertedPreview"></div>
+                        <div class="file-stats">
+                            <div class="stat">Size: <span id="convertedFileSize">-</span></div>
+                            <div class="stat">Format: <span id="convertedFormat">-</span></div>
+                            <div class="stat">Size Change: <span id="sizeChange">-</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="download-section">
+                    <button class="btn btn-success" id="downloadBtn" onclick="downloadConverted()">Download Converted Image</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let originalFile = null;
+        let convertedBlob = null;
+        let originalImageData = null;
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const qualitySlider = document.getElementById('qualitySlider');
+        const qualityValue = document.getElementById('qualityValue');
+
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // File input handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file');
+                return;
+            }
+
+            originalFile = file;
+            displayFileInfo(file);
+            document.getElementById('convertBtn').disabled = false;
+        }
+
+        function displayFileInfo(file) {
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const originalSize = document.getElementById('originalSize');
+            const originalFormat = document.getElementById('originalFormat');
+            
+            fileName.textContent = file.name;
+            originalSize.textContent = formatFileSize(file.size);
+            originalFormat.textContent = file.type.split('/')[1].toUpperCase();
+            
+            // Get image dimensions
+            const img = new Image();
+            img.onload = function() {
+                document.getElementById('imageDimensions').textContent = `${this.width} × ${this.height}`;
+                originalImageData = {
+                    width: this.width,
+                    height: this.height,
+                    size: file.size,
+                    format: file.type
+                };
+            };
+            img.src = URL.createObjectURL(file);
+            
+            fileInfo.style.display = 'block';
+        }
+
+        function updateFormatSettings() {
+            const format = document.getElementById('outputFormat').value;
+            const qualityGroup = document.getElementById('qualityGroup');
+            const pngSettings = document.getElementById('pngSettings');
+            
+            // Hide all format-specific settings
+            qualityGroup.style.display = 'none';
+            pngSettings.style.display = 'none';
+            
+            // Show relevant settings
+            if (format === 'jpeg' || format === 'webp') {
+                qualityGroup.style.display = 'block';
+            } else if (format === 'png') {
+                pngSettings.style.display = 'block';
+            }
+            
+            // Update format info visibility
+            document.querySelectorAll('.format-card').forEach(card => {
+                card.style.display = 'none';
+            });
+            document.getElementById(format + 'Info').style.display = 'block';
+        }
+
+        function updateQuality() {
+            qualityValue.textContent = qualitySlider.value;
+        }
+
+        function convertImage() {
+            if (!originalFile || !originalImageData) return;
+
+            const outputFormat = document.getElementById('outputFormat').value;
+            const quality = parseInt(qualitySlider.value) / 100;
+            const removeBackground = document.getElementById('removeBackground').checked;
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+
+            canvas.width = originalImageData.width;
+            canvas.height = originalImageData.height;
+
+            img.onload = function() {
+                // Handle background removal for PNG
+                if (outputFormat === 'png' && removeBackground) {
+                    // Simple background removal (white background)
+                    ctx.fillStyle = 'transparent';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                } else {
+                    // Fill with white background for JPEG
+                    if (outputFormat === 'jpeg') {
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    }
+                }
+                
+                ctx.drawImage(img, 0, 0);
+                
+                const mimeType = `image/${outputFormat}`;
+                canvas.toBlob((blob) => {
+                    displayResults(blob, mimeType);
+                }, mimeType, quality);
+            };
+
+            img.src = URL.createObjectURL(originalFile);
+        }
+
+        function displayResults(blob, mimeType) {
+            convertedBlob = blob;
+            
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.style.display = 'block';
+            
+            // Display original image
+            const originalPreview = document.getElementById('originalPreview');
+            originalPreview.innerHTML = `<img src="${URL.createObjectURL(originalFile)}" alt="Original">`;
+            
+            // Display converted image
+            const convertedPreview = document.getElementById('convertedPreview');
+            convertedPreview.innerHTML = `<img src="${URL.createObjectURL(blob)}" alt="Converted">`;
+            
+            // Update file stats
+            document.getElementById('originalFileSize').textContent = formatFileSize(originalFile.size);
+            document.getElementById('originalFormatResult').textContent = originalFile.type.split('/')[1].toUpperCase();
+            document.getElementById('convertedFileSize').textContent = formatFileSize(blob.size);
+            document.getElementById('convertedFormat').textContent = mimeType.split('/')[1].toUpperCase();
+            
+            const sizeChange = ((blob.size - originalFile.size) / originalFile.size * 100);
+            const sizeChangeText = sizeChange > 0 ? `+${sizeChange.toFixed(1)}%` : `${sizeChange.toFixed(1)}%`;
+            const sizeChangeColor = sizeChange > 0 ? '#dc3545' : '#28a745';
+            document.getElementById('sizeChange').textContent = sizeChangeText;
+            document.getElementById('sizeChange').style.color = sizeChangeColor;
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function downloadConverted() {
+            if (!convertedBlob) return;
+
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(convertedBlob);
+            const extension = document.getElementById('outputFormat').value;
+            link.download = `converted_${originalFile.name.split('.')[0]}.${extension}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function resetSettings() {
+            qualitySlider.value = 90;
+            qualityValue.textContent = '90';
+            document.getElementById('outputFormat').value = 'jpeg';
+            document.getElementById('pngCompression').value = '2';
+            document.getElementById('removeBackground').checked = false;
+            updateFormatSettings();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Initialize
+        updateFormatSettings();
+    </script>
+</body>
+</html>

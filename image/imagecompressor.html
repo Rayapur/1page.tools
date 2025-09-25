@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compressor - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>Image Compressor</h1>
+            <p class="subtitle">Reduce image file size while maintaining quality</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Upload an image and compress it to reduce file size. Supports JPEG, PNG, and WebP formats.</p>
+        </div>
+        
+        <div class="image-tools-container">
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <div class="upload-icon">📁</div>
+                        <h3>Drop your image here</h3>
+                        <p>or click to browse</p>
+                        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <div class="file-details">
+                        <strong>Selected File:</strong>
+                        <span id="fileName">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Original Size:</strong>
+                        <span id="originalSize">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Dimensions:</strong>
+                        <span id="imageDimensions">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="compression-settings">
+                <h3>Compression Settings</h3>
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <label for="qualitySlider">Quality: <span id="qualityValue">80</span>%</label>
+                        <input type="range" id="qualitySlider" min="10" max="100" value="80" oninput="updateQuality()">
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label for="outputFormat">Output Format:</label>
+                        <select id="outputFormat">
+                            <option value="jpeg">JPEG</option>
+                            <option value="png">PNG</option>
+                            <option value="webp">WebP</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label for="maxWidth">Max Width (px):</label>
+                        <input type="number" id="maxWidth" placeholder="Auto" min="100" max="4000">
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label for="maxHeight">Max Height (px):</label>
+                        <input type="number" id="maxHeight" placeholder="Auto" min="100" max="4000">
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" id="compressBtn" onclick="compressImage()" disabled>Compress Image</button>
+                    <button class="btn btn-secondary" onclick="resetSettings()">Reset Settings</button>
+                </div>
+            </div>
+            
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h3>Compression Results</h3>
+                <div class="results-grid">
+                    <div class="result-card">
+                        <h4>Original</h4>
+                        <div class="image-preview" id="originalPreview"></div>
+                        <div class="file-stats">
+                            <div class="stat">Size: <span id="originalFileSize">-</span></div>
+                            <div class="stat">Format: <span id="originalFormat">-</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h4>Compressed</h4>
+                        <div class="image-preview" id="compressedPreview"></div>
+                        <div class="file-stats">
+                            <div class="stat">Size: <span id="compressedFileSize">-</span></div>
+                            <div class="stat">Format: <span id="compressedFormat">-</span></div>
+                            <div class="stat">Reduction: <span id="sizeReduction">-</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="download-section">
+                    <button class="btn btn-success" id="downloadBtn" onclick="downloadCompressed()">Download Compressed Image</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let originalFile = null;
+        let compressedBlob = null;
+        let originalImageData = null;
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const qualitySlider = document.getElementById('qualitySlider');
+        const qualityValue = document.getElementById('qualityValue');
+
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // File input handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file');
+                return;
+            }
+
+            originalFile = file;
+            displayFileInfo(file);
+            document.getElementById('compressBtn').disabled = false;
+        }
+
+        function displayFileInfo(file) {
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const originalSize = document.getElementById('originalSize');
+            
+            fileName.textContent = file.name;
+            originalSize.textContent = formatFileSize(file.size);
+            
+            // Get image dimensions
+            const img = new Image();
+            img.onload = function() {
+                document.getElementById('imageDimensions').textContent = `${this.width} × ${this.height}`;
+                originalImageData = {
+                    width: this.width,
+                    height: this.height,
+                    size: file.size,
+                    format: file.type
+                };
+            };
+            img.src = URL.createObjectURL(file);
+            
+            fileInfo.style.display = 'block';
+        }
+
+        function updateQuality() {
+            qualityValue.textContent = qualitySlider.value;
+        }
+
+        function compressImage() {
+            if (!originalFile) return;
+
+            const quality = parseInt(qualitySlider.value) / 100;
+            const outputFormat = document.getElementById('outputFormat').value;
+            const maxWidth = parseInt(document.getElementById('maxWidth').value) || null;
+            const maxHeight = parseInt(document.getElementById('maxHeight').value) || null;
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+
+            img.onload = function() {
+                let { width, height } = calculateDimensions(this.width, this.height, maxWidth, maxHeight);
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                const mimeType = `image/${outputFormat}`;
+                const compressedBlob = canvas.toBlob((blob) => {
+                    displayResults(blob, mimeType);
+                }, mimeType, quality);
+            };
+
+            img.src = URL.createObjectURL(originalFile);
+        }
+
+        function calculateDimensions(originalWidth, originalHeight, maxWidth, maxHeight) {
+            let width = originalWidth;
+            let height = originalHeight;
+
+            if (maxWidth && width > maxWidth) {
+                height = (height * maxWidth) / width;
+                width = maxWidth;
+            }
+
+            if (maxHeight && height > maxHeight) {
+                width = (width * maxHeight) / height;
+                height = maxHeight;
+            }
+
+            return { width: Math.round(width), height: Math.round(height) };
+        }
+
+        function displayResults(blob, mimeType) {
+            compressedBlob = blob;
+            
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.style.display = 'block';
+            
+            // Display original image
+            const originalPreview = document.getElementById('originalPreview');
+            originalPreview.innerHTML = `<img src="${URL.createObjectURL(originalFile)}" alt="Original">`;
+            
+            // Display compressed image
+            const compressedPreview = document.getElementById('compressedPreview');
+            compressedPreview.innerHTML = `<img src="${URL.createObjectURL(blob)}" alt="Compressed">`;
+            
+            // Update file stats
+            document.getElementById('originalFileSize').textContent = formatFileSize(originalFile.size);
+            document.getElementById('originalFormat').textContent = originalFile.type.split('/')[1].toUpperCase();
+            document.getElementById('compressedFileSize').textContent = formatFileSize(blob.size);
+            document.getElementById('compressedFormat').textContent = mimeType.split('/')[1].toUpperCase();
+            
+            const reduction = ((originalFile.size - blob.size) / originalFile.size * 100).toFixed(1);
+            document.getElementById('sizeReduction').textContent = `${reduction}%`;
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function downloadCompressed() {
+            if (!compressedBlob) return;
+
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(compressedBlob);
+            link.download = `compressed_${originalFile.name}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function resetSettings() {
+            qualitySlider.value = 80;
+            qualityValue.textContent = '80';
+            document.getElementById('outputFormat').value = 'jpeg';
+            document.getElementById('maxWidth').value = '';
+            document.getElementById('maxHeight').value = '';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>

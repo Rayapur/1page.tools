@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Resizer - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>Image Resizer</h1>
+            <p class="subtitle">Resize images to specific dimensions or percentages</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Upload an image and resize it to your desired dimensions. Maintain aspect ratio or resize to exact dimensions.</p>
+        </div>
+        
+        <div class="image-tools-container">
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <div class="upload-icon">📁</div>
+                        <h3>Drop your image here</h3>
+                        <p>or click to browse</p>
+                        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <div class="file-details">
+                        <strong>Selected File:</strong>
+                        <span id="fileName">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Original Size:</strong>
+                        <span id="originalSize">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Dimensions:</strong>
+                        <span id="imageDimensions">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="resize-settings">
+                <h3>Resize Settings</h3>
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <label for="resizeMode">Resize Mode:</label>
+                        <select id="resizeMode" onchange="updateResizeMode()">
+                            <option value="percentage">Percentage</option>
+                            <option value="dimensions">Exact Dimensions</option>
+                            <option value="fit">Fit to Size</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-group" id="percentageGroup">
+                        <label for="percentageSlider">Scale: <span id="percentageValue">100</span>%</label>
+                        <input type="range" id="percentageSlider" min="10" max="500" value="100" oninput="updatePercentage()">
+                    </div>
+                    
+                    <div class="setting-group" id="dimensionsGroup" style="display: none;">
+                        <label for="newWidth">Width (px):</label>
+                        <input type="number" id="newWidth" placeholder="Enter width" min="1" max="4000">
+                    </div>
+                    
+                    <div class="setting-group" id="dimensionsGroup2" style="display: none;">
+                        <label for="newHeight">Height (px):</label>
+                        <input type="number" id="newHeight" placeholder="Enter height" min="1" max="4000">
+                    </div>
+                    
+                    <div class="setting-group" id="fitGroup" style="display: none;">
+                        <label for="fitWidth">Fit Width (px):</label>
+                        <input type="number" id="fitWidth" placeholder="Max width" min="1" max="4000">
+                    </div>
+                    
+                    <div class="setting-group" id="fitGroup2" style="display: none;">
+                        <label for="fitHeight">Fit Height (px):</label>
+                        <input type="number" id="fitHeight" placeholder="Max height" min="1" max="4000">
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label for="maintainAspect">Maintain Aspect Ratio:</label>
+                        <input type="checkbox" id="maintainAspect" checked>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label for="outputFormat">Output Format:</label>
+                        <select id="outputFormat">
+                            <option value="original">Keep Original</option>
+                            <option value="jpeg">JPEG</option>
+                            <option value="png">PNG</option>
+                            <option value="webp">WebP</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="preset-sizes">
+                    <h4>Quick Presets</h4>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" onclick="setPresetSize(1920, 1080)">HD (1920×1080)</button>
+                        <button class="preset-btn" onclick="setPresetSize(1280, 720)">HD (1280×720)</button>
+                        <button class="preset-btn" onclick="setPresetSize(800, 600)">Small (800×600)</button>
+                        <button class="preset-btn" onclick="setPresetSize(400, 300)">Thumbnail (400×300)</button>
+                        <button class="preset-btn" onclick="setPresetSize(150, 150)">Avatar (150×150)</button>
+                        <button class="preset-btn" onclick="setPresetSize(32, 32)">Icon (32×32)</button>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" id="resizeBtn" onclick="resizeImage()" disabled>Resize Image</button>
+                    <button class="btn btn-secondary" onclick="resetSettings()">Reset Settings</button>
+                </div>
+            </div>
+            
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h3>Resize Results</h3>
+                <div class="results-grid">
+                    <div class="result-card">
+                        <h4>Original</h4>
+                        <div class="image-preview" id="originalPreview"></div>
+                        <div class="file-stats">
+                            <div class="stat">Size: <span id="originalFileSize">-</span></div>
+                            <div class="stat">Dimensions: <span id="originalDimensions">-</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h4>Resized</h4>
+                        <div class="image-preview" id="resizedPreview"></div>
+                        <div class="file-stats">
+                            <div class="stat">Size: <span id="resizedFileSize">-</span></div>
+                            <div class="stat">Dimensions: <span id="resizedDimensions">-</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="download-section">
+                    <button class="btn btn-success" id="downloadBtn" onclick="downloadResized()">Download Resized Image</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let originalFile = null;
+        let resizedBlob = null;
+        let originalImageData = null;
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const percentageSlider = document.getElementById('percentageSlider');
+        const percentageValue = document.getElementById('percentageValue');
+
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // File input handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file');
+                return;
+            }
+
+            originalFile = file;
+            displayFileInfo(file);
+            document.getElementById('resizeBtn').disabled = false;
+        }
+
+        function displayFileInfo(file) {
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const originalSize = document.getElementById('originalSize');
+            
+            fileName.textContent = file.name;
+            originalSize.textContent = formatFileSize(file.size);
+            
+            // Get image dimensions
+            const img = new Image();
+            img.onload = function() {
+                document.getElementById('imageDimensions').textContent = `${this.width} × ${this.height}`;
+                originalImageData = {
+                    width: this.width,
+                    height: this.height,
+                    size: file.size,
+                    format: file.type
+                };
+            };
+            img.src = URL.createObjectURL(file);
+            
+            fileInfo.style.display = 'block';
+        }
+
+        function updateResizeMode() {
+            const mode = document.getElementById('resizeMode').value;
+            const percentageGroup = document.getElementById('percentageGroup');
+            const dimensionsGroup = document.getElementById('dimensionsGroup');
+            const dimensionsGroup2 = document.getElementById('dimensionsGroup2');
+            const fitGroup = document.getElementById('fitGroup');
+            const fitGroup2 = document.getElementById('fitGroup2');
+            
+            // Hide all groups
+            percentageGroup.style.display = 'none';
+            dimensionsGroup.style.display = 'none';
+            dimensionsGroup2.style.display = 'none';
+            fitGroup.style.display = 'none';
+            fitGroup2.style.display = 'none';
+            
+            // Show relevant groups
+            if (mode === 'percentage') {
+                percentageGroup.style.display = 'block';
+            } else if (mode === 'dimensions') {
+                dimensionsGroup.style.display = 'block';
+                dimensionsGroup2.style.display = 'block';
+            } else if (mode === 'fit') {
+                fitGroup.style.display = 'block';
+                fitGroup2.style.display = 'block';
+            }
+        }
+
+        function updatePercentage() {
+            percentageValue.textContent = percentageSlider.value;
+        }
+
+        function setPresetSize(width, height) {
+            document.getElementById('resizeMode').value = 'dimensions';
+            document.getElementById('newWidth').value = width;
+            document.getElementById('newHeight').value = height;
+            updateResizeMode();
+        }
+
+        function resizeImage() {
+            if (!originalFile || !originalImageData) return;
+
+            const mode = document.getElementById('resizeMode').value;
+            const maintainAspect = document.getElementById('maintainAspect').checked;
+            const outputFormat = document.getElementById('outputFormat').value;
+            
+            let newWidth, newHeight;
+            
+            if (mode === 'percentage') {
+                const percentage = parseInt(percentageSlider.value) / 100;
+                newWidth = Math.round(originalImageData.width * percentage);
+                newHeight = Math.round(originalImageData.height * percentage);
+            } else if (mode === 'dimensions') {
+                newWidth = parseInt(document.getElementById('newWidth').value);
+                newHeight = parseInt(document.getElementById('newHeight').value);
+                
+                if (maintainAspect) {
+                    const aspectRatio = originalImageData.width / originalImageData.height;
+                    if (newWidth / newHeight > aspectRatio) {
+                        newWidth = Math.round(newHeight * aspectRatio);
+                    } else {
+                        newHeight = Math.round(newWidth / aspectRatio);
+                    }
+                }
+            } else if (mode === 'fit') {
+                const fitWidth = parseInt(document.getElementById('fitWidth').value);
+                const fitHeight = parseInt(document.getElementById('fitHeight').value);
+                
+                const aspectRatio = originalImageData.width / originalImageData.height;
+                if (fitWidth && fitHeight) {
+                    if (fitWidth / fitHeight > aspectRatio) {
+                        newWidth = Math.round(fitHeight * aspectRatio);
+                        newHeight = fitHeight;
+                    } else {
+                        newWidth = fitWidth;
+                        newHeight = Math.round(fitWidth / aspectRatio);
+                    }
+                } else if (fitWidth) {
+                    newWidth = fitWidth;
+                    newHeight = Math.round(fitWidth / aspectRatio);
+                } else if (fitHeight) {
+                    newWidth = Math.round(fitHeight * aspectRatio);
+                    newHeight = fitHeight;
+                }
+            }
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                
+                const mimeType = outputFormat === 'original' ? originalFile.type : `image/${outputFormat}`;
+                canvas.toBlob((blob) => {
+                    displayResults(blob, mimeType, newWidth, newHeight);
+                }, mimeType, 0.9);
+            };
+
+            img.src = URL.createObjectURL(originalFile);
+        }
+
+        function displayResults(blob, mimeType, width, height) {
+            resizedBlob = blob;
+            
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.style.display = 'block';
+            
+            // Display original image
+            const originalPreview = document.getElementById('originalPreview');
+            originalPreview.innerHTML = `<img src="${URL.createObjectURL(originalFile)}" alt="Original">`;
+            
+            // Display resized image
+            const resizedPreview = document.getElementById('resizedPreview');
+            resizedPreview.innerHTML = `<img src="${URL.createObjectURL(blob)}" alt="Resized">`;
+            
+            // Update file stats
+            document.getElementById('originalFileSize').textContent = formatFileSize(originalFile.size);
+            document.getElementById('originalDimensions').textContent = `${originalImageData.width} × ${originalImageData.height}`;
+            document.getElementById('resizedFileSize').textContent = formatFileSize(blob.size);
+            document.getElementById('resizedDimensions').textContent = `${width} × ${height}`;
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function downloadResized() {
+            if (!resizedBlob) return;
+
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(resizedBlob);
+            link.download = `resized_${originalFile.name}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function resetSettings() {
+            percentageSlider.value = 100;
+            percentageValue.textContent = '100';
+            document.getElementById('resizeMode').value = 'percentage';
+            document.getElementById('newWidth').value = '';
+            document.getElementById('newHeight').value = '';
+            document.getElementById('fitWidth').value = '';
+            document.getElementById('fitHeight').value = '';
+            document.getElementById('maintainAspect').checked = true;
+            document.getElementById('outputFormat').value = 'original';
+            updateResizeMode();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Initialize
+        updateResizeMode();
+    </script>
+</body>
+</html>
