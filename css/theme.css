@@ -1211,3 +1211,54 @@ input[type="color"] {
         grid-template-columns: 1fr;
     }
 }
+
+/* AdSense Styles */
+.ad-container {
+    margin: 2rem auto;
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.ad-banner {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: var(--card-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+}
+
+.ad-rectangle {
+    margin: 2rem 0;
+    padding: 1rem;
+    background: var(--card-bg);
+    border-radius: var(--container-radius);
+    box-shadow: var(--container-shadow);
+}
+
+/* Responsive ad adjustments */
+@media (max-width: 768px) {
+    .ad-container {
+        margin: 1rem auto;
+        padding: 0.5rem;
+    }
+    
+    .ad-banner,
+    .ad-rectangle {
+        margin: 1rem 0;
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .ad-container {
+        margin: 0.5rem auto;
+        padding: 0.25rem;
+    }
+    
+    .ad-banner,
+    .ad-rectangle {
+        margin: 0.5rem 0;
+        padding: 0.25rem;
+    }
+}

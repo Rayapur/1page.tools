@@ -6,6 +6,10 @@
     <title>1page.tools - Simple Online Tools</title>
     <link rel="stylesheet" href="css/theme.css">
     <!-- All styles are now globalized in css/theme.css -->
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_PUBLISHER_ID"
+            crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="container">
@@ -21,6 +25,16 @@
             <button class="filter-btn" data-filter="math">Math</button>
             <button class="filter-btn" data-filter="geo">Geo</button>
         </div>
+        </div>
+
+        <!-- AdSense Banner Ad -->
+        <div class="ad-container ad-banner">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-YOUR_PUBLISHER_ID"
+                 data-ad-slot="YOUR_BANNER_SLOT_ID"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
         </div>
 
         <!-- Tool cards grouped by category -->
@@ -75,12 +89,25 @@
             </div>
             <!-- Add more tools below as you create them, with appropriate data-category -->
         </div>
+
+        <!-- AdSense Rectangle Ad -->
+        <div class="ad-container ad-rectangle">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-YOUR_PUBLISHER_ID"
+                 data-ad-slot="YOUR_RECTANGLE_SLOT_ID"
+                 data-ad-format="rectangle"></ins>
+        </div>
+
         <div class="footer">
               &copy; 2025 1page.tools &mdash; Made for simplicity.<br>
               <a href="privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="terms-of-use.html" target="_blank">Terms of Use</a>
         </div>
     </div>
     <script>
+        // Initialize AdSense ads
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        
         // Filter logic
         document.addEventListener('DOMContentLoaded', function() {
             const filterCapsules = document.getElementById('filterCapsules');
