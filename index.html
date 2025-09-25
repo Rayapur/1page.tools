@@ -105,8 +105,19 @@
         </div>
     </div>
     <script>
-        // Initialize AdSense ads
+        // Initialize AdSense ads and hide empty containers
         (adsbygoogle = window.adsbygoogle || []).push({});
+        
+        // Hide ad containers that don't have content after a delay
+        setTimeout(function() {
+            const adContainers = document.querySelectorAll('.ad-container');
+            adContainers.forEach(function(container) {
+                const adElement = container.querySelector('.adsbygoogle');
+                if (adElement && adElement.offsetHeight === 0) {
+                    container.style.display = 'none';
+                }
+            });
+        }, 3000); // Wait 3 seconds for ads to load
         
         // Filter logic
         document.addEventListener('DOMContentLoaded', function() {

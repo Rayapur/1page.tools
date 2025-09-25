@@ -1218,47 +1218,76 @@ input[type="color"] {
     text-align: center;
     max-width: 100%;
     overflow: hidden;
+    min-height: 0;
 }
 
 .ad-banner {
     margin: 1.5rem 0;
-    padding: 1rem;
-    background: var(--card-bg);
+    padding: 0.5rem;
+    background: transparent;
     border-radius: var(--container-radius);
-    box-shadow: var(--container-shadow);
+    min-height: 0;
 }
 
 .ad-rectangle {
     margin: 2rem 0;
-    padding: 1rem;
-    background: var(--card-bg);
+    padding: 0.5rem;
+    background: transparent;
     border-radius: var(--container-radius);
-    box-shadow: var(--container-shadow);
+    min-height: 0;
+}
+
+/* Hide ad containers when they're empty or loading */
+.ad-container:empty {
+    display: none;
+}
+
+.ad-container .adsbygoogle:empty {
+    display: none;
 }
 
 /* Responsive ad adjustments */
 @media (max-width: 768px) {
     .ad-container {
         margin: 1rem auto;
-        padding: 0.5rem;
-    }
-    
-    .ad-banner,
-    .ad-rectangle {
-        margin: 1rem 0;
-        padding: 0.5rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .ad-container {
-        margin: 0.5rem auto;
         padding: 0.25rem;
+        min-height: 0;
     }
     
     .ad-banner,
     .ad-rectangle {
         margin: 0.5rem 0;
         padding: 0.25rem;
+        min-height: 0;
+    }
+    
+    /* Hide ad containers on mobile if they're empty */
+    .ad-container:empty {
+        display: none !important;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .ad-container {
+        margin: 0.5rem auto;
+        padding: 0.1rem;
+        min-height: 0;
+    }
+    
+    .ad-banner,
+    .ad-rectangle {
+        margin: 0.25rem 0;
+        padding: 0.1rem;
+        min-height: 0;
+    }
+    
+    /* Ensure empty ad containers are hidden on mobile */
+    .ad-container:empty {
+        display: none !important;
+        margin: 0;
+        padding: 0;
+        height: 0;
     }
 }
