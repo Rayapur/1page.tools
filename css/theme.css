@@ -4078,6 +4078,7 @@ input[type="color"] {
     top: 0;
     z-index: 10;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: #f8f9fa !important;
 }
 
 .colored-csv-table td,
@@ -4086,6 +4087,11 @@ input[type="color"] {
     max-width: 200px;
     vertical-align: top;
     line-height: 1.4;
+    background-color: white !important;
+}
+
+.colored-csv-table td {
+    font-weight: 500;
 }
 
 .colored-csv-table tr:hover {

@@ -1,0 +1,31 @@
+Name,Age,Department,Salary,Start Date,Email,Phone,Location,Status,Performance Score
+John Smith,28,Engineering,75000,2023-01-15,john.smith@company.com,+1-555-0101,New York,Active,8.5
+Sarah Johnson,32,Marketing,68000,2022-03-22,sarah.johnson@company.com,+1-555-0102,Los Angeles,Active,9.2
+Michael Brown,45,Engineering,95000,2020-07-10,michael.brown@company.com,+1-555-0103,Chicago,Active,7.8
+Emily Davis,29,Sales,62000,2023-05-08,emily.davis@company.com,+1-555-0104,Houston,Active,8.9
+David Wilson,38,HR,58000,2021-11-30,david.wilson@company.com,+1-555-0105,Phoenix,Active,7.5
+Lisa Anderson,31,Finance,72000,2022-09-12,lisa.anderson@company.com,+1-555-0106,Philadelphia,Active,8.7
+Robert Taylor,42,Engineering,88000,2020-12-05,robert.taylor@company.com,+1-555-0107,San Antonio,Active,8.1
+Jennifer Martinez,27,Marketing,59000,2023-02-18,jennifer.martinez@company.com,+1-555-0108,San Diego,Active,9.0
+Christopher Lee,35,Sales,71000,2021-06-25,christopher.lee@company.com,+1-555-0109,Dallas,Active,8.3
+Amanda White,33,Finance,69000,2022-01-14,amanda.white@company.com,+1-555-0110,San Jose,Active,8.6
+James Harris,40,Engineering,92000,2020-04-03,james.harris@company.com,+1-555-0111,Austin,Active,7.9
+Michelle Clark,26,HR,55000,2023-08-20,michelle.clark@company.com,+1-555-0112,Jacksonville,Active,8.4
+Daniel Rodriguez,37,Sales,74000,2021-10-07,daniel.rodriguez@company.com,+1-555-0113,Fort Worth,Active,8.8
+Ashley Lewis,30,Marketing,65000,2022-12-01,ashley.lewis@company.com,+1-555-0114,Columbus,Active,9.1
+Matthew Walker,44,Engineering,96000,2020-08-15,matthew.walker@company.com,+1-555-0115,Charlotte,Active,7.7
+Jessica Hall,28,Finance,61000,2023-04-12,jessica.hall@company.com,+1-555-0116,Seattle,Active,8.2
+Andrew Allen,36,Sales,73000,2021-09-28,andrew.allen@company.com,+1-555-0117,Denver,Active,8.5
+Stephanie Young,29,HR,57000,2022-11-09,stephanie.young@company.com,+1-555-0118,Washington,Active,7.8
+Kevin King,41,Engineering,91000,2020-05-22,kevin.king@company.com,+1-555-0119,Boston,Active,8.0
+Nicole Wright,34,Marketing,67000,2022-07-16,nicole.wright@company.com,+1-555-0120,El Paso,Active,8.9
+Ryan Lopez,32,Sales,70000,2021-12-04,ryan.lopez@company.com,+1-555-0121,Nashville,Active,8.6
+Samantha Hill,27,Finance,60000,2023-06-30,samantha.hill@company.com,+1-555-0122,Detroit,Active,8.3
+Brandon Scott,39,Engineering,87000,2021-03-17,brandon.scott@company.com,+1-555-0123,Oklahoma City,Active,7.6
+Rachel Green,31,HR,59000,2022-10-25,rachel.green@company.com,+1-555-0124,Portland,Active,8.7
+Tyler Adams,35,Sales,72000,2021-08-11,tyler.adams@company.com,+1-555-0125,Las Vegas,Active,8.4
+Lauren Baker,28,Marketing,63000,2023-01-08,lauren.baker@company.com,+1-555-0126,Louisville,Active,9.3
+Justin Nelson,43,Engineering,94000,2020-09-14,justin.nelson@company.com,+1-555-0127,Baltimore,Active,7.8
+Megan Carter,30,Finance,66000,2022-05-03,megan.carter@company.com,+1-555-0128,Milwaukee,Active,8.1
+Jordan Mitchell,37,Sales,75000,2021-07-19,jordan.mitchell@company.com,+1-555-0129,Albuquerque,Active,8.8
+Kayla Perez,26,HR,56000,2023-03-26,kayla.perez@company.com,+1-555-0130,Tucson,Active,8.5
