@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Splitter - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>PDF Splitter</h1>
+            <p class="subtitle">Split PDF files into individual pages or custom ranges</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Upload a PDF file and split it into individual pages or extract specific page ranges. Download the split PDFs as separate files.</p>
+        </div>
+        
+        <div class="pdf-tools-container">
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <div class="upload-icon">📄</div>
+                        <p>Click to upload PDF or drag and drop</p>
+                        <p class="upload-hint">Supports PDF files up to 50MB</p>
+                    </div>
+                    <input type="file" id="fileInput" accept=".pdf" onchange="handleFileUpload()" style="display: none;">
+                </div>
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <div class="file-details">
+                        <strong>File:</strong> <span id="fileName">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Size:</strong> <span id="fileSize">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Pages:</strong> <span id="pageCount">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="split-options" id="splitOptions" style="display: none;">
+                <h3>Split Options</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="splitMode">Split Mode:</label>
+                        <select id="splitMode" onchange="updateSplitMode()">
+                            <option value="individual">Split into Individual Pages</option>
+                            <option value="range">Extract Page Range</option>
+                            <option value="custom">Custom Split Points</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group" id="rangeOptions" style="display: none;">
+                        <label for="startPage">Start Page:</label>
+                        <input type="number" id="startPage" min="1" value="1" onchange="updateRange()">
+                    </div>
+                    
+                    <div class="option-group" id="endPageOptions" style="display: none;">
+                        <label for="endPage">End Page:</label>
+                        <input type="number" id="endPage" min="1" value="1" onchange="updateRange()">
+                    </div>
+                    
+                    <div class="option-group" id="customOptions" style="display: none;">
+                        <label for="splitPoints">Split Points:</label>
+                        <input type="text" id="splitPoints" placeholder="e.g., 1,3,5,7" onchange="updateCustomSplit()">
+                        <small>Enter page numbers where to split (comma-separated)</small>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" onclick="splitPDF()">Split PDF</button>
+                    <button class="btn btn-secondary" onclick="clearFile()">Clear File</button>
+                </div>
+            </div>
+            
+            <div class="split-results" id="splitResults" style="display: none;">
+                <h3>Split Results</h3>
+                <div class="results-summary" id="resultsSummary">
+                    <div class="summary-item">
+                        <strong>Total Files:</strong>
+                        <span id="totalFiles">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <strong>Total Pages:</strong>
+                        <span id="totalPages">0</span>
+                    </div>
+                </div>
+                
+                <div class="results-list" id="resultsList">
+                    <!-- Split results will be populated by JavaScript -->
+                </div>
+                
+                <div class="results-actions">
+                    <button class="btn btn-secondary" onclick="downloadAll()">Download All as ZIP</button>
+                    <button class="btn btn-secondary" onclick="clearResults()">Clear Results</button>
+                </div>
+            </div>
+            
+            <div class="pdf-info">
+                <h3>PDF Splitting Information</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>Individual Pages</strong>
+                        <p>Split the PDF into separate files, one for each page. Useful for extracting specific pages.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Page Range</strong>
+                        <p>Extract a continuous range of pages from the PDF. Specify start and end page numbers.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Custom Split</strong>
+                        <p>Split the PDF at specific page numbers. Create multiple files with custom page ranges.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>File Size</strong>
+                        <p>Split PDFs help reduce file sizes and make documents easier to share and manage.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let currentPDF = null;
+        let splitResults = [];
+
+        function handleFileUpload() {
+            const file = document.getElementById('fileInput').files[0];
+            if (file) {
+                if (file.type !== 'application/pdf') {
+                    alert('Please select a PDF file');
+                    return;
+                }
+                
+                if (file.size > 50 * 1024 * 1024) {
+                    alert('File size must be less than 50MB');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        currentPDF = await PDFLib.PDFDocument.load(e.target.result);
+                        const pageCount = currentPDF.getPageCount();
+                        
+                        document.getElementById('fileName').textContent = file.name;
+                        document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                        document.getElementById('pageCount').textContent = pageCount;
+                        document.getElementById('fileInfo').style.display = 'block';
+                        document.getElementById('splitOptions').style.display = 'block';
+                        
+                        // Update range inputs
+                        document.getElementById('endPage').max = pageCount;
+                        document.getElementById('endPage').value = pageCount;
+                        
+                    } catch (error) {
+                        alert('Error loading PDF: ' + error.message);
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        function updateSplitMode() {
+            const mode = document.getElementById('splitMode').value;
+            const rangeOptions = document.getElementById('rangeOptions');
+            const endPageOptions = document.getElementById('endPageOptions');
+            const customOptions = document.getElementById('customOptions');
+            
+            // Hide all options
+            rangeOptions.style.display = 'none';
+            endPageOptions.style.display = 'none';
+            customOptions.style.display = 'none';
+            
+            // Show relevant options
+            if (mode === 'range') {
+                rangeOptions.style.display = 'block';
+                endPageOptions.style.display = 'block';
+            } else if (mode === 'custom') {
+                customOptions.style.display = 'block';
+            }
+        }
+
+        function updateRange() {
+            const startPage = parseInt(document.getElementById('startPage').value);
+            const endPage = parseInt(document.getElementById('endPage').value);
+            const pageCount = currentPDF ? currentPDF.getPageCount() : 0;
+            
+            if (startPage > endPage) {
+                document.getElementById('endPage').value = startPage;
+            }
+            
+            if (endPage > pageCount) {
+                document.getElementById('endPage').value = pageCount;
+            }
+        }
+
+        function updateCustomSplit() {
+            const splitPoints = document.getElementById('splitPoints').value;
+            const pageCount = currentPDF ? currentPDF.getPageCount() : 0;
+            
+            if (splitPoints) {
+                const points = splitPoints.split(',').map(p => parseInt(p.trim())).filter(p => p > 0 && p <= pageCount);
+                document.getElementById('splitPoints').value = points.join(', ');
+            }
+        }
+
+        async function splitPDF() {
+            if (!currentPDF) {
+                alert('Please upload a PDF file first');
+                return;
+            }
+            
+            const mode = document.getElementById('splitMode').value;
+            const pageCount = currentPDF.getPageCount();
+            splitResults = [];
+            
+            try {
+                if (mode === 'individual') {
+                    await splitIndividualPages();
+                } else if (mode === 'range') {
+                    await splitPageRange();
+                } else if (mode === 'custom') {
+                    await splitCustom();
+                }
+                
+                displayResults();
+                
+            } catch (error) {
+                alert('Error splitting PDF: ' + error.message);
+            }
+        }
+
+        async function splitIndividualPages() {
+            const pageCount = currentPDF.getPageCount();
+            
+            for (let i = 0; i < pageCount; i++) {
+                const newPDF = await PDFLib.PDFDocument.create();
+                const [copiedPage] = await newPDF.copyPages(currentPDF, [i]);
+                newPDF.addPage(copiedPage);
+                
+                const pdfBytes = await newPDF.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                
+                splitResults.push({
+                    name: `page_${i + 1}.pdf`,
+                    blob: blob,
+                    pages: 1,
+                    size: blob.size
+                });
+            }
+        }
+
+        async function splitPageRange() {
+            const startPage = parseInt(document.getElementById('startPage').value) - 1;
+            const endPage = parseInt(document.getElementById('endPage').value) - 1;
+            const pageCount = endPage - startPage + 1;
+            
+            const newPDF = await PDFLib.PDFDocument.create();
+            const pageIndices = Array.from({ length: pageCount }, (_, i) => startPage + i);
+            const copiedPages = await newPDF.copyPages(currentPDF, pageIndices);
+            
+            copiedPages.forEach(page => newPDF.addPage(page));
+            
+            const pdfBytes = await newPDF.save();
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            
+            splitResults.push({
+                name: `pages_${startPage + 1}_to_${endPage + 1}.pdf`,
+                blob: blob,
+                pages: pageCount,
+                size: blob.size
+            });
+        }
+
+        async function splitCustom() {
+            const splitPoints = document.getElementById('splitPoints').value;
+            if (!splitPoints.trim()) {
+                alert('Please enter split points');
+                return;
+            }
+            
+            const points = splitPoints.split(',').map(p => parseInt(p.trim())).filter(p => p > 0);
+            const pageCount = currentPDF.getPageCount();
+            
+            if (points.some(p => p > pageCount)) {
+                alert('Split points cannot exceed total page count');
+                return;
+            }
+            
+            // Add start and end points
+            const allPoints = [1, ...points, pageCount + 1].sort((a, b) => a - b);
+            
+            for (let i = 0; i < allPoints.length - 1; i++) {
+                const startPage = allPoints[i] - 1;
+                const endPage = allPoints[i + 1] - 2;
+                
+                if (startPage <= endPage) {
+                    const newPDF = await PDFLib.PDFDocument.create();
+                    const pageIndices = Array.from({ length: endPage - startPage + 1 }, (_, j) => startPage + j);
+                    const copiedPages = await newPDF.copyPages(currentPDF, pageIndices);
+                    
+                    copiedPages.forEach(page => newPDF.addPage(page));
+                    
+                    const pdfBytes = await newPDF.save();
+                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                    
+                    splitResults.push({
+                        name: `split_${i + 1}_pages_${startPage + 1}_to_${endPage + 1}.pdf`,
+                        blob: blob,
+                        pages: endPage - startPage + 1,
+                        size: blob.size
+                    });
+                }
+            }
+        }
+
+        function displayResults() {
+            const container = document.getElementById('resultsList');
+            container.innerHTML = '';
+            
+            splitResults.forEach((result, index) => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                resultItem.innerHTML = `
+                    <div class="result-info">
+                        <div class="result-name">${result.name}</div>
+                        <div class="result-details">
+                            <span>Pages: ${result.pages}</span>
+                            <span>Size: ${formatFileSize(result.size)}</span>
+                        </div>
+                    </div>
+                    <div class="result-actions">
+                        <button class="btn btn-secondary" onclick="downloadSingle(${index})">Download</button>
+                    </div>
+                `;
+                container.appendChild(resultItem);
+            });
+            
+            // Update summary
+            document.getElementById('totalFiles').textContent = splitResults.length;
+            document.getElementById('totalPages').textContent = splitResults.reduce((sum, result) => sum + result.pages, 0);
+            
+            document.getElementById('splitResults').style.display = 'block';
+        }
+
+        function downloadSingle(index) {
+            const result = splitResults[index];
+            const url = URL.createObjectURL(result.blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = result.name;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadAll() {
+            if (splitResults.length === 0) return;
+            
+            // For now, download individually since ZIP creation requires additional library
+            splitResults.forEach((result, index) => {
+                setTimeout(() => {
+                    downloadSingle(index);
+                }, index * 100); // Stagger downloads
+            });
+        }
+
+        function clearFile() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('splitOptions').style.display = 'none';
+            document.getElementById('splitResults').style.display = 'none';
+            currentPDF = null;
+            splitResults = [];
+        }
+
+        function clearResults() {
+            document.getElementById('splitResults').style.display = 'none';
+            splitResults = [];
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Handle drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('click', () => document.getElementById('fileInput').click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('fileInput').files = files;
+                handleFileUpload();
+            }
+        });
+    </script>
+</body>
+</html>

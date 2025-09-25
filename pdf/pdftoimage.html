@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to Image Converter - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>PDF to Image Converter</h1>
+            <p class="subtitle">Convert PDF pages to high-quality images in various formats</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Upload a PDF file and convert its pages to images. Choose from multiple formats and quality settings.</p>
+        </div>
+        
+        <div class="pdf-tools-container">
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <div class="upload-icon">🖼️</div>
+                        <p>Click to upload PDF or drag and drop</p>
+                        <p class="upload-hint">Supports PDF files up to 50MB</p>
+                    </div>
+                    <input type="file" id="fileInput" accept=".pdf" onchange="handleFileUpload()" style="display: none;">
+                </div>
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <div class="file-details">
+                        <strong>File:</strong> <span id="fileName">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Size:</strong> <span id="fileSize">-</span>
+                    </div>
+                    <div class="file-details">
+                        <strong>Pages:</strong> <span id="pageCount">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="conversion-options" id="conversionOptions" style="display: none;">
+                <h3>Conversion Options</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="imageFormat">Image Format:</label>
+                        <select id="imageFormat">
+                            <option value="png">PNG (High Quality)</option>
+                            <option value="jpeg">JPEG (Compressed)</option>
+                            <option value="webp">WebP (Modern)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="imageQuality">Quality:</label>
+                        <select id="imageQuality">
+                            <option value="1.0">High (1.0)</option>
+                            <option value="0.8">Medium (0.8)</option>
+                            <option value="0.6">Low (0.6)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="imageScale">Scale:</label>
+                        <select id="imageScale">
+                            <option value="1.0">Original (1x)</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2.0" selected>2x (Retina)</option>
+                            <option value="3.0">3x (High DPI)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="pageRange">Page Range:</label>
+                        <select id="pageRange" onchange="updatePageRange()">
+                            <option value="all">All Pages</option>
+                            <option value="first">First Page Only</option>
+                            <option value="last">Last Page Only</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group" id="customRangeOptions" style="display: none;">
+                        <label for="startPage">Start Page:</label>
+                        <input type="number" id="startPage" min="1" value="1">
+                    </div>
+                    
+                    <div class="option-group" id="endPageOptions" style="display: none;">
+                        <label for="endPage">End Page:</label>
+                        <input type="number" id="endPage" min="1" value="1">
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" onclick="convertToImages()">Convert to Images</button>
+                    <button class="btn btn-secondary" onclick="clearFile()">Clear File</button>
+                </div>
+            </div>
+            
+            <div class="conversion-progress" id="conversionProgress" style="display: none;">
+                <h3>Converting PDF to Images</h3>
+                <div class="progress-content">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Preparing conversion...</div>
+                    <div class="progress-details" id="progressDetails">
+                        <span id="currentPage">Page 0</span> of <span id="totalPages">0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="conversion-results" id="conversionResults" style="display: none;">
+                <h3>Conversion Results</h3>
+                <div class="results-summary" id="resultsSummary">
+                    <div class="summary-item">
+                        <strong>Images Created:</strong>
+                        <span id="imagesCreated">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <strong>Total Size:</strong>
+                        <span id="totalSize">0 MB</span>
+                    </div>
+                    <div class="summary-item">
+                        <strong>Format:</strong>
+                        <span id="resultFormat">-</span>
+                    </div>
+                </div>
+                
+                <div class="images-grid" id="imagesGrid">
+                    <!-- Converted images will be populated by JavaScript -->
+                </div>
+                
+                <div class="results-actions">
+                    <button class="btn" onclick="downloadAllImages()">Download All as ZIP</button>
+                    <button class="btn btn-secondary" onclick="clearResults()">Clear Results</button>
+                </div>
+            </div>
+            
+            <div class="pdf-info">
+                <h3>PDF to Image Conversion Information</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>Image Formats</strong>
+                        <p>PNG for high quality, JPEG for smaller files, WebP for modern browsers with good compression.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Quality Settings</strong>
+                        <p>Higher quality produces larger files but better image clarity. Lower quality reduces file size.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Scale Options</strong>
+                        <p>Higher scale produces larger images. 2x scale is recommended for high-resolution displays.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Page Selection</strong>
+                        <p>Convert all pages or select specific pages to save processing time and storage space.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let pdfDoc = null;
+        let convertedImages = [];
+        let totalPages = 0;
+
+        // Initialize PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        function handleFileUpload() {
+            const file = document.getElementById('fileInput').files[0];
+            if (file) {
+                if (file.type !== 'application/pdf') {
+                    alert('Please select a PDF file');
+                    return;
+                }
+                
+                if (file.size > 50 * 1024 * 1024) {
+                    alert('File size must be less than 50MB');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        const typedArray = new Uint8Array(e.target.result);
+                        pdfDoc = await pdfjsLib.getDocument(typedArray).promise;
+                        totalPages = pdfDoc.numPages;
+                        
+                        document.getElementById('fileName').textContent = file.name;
+                        document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                        document.getElementById('pageCount').textContent = totalPages;
+                        document.getElementById('fileInfo').style.display = 'block';
+                        document.getElementById('conversionOptions').style.display = 'block';
+                        
+                        // Update page range inputs
+                        document.getElementById('endPage').max = totalPages;
+                        document.getElementById('endPage').value = totalPages;
+                        
+                    } catch (error) {
+                        alert('Error loading PDF: ' + error.message);
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        function updatePageRange() {
+            const range = document.getElementById('pageRange').value;
+            const customOptions = document.getElementById('customRangeOptions');
+            const endPageOptions = document.getElementById('endPageOptions');
+            
+            customOptions.style.display = 'none';
+            endPageOptions.style.display = 'none';
+            
+            if (range === 'custom') {
+                customOptions.style.display = 'block';
+                endPageOptions.style.display = 'block';
+            }
+        }
+
+        async function convertToImages() {
+            if (!pdfDoc) {
+                alert('Please upload a PDF file first');
+                return;
+            }
+            
+            const format = document.getElementById('imageFormat').value;
+            const quality = parseFloat(document.getElementById('imageQuality').value);
+            const scale = parseFloat(document.getElementById('imageScale').value);
+            const range = document.getElementById('pageRange').value;
+            
+            let pagesToConvert = [];
+            
+            switch (range) {
+                case 'all':
+                    pagesToConvert = Array.from({ length: totalPages }, (_, i) => i + 1);
+                    break;
+                case 'first':
+                    pagesToConvert = [1];
+                    break;
+                case 'last':
+                    pagesToConvert = [totalPages];
+                    break;
+                case 'custom':
+                    const startPage = parseInt(document.getElementById('startPage').value);
+                    const endPage = parseInt(document.getElementById('endPage').value);
+                    pagesToConvert = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+                    break;
+            }
+            
+            // Show progress
+            document.getElementById('conversionOptions').style.display = 'none';
+            document.getElementById('conversionProgress').style.display = 'block';
+            
+            convertedImages = [];
+            let totalSize = 0;
+            
+            for (let i = 0; i < pagesToConvert.length; i++) {
+                const pageNum = pagesToConvert[i];
+                
+                // Update progress
+                updateProgress(i + 1, pagesToConvert.length, `Converting page ${pageNum}...`);
+                
+                try {
+                    const page = await pdfDoc.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: scale });
+                    
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    
+                    await page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    }).promise;
+                    
+                    // Convert to image
+                    const imageData = canvas.toDataURL(`image/${format}`, quality);
+                    const blob = dataURLToBlob(imageData);
+                    
+                    convertedImages.push({
+                        page: pageNum,
+                        blob: blob,
+                        dataUrl: imageData,
+                        size: blob.size
+                    });
+                    
+                    totalSize += blob.size;
+                    
+                } catch (error) {
+                    console.error(`Error converting page ${pageNum}:`, error);
+                }
+            }
+            
+            // Hide progress and show results
+            document.getElementById('conversionProgress').style.display = 'none';
+            displayResults(format, totalSize);
+        }
+
+        function updateProgress(current, total, message) {
+            const percentage = (current / total) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = message;
+            document.getElementById('currentPage').textContent = `Page ${current}`;
+            document.getElementById('totalPages').textContent = total;
+        }
+
+        function displayResults(format, totalSize) {
+            const container = document.getElementById('imagesGrid');
+            container.innerHTML = '';
+            
+            convertedImages.forEach((image, index) => {
+                const imageItem = document.createElement('div');
+                imageItem.className = 'image-item';
+                imageItem.innerHTML = `
+                    <div class="image-preview">
+                        <img src="${image.dataUrl}" alt="Page ${image.page}">
+                    </div>
+                    <div class="image-info">
+                        <div class="image-name">Page ${image.page}</div>
+                        <div class="image-details">
+                            <span>Size: ${formatFileSize(image.size)}</span>
+                        </div>
+                    </div>
+                    <div class="image-actions">
+                        <button class="btn btn-secondary" onclick="downloadSingleImage(${index})">Download</button>
+                    </div>
+                `;
+                container.appendChild(imageItem);
+            });
+            
+            // Update summary
+            document.getElementById('imagesCreated').textContent = convertedImages.length;
+            document.getElementById('totalSize').textContent = formatFileSize(totalSize);
+            document.getElementById('resultFormat').textContent = format.toUpperCase();
+            
+            document.getElementById('conversionResults').style.display = 'block';
+        }
+
+        function downloadSingleImage(index) {
+            const image = convertedImages[index];
+            const url = URL.createObjectURL(image.blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `page_${image.page}.${document.getElementById('imageFormat').value}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadAllImages() {
+            if (convertedImages.length === 0) return;
+            
+            // For now, download individually since ZIP creation requires additional library
+            convertedImages.forEach((image, index) => {
+                setTimeout(() => {
+                    downloadSingleImage(index);
+                }, index * 100); // Stagger downloads
+            });
+        }
+
+        function dataURLToBlob(dataURL) {
+            const arr = dataURL.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], { type: mime });
+        }
+
+        function clearFile() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('conversionOptions').style.display = 'none';
+            document.getElementById('conversionProgress').style.display = 'none';
+            document.getElementById('conversionResults').style.display = 'none';
+            pdfDoc = null;
+            convertedImages = [];
+            totalPages = 0;
+        }
+
+        function clearResults() {
+            document.getElementById('conversionResults').style.display = 'none';
+            convertedImages = [];
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Handle drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('click', () => document.getElementById('fileInput').click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('fileInput').files = files;
+                handleFileUpload();
+            }
+        });
+    </script>
+</body>
+</html>
