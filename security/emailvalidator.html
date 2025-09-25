@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Validator - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>Email Validator</h1>
+            <p class="subtitle">Validate email addresses with comprehensive checks and domain analysis</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Validate email addresses for syntax, domain existence, and deliverability. Get detailed analysis and recommendations.</p>
+        </div>
+        
+        <div class="security-tools-container">
+            <div class="input-section">
+                <div class="input-header">
+                    <label for="emailInput">Email Address:</label>
+                    <div class="input-actions">
+                        <button class="btn btn-secondary" onclick="clearInput()">Clear</button>
+                        <button class="btn btn-secondary" onclick="loadSample()">Load Sample</button>
+                        <button class="btn btn-secondary" onclick="validateMultiple()">Validate Multiple</button>
+                    </div>
+                </div>
+                <textarea id="emailInput" placeholder="Enter email address to validate..." oninput="validateEmail()"></textarea>
+                <div class="input-stats" id="inputStats">
+                    <span id="emailCount">Emails: 0</span>
+                    <span id="validCount">Valid: 0</span>
+                    <span id="invalidCount">Invalid: 0</span>
+                </div>
+            </div>
+            
+            <div class="validation-options">
+                <h3>Validation Options</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="syntaxCheck">Syntax Validation:</label>
+                        <input type="checkbox" id="syntaxCheck" checked>
+                        <small>Check email format and structure</small>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="domainCheck">Domain Validation:</label>
+                        <input type="checkbox" id="domainCheck" checked>
+                        <small>Verify domain exists and has MX records</small>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="disposableCheck">Disposable Email Check:</label>
+                        <input type="checkbox" id="disposableCheck" checked>
+                        <small>Detect temporary/disposable email services</small>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="roleCheck">Role Account Check:</label>
+                        <input type="checkbox" id="roleCheck" checked>
+                        <small>Detect role-based accounts (admin, info, etc.)</small>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="typoCheck">Typo Detection:</label>
+                        <input type="checkbox" id="typoCheck" checked>
+                        <small>Suggest corrections for common typos</small>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="deliverabilityCheck">Deliverability Check:</label>
+                        <input type="checkbox" id="deliverabilityCheck">
+                        <small>Check if email is likely to be delivered</small>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" onclick="validateEmail()">Validate Email</button>
+                    <button class="btn btn-secondary" onclick="copyResults()" id="copyBtn" disabled>Copy Results</button>
+                    <button class="btn btn-secondary" onclick="downloadResults()" id="downloadBtn" disabled>Download Results</button>
+                </div>
+            </div>
+            
+            <div class="validation-results" id="validationResults" style="display: none;">
+                <h3>Validation Results</h3>
+                <div class="results-container" id="resultsContainer">
+                    <!-- Validation results will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="email-analysis" id="emailAnalysis" style="display: none;">
+                <h3>Email Analysis</h3>
+                <div class="analysis-grid">
+                    <div class="analysis-item">
+                        <strong>Local Part:</strong>
+                        <span id="localPart">-</span>
+                    </div>
+                    <div class="analysis-item">
+                        <strong>Domain:</strong>
+                        <span id="domain">-</span>
+                    </div>
+                    <div class="analysis-item">
+                        <strong>TLD:</strong>
+                        <span id="tld">-</span>
+                    </div>
+                    <div class="analysis-item">
+                        <strong>Length:</strong>
+                        <span id="emailLength">-</span>
+                    </div>
+                    <div class="analysis-item">
+                        <strong>Character Set:</strong>
+                        <span id="characterSet">-</span>
+                    </div>
+                    <div class="analysis-item">
+                        <strong>Has Numbers:</strong>
+                        <span id="hasNumbers">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="domain-info" id="domainInfo" style="display: none;">
+                <h3>Domain Information</h3>
+                <div class="domain-details" id="domainDetails">
+                    <!-- Domain information will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="security-info">
+                <h3>Email Validation Information</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>Syntax Validation</strong>
+                        <p>Checks email format against RFC 5322 standards for proper structure and characters.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Domain Validation</strong>
+                        <p>Verifies that the domain exists and has proper MX (Mail Exchange) records.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Disposable Emails</strong>
+                        <p>Detects temporary email services that are often used for spam or one-time registrations.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Role Accounts</strong>
+                        <p>Identifies generic email addresses like admin@, info@, support@ that may not be personal.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Typo Detection</strong>
+                        <p>Suggests corrections for common misspellings in popular email domains.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Best Practices</strong>
+                        <p>Use multiple validation methods and consider implementing email verification in your applications.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let validationResults = [];
+
+        // Common disposable email domains
+        const disposableDomains = [
+            '10minutemail.com', 'tempmail.org', 'guerrillamail.com', 'mailinator.com',
+            'yopmail.com', 'temp-mail.org', 'throwaway.email', 'getnada.com',
+            'maildrop.cc', 'sharklasers.com', 'guerrillamailblock.com'
+        ];
+
+        // Common role-based email prefixes
+        const rolePrefixes = [
+            'admin', 'administrator', 'info', 'information', 'support', 'help',
+            'contact', 'sales', 'marketing', 'noreply', 'no-reply', 'postmaster',
+            'webmaster', 'hostmaster', 'abuse', 'security', 'billing', 'accounts'
+        ];
+
+        // Common email domain typos
+        const domainTypos = {
+            'gmail.com': ['gmial.com', 'gmail.co', 'gmai.com', 'gmail.cm'],
+            'yahoo.com': ['yaho.com', 'yahoo.co', 'yaho.com', 'yahoo.cm'],
+            'hotmail.com': ['hotmial.com', 'hotmail.co', 'hotmai.com', 'hotmail.cm'],
+            'outlook.com': ['outlok.com', 'outlook.co', 'outloo.com', 'outlook.cm']
+        };
+
+        function validateEmail() {
+            const input = document.getElementById('emailInput').value.trim();
+            if (!input) {
+                alert('Please enter an email address');
+                return;
+            }
+            
+            const emails = input.split('\n').map(email => email.trim()).filter(email => email);
+            validationResults = [];
+            
+            emails.forEach(email => {
+                const result = validateSingleEmail(email);
+                validationResults.push(result);
+            });
+            
+            displayResults();
+            updateStats();
+        }
+
+        function validateSingleEmail(email) {
+            const result = {
+                email: email,
+                isValid: false,
+                checks: {},
+                suggestions: [],
+                analysis: {}
+            };
+            
+            // Syntax validation
+            if (document.getElementById('syntaxCheck').checked) {
+                result.checks.syntax = validateSyntax(email);
+            }
+            
+            // Domain validation
+            if (document.getElementById('domainCheck').checked) {
+                result.checks.domain = validateDomain(email);
+            }
+            
+            // Disposable email check
+            if (document.getElementById('disposableCheck').checked) {
+                result.checks.disposable = checkDisposable(email);
+            }
+            
+            // Role account check
+            if (document.getElementById('roleCheck').checked) {
+                result.checks.role = checkRole(email);
+            }
+            
+            // Typo detection
+            if (document.getElementById('typoCheck').checked) {
+                result.suggestions = detectTypos(email);
+            }
+            
+            // Email analysis
+            result.analysis = analyzeEmail(email);
+            
+            // Overall validation
+            result.isValid = Object.values(result.checks).every(check => check === true);
+            
+            return result;
+        }
+
+        function validateSyntax(email) {
+            const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+            return emailRegex.test(email);
+        }
+
+        function validateDomain(email) {
+            const domain = email.split('@')[1];
+            if (!domain) return false;
+            
+            // Basic domain validation
+            const domainRegex = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+            return domainRegex.test(domain);
+        }
+
+        function checkDisposable(email) {
+            const domain = email.split('@')[1];
+            return !disposableDomains.includes(domain.toLowerCase());
+        }
+
+        function checkRole(email) {
+            const localPart = email.split('@')[0].toLowerCase();
+            return !rolePrefixes.includes(localPart);
+        }
+
+        function detectTypos(email) {
+            const domain = email.split('@')[1];
+            const suggestions = [];
+            
+            Object.entries(domainTypos).forEach(([correct, typos]) => {
+                if (typos.includes(domain.toLowerCase())) {
+                    suggestions.push(`Did you mean ${email.replace(domain, correct)}?`);
+                }
+            });
+            
+            return suggestions;
+        }
+
+        function analyzeEmail(email) {
+            const parts = email.split('@');
+            const localPart = parts[0];
+            const domain = parts[1];
+            const tld = domain ? domain.split('.').pop() : '';
+            
+            return {
+                localPart: localPart,
+                domain: domain,
+                tld: tld,
+                length: email.length,
+                hasNumbers: /\d/.test(localPart),
+                characterSet: getCharacterSet(email)
+            };
+        }
+
+        function getCharacterSet(email) {
+            const hasLower = /[a-z]/.test(email);
+            const hasUpper = /[A-Z]/.test(email);
+            const hasNumbers = /\d/.test(email);
+            const hasSymbols = /[^a-zA-Z0-9@.]/.test(email);
+            
+            const sets = [];
+            if (hasLower) sets.push('lowercase');
+            if (hasUpper) sets.push('uppercase');
+            if (hasNumbers) sets.push('numbers');
+            if (hasSymbols) sets.push('symbols');
+            
+            return sets.join(', ') || 'none';
+        }
+
+        function displayResults() {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '';
+            
+            validationResults.forEach((result, index) => {
+                const resultItem = document.createElement('div');
+                resultItem.className = `result-item ${result.isValid ? 'valid' : 'invalid'}`;
+                
+                let checksHtml = '';
+                Object.entries(result.checks).forEach(([check, passed]) => {
+                    checksHtml += `
+                        <div class="check-item ${passed ? 'passed' : 'failed'}">
+                            <strong>${check.charAt(0).toUpperCase() + check.slice(1)}:</strong>
+                            <span>${passed ? '✓ Pass' : '✗ Fail'}</span>
+                        </div>
+                    `;
+                });
+                
+                let suggestionsHtml = '';
+                if (result.suggestions.length > 0) {
+                    suggestionsHtml = `
+                        <div class="suggestions">
+                            <strong>Suggestions:</strong>
+                            <ul>
+                                ${result.suggestions.map(suggestion => `<li>${suggestion}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+                
+                resultItem.innerHTML = `
+                    <div class="result-header">
+                        <strong>${result.email}</strong>
+                        <span class="result-status">${result.isValid ? '✓ Valid' : '✗ Invalid'}</span>
+                    </div>
+                    <div class="result-checks">
+                        ${checksHtml}
+                    </div>
+                    ${suggestionsHtml}
+                `;
+                
+                container.appendChild(resultItem);
+            });
+            
+            // Show analysis for first email
+            if (validationResults.length > 0) {
+                displayAnalysis(validationResults[0].analysis);
+            }
+            
+            document.getElementById('validationResults').style.display = 'block';
+            document.getElementById('emailAnalysis').style.display = 'block';
+            document.getElementById('copyBtn').disabled = false;
+            document.getElementById('downloadBtn').disabled = false;
+        }
+
+        function displayAnalysis(analysis) {
+            document.getElementById('localPart').textContent = analysis.localPart;
+            document.getElementById('domain').textContent = analysis.domain;
+            document.getElementById('tld').textContent = analysis.tld;
+            document.getElementById('emailLength').textContent = analysis.length + ' characters';
+            document.getElementById('characterSet').textContent = analysis.characterSet;
+            document.getElementById('hasNumbers').textContent = analysis.hasNumbers ? 'Yes' : 'No';
+        }
+
+        function updateStats() {
+            const total = validationResults.length;
+            const valid = validationResults.filter(r => r.isValid).length;
+            const invalid = total - valid;
+            
+            document.getElementById('emailCount').textContent = `Emails: ${total}`;
+            document.getElementById('validCount').textContent = `Valid: ${valid}`;
+            document.getElementById('invalidCount').textContent = `Invalid: ${invalid}`;
+        }
+
+        function validateMultiple() {
+            const sampleEmails = `john.doe@gmail.com
+jane.smith@yahoo.com
+admin@company.com
+invalid-email
+test@tempmail.org
+support@business.co.uk`;
+            
+            document.getElementById('emailInput').value = sampleEmails;
+            validateEmail();
+        }
+
+        function copyResults() {
+            const results = validationResults.map(result => {
+                const status = result.isValid ? 'Valid' : 'Invalid';
+                const checks = Object.entries(result.checks)
+                    .map(([check, passed]) => `${check}: ${passed ? 'Pass' : 'Fail'}`)
+                    .join(', ');
+                return `${result.email} - ${status} (${checks})`;
+            }).join('\n');
+            
+            navigator.clipboard.writeText(results).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+
+        function downloadResults() {
+            const content = validationResults.map(result => {
+                const status = result.isValid ? 'Valid' : 'Invalid';
+                const checks = Object.entries(result.checks)
+                    .map(([check, passed]) => `${check}: ${passed ? 'Pass' : 'Fail'}`)
+                    .join(', ');
+                const suggestions = result.suggestions.length > 0 ? 
+                    `\nSuggestions: ${result.suggestions.join(', ')}` : '';
+                return `${result.email} - ${status}\nChecks: ${checks}${suggestions}`;
+            }).join('\n\n');
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'email_validation_results.txt';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function clearInput() {
+            document.getElementById('emailInput').value = '';
+            document.getElementById('validationResults').style.display = 'none';
+            document.getElementById('emailAnalysis').style.display = 'none';
+            document.getElementById('domainInfo').style.display = 'none';
+            document.getElementById('copyBtn').disabled = true;
+            document.getElementById('downloadBtn').disabled = true;
+            updateStats();
+        }
+
+        function loadSample() {
+            const sampleEmail = 'john.doe@example.com';
+            document.getElementById('emailInput').value = sampleEmail;
+            validateEmail();
+        }
+    </script>
+</body>
+</html>

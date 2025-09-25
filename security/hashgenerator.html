@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Generator - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <header>
+            <h1>Hash Generator</h1>
+            <p class="subtitle">Generate cryptographic hashes for text, files, and data integrity verification</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Generate cryptographic hashes for text input or file uploads. Supports multiple hash algorithms for data integrity and security.</p>
+        </div>
+        
+        <div class="security-tools-container">
+            <div class="input-section">
+                <div class="input-header">
+                    <label>Input Source:</label>
+                    <div class="input-actions">
+                        <button class="btn btn-secondary" onclick="clearInput()">Clear</button>
+                        <button class="btn btn-secondary" onclick="loadSample()">Load Sample</button>
+                    </div>
+                </div>
+                
+                <div class="source-tabs">
+                    <button class="tab-btn active" onclick="switchTab('text')">Text Input</button>
+                    <button class="tab-btn" onclick="switchTab('file')">File Upload</button>
+                </div>
+                
+                <div class="tab-content" id="textTab">
+                    <div class="text-input-group">
+                        <label for="textInput">Enter text to hash:</label>
+                        <textarea id="textInput" placeholder="Enter text to generate hash..." oninput="updateTextStats()"></textarea>
+                    </div>
+                    <div class="text-stats" id="textStats">
+                        <span id="textLength">Length: 0</span>
+                        <span id="textChars">Characters: 0</span>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="fileTab" style="display: none;">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-content">
+                            <div class="upload-icon">📁</div>
+                            <p>Click to upload file or drag and drop</p>
+                            <p class="upload-hint">Supports any file type</p>
+                        </div>
+                        <input type="file" id="fileInput" onchange="handleFileUpload()" style="display: none;">
+                    </div>
+                    <div class="file-info" id="fileInfo" style="display: none;">
+                        <div class="file-details">
+                            <strong>File:</strong> <span id="fileName">-</span>
+                        </div>
+                        <div class="file-details">
+                            <strong>Size:</strong> <span id="fileSize">-</span>
+                        </div>
+                        <div class="file-details">
+                            <strong>Type:</strong> <span id="fileType">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hash-options">
+                <h3>Hash Algorithms</h3>
+                <div class="algorithms-grid">
+                    <div class="algorithm-group">
+                        <label for="md5">MD5:</label>
+                        <input type="checkbox" id="md5" checked>
+                        <small>128-bit hash (fast, not secure)</small>
+                    </div>
+                    
+                    <div class="algorithm-group">
+                        <label for="sha1">SHA-1:</label>
+                        <input type="checkbox" id="sha1" checked>
+                        <small>160-bit hash (deprecated)</small>
+                    </div>
+                    
+                    <div class="algorithm-group">
+                        <label for="sha256">SHA-256:</label>
+                        <input type="checkbox" id="sha256" checked>
+                        <small>256-bit hash (recommended)</small>
+                    </div>
+                    
+                    <div class="algorithm-group">
+                        <label for="sha512">SHA-512:</label>
+                        <input type="checkbox" id="sha512">
+                        <small>512-bit hash (high security)</small>
+                    </div>
+                    
+                    <div class="algorithm-group">
+                        <label for="sha3">SHA-3:</label>
+                        <input type="checkbox" id="sha3">
+                        <small>SHA-3 family (newest standard)</small>
+                    </div>
+                    
+                    <div class="algorithm-group">
+                        <label for="blake2b">BLAKE2b:</label>
+                        <input type="checkbox" id="blake2b">
+                        <small>Fast, secure hash function</small>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" onclick="generateHashes()">Generate Hashes</button>
+                    <button class="btn btn-secondary" onclick="copyAllHashes()" id="copyAllBtn" disabled>Copy All</button>
+                    <button class="btn btn-secondary" onclick="downloadHashes()" id="downloadBtn" disabled>Download Results</button>
+                </div>
+            </div>
+            
+            <div class="hash-results" id="hashResults" style="display: none;">
+                <h3>Generated Hashes</h3>
+                <div class="results-container" id="resultsContainer">
+                    <!-- Hash results will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="hash-comparison" id="hashComparison" style="display: none;">
+                <h3>Hash Comparison</h3>
+                <div class="comparison-input">
+                    <label for="compareHash">Compare with hash:</label>
+                    <input type="text" id="compareHash" placeholder="Enter hash to compare..." oninput="compareHashes()">
+                </div>
+                <div class="comparison-results" id="comparisonResults">
+                    <!-- Comparison results will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="security-info">
+                <h3>Hash Function Information</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>MD5</strong>
+                        <p>Fast but cryptographically broken. Use only for non-security purposes like checksums.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>SHA-1</strong>
+                        <p>Deprecated due to collision vulnerabilities. Not recommended for new applications.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>SHA-256</strong>
+                        <p>Widely used, secure hash function. Recommended for most applications.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>SHA-512</strong>
+                        <p>Higher security than SHA-256. Good for applications requiring extra security.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>SHA-3</strong>
+                        <p>Latest SHA standard. Designed to be different from SHA-2 family.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>BLAKE2b</strong>
+                        <p>Fast, secure alternative to SHA-3. Used in many modern applications.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let currentHashes = {};
+        let currentInput = '';
+        let currentFile = null;
+        let currentTab = 'text';
+
+        function switchTab(tab) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tab + 'Tab').style.display = 'block';
+            event.target.classList.add('active');
+            
+            currentTab = tab;
+        }
+
+        function updateTextStats() {
+            const text = document.getElementById('textInput').value;
+            const length = text.length;
+            const chars = text.length;
+            
+            document.getElementById('textLength').textContent = `Length: ${length}`;
+            document.getElementById('textChars').textContent = `Characters: ${chars}`;
+        }
+
+        function handleFileUpload() {
+            const file = document.getElementById('fileInput').files[0];
+            if (file) {
+                currentFile = file;
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                document.getElementById('fileType').textContent = file.type || 'Unknown';
+                document.getElementById('fileInfo').style.display = 'block';
+            }
+        }
+
+        function generateHashes() {
+            if (currentTab === 'text') {
+                const text = document.getElementById('textInput').value;
+                if (!text.trim()) {
+                    alert('Please enter text to hash');
+                    return;
+                }
+                currentInput = text;
+                generateTextHashes(text);
+            } else {
+                if (!currentFile) {
+                    alert('Please upload a file first');
+                    return;
+                }
+                generateFileHashes(currentFile);
+            }
+        }
+
+        function generateTextHashes(text) {
+            const hashes = {};
+            const algorithms = getSelectedAlgorithms();
+            
+            algorithms.forEach(algorithm => {
+                try {
+                    let hash;
+                    switch (algorithm) {
+                        case 'md5':
+                            hash = CryptoJS.MD5(text).toString();
+                            break;
+                        case 'sha1':
+                            hash = CryptoJS.SHA1(text).toString();
+                            break;
+                        case 'sha256':
+                            hash = CryptoJS.SHA256(text).toString();
+                            break;
+                        case 'sha512':
+                            hash = CryptoJS.SHA512(text).toString();
+                            break;
+                        case 'sha3':
+                            hash = CryptoJS.SHA3(text).toString();
+                            break;
+                        case 'blake2b':
+                            // Note: BLAKE2b is not available in crypto-js, using SHA-256 as fallback
+                            hash = CryptoJS.SHA256(text).toString() + ' (BLAKE2b not available)';
+                            break;
+                    }
+                    hashes[algorithm] = hash;
+                } catch (error) {
+                    hashes[algorithm] = 'Error: ' + error.message;
+                }
+            });
+            
+            currentHashes = hashes;
+            displayHashes(hashes);
+        }
+
+        function generateFileHashes(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const hashes = {};
+                const algorithms = getSelectedAlgorithms();
+                
+                algorithms.forEach(algorithm => {
+                    try {
+                        let hash;
+                        switch (algorithm) {
+                            case 'md5':
+                                hash = CryptoJS.MD5(CryptoJS.lib.WordArray.create(content)).toString();
+                                break;
+                            case 'sha1':
+                                hash = CryptoJS.SHA1(CryptoJS.lib.WordArray.create(content)).toString();
+                                break;
+                            case 'sha256':
+                                hash = CryptoJS.SHA256(CryptoJS.lib.WordArray.create(content)).toString();
+                                break;
+                            case 'sha512':
+                                hash = CryptoJS.SHA512(CryptoJS.lib.WordArray.create(content)).toString();
+                                break;
+                            case 'sha3':
+                                hash = CryptoJS.SHA3(CryptoJS.lib.WordArray.create(content)).toString();
+                                break;
+                            case 'blake2b':
+                                hash = CryptoJS.SHA256(CryptoJS.lib.WordArray.create(content)).toString() + ' (BLAKE2b not available)';
+                                break;
+                        }
+                        hashes[algorithm] = hash;
+                    } catch (error) {
+                        hashes[algorithm] = 'Error: ' + error.message;
+                    }
+                });
+                
+                currentHashes = hashes;
+                displayHashes(hashes);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function getSelectedAlgorithms() {
+            const algorithms = [];
+            if (document.getElementById('md5').checked) algorithms.push('md5');
+            if (document.getElementById('sha1').checked) algorithms.push('sha1');
+            if (document.getElementById('sha256').checked) algorithms.push('sha256');
+            if (document.getElementById('sha512').checked) algorithms.push('sha512');
+            if (document.getElementById('sha3').checked) algorithms.push('sha3');
+            if (document.getElementById('blake2b').checked) algorithms.push('blake2b');
+            return algorithms;
+        }
+
+        function displayHashes(hashes) {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '';
+            
+            Object.entries(hashes).forEach(([algorithm, hash]) => {
+                const hashItem = document.createElement('div');
+                hashItem.className = 'hash-item';
+                hashItem.innerHTML = `
+                    <div class="hash-header">
+                        <strong>${algorithm.toUpperCase()}:</strong>
+                        <button class="copy-hash-btn" onclick="copyHash('${hash}')">Copy</button>
+                    </div>
+                    <div class="hash-value">${hash}</div>
+                `;
+                container.appendChild(hashItem);
+            });
+            
+            document.getElementById('hashResults').style.display = 'block';
+            document.getElementById('hashComparison').style.display = 'block';
+            document.getElementById('copyAllBtn').disabled = false;
+            document.getElementById('downloadBtn').disabled = false;
+        }
+
+        function copyHash(hash) {
+            navigator.clipboard.writeText(hash).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+
+        function copyAllHashes() {
+            const allHashes = Object.entries(currentHashes)
+                .map(([algorithm, hash]) => `${algorithm.toUpperCase()}: ${hash}`)
+                .join('\n');
+            
+            navigator.clipboard.writeText(allHashes).then(() => {
+                const btn = document.getElementById('copyAllBtn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+
+        function downloadHashes() {
+            const content = Object.entries(currentHashes)
+                .map(([algorithm, hash]) => `${algorithm.toUpperCase()}: ${hash}`)
+                .join('\n');
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'hashes.txt';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function compareHashes() {
+            const compareHash = document.getElementById('compareHash').value.trim();
+            if (!compareHash) {
+                document.getElementById('comparisonResults').innerHTML = '';
+                return;
+            }
+            
+            const results = [];
+            Object.entries(currentHashes).forEach(([algorithm, hash]) => {
+                const matches = hash.toLowerCase() === compareHash.toLowerCase();
+                results.push({
+                    algorithm: algorithm.toUpperCase(),
+                    matches: matches,
+                    hash: hash
+                });
+            });
+            
+            const container = document.getElementById('comparisonResults');
+            container.innerHTML = results.map(result => `
+                <div class="comparison-item ${result.matches ? 'match' : 'no-match'}">
+                    <strong>${result.algorithm}:</strong>
+                    <span class="comparison-status">${result.matches ? '✓ Match' : '✗ No Match'}</span>
+                </div>
+            `).join('');
+        }
+
+        function clearInput() {
+            if (currentTab === 'text') {
+                document.getElementById('textInput').value = '';
+                updateTextStats();
+            } else {
+                document.getElementById('fileInput').value = '';
+                document.getElementById('fileInfo').style.display = 'none';
+                currentFile = null;
+            }
+            
+            document.getElementById('hashResults').style.display = 'none';
+            document.getElementById('hashComparison').style.display = 'none';
+            document.getElementById('copyAllBtn').disabled = true;
+            document.getElementById('downloadBtn').disabled = true;
+        }
+
+        function loadSample() {
+            const sampleText = 'Hello, World! This is a sample text for hash generation.';
+            document.getElementById('textInput').value = sampleText;
+            updateTextStats();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Handle drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('click', () => document.getElementById('fileInput').click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('fileInput').files = files;
+                handleFileUpload();
+            }
+        });
+    </script>
+</body>
+</html>
