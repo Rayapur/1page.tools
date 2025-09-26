@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https: http: 'unsafe-inline' 'unsafe-eval';">
     <title>QR Code Generator - 1Page Tools</title>
     <link rel="stylesheet" href="../css/theme.css">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" onerror="loadQRFallback()"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" 
+            onerror="loadQRFallback()" 
+            crossorigin="anonymous"
+            onload="console.log('Primary QRCode library loaded successfully')"
+            defer></script>
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
             crossorigin="anonymous"></script>
@@ -509,40 +514,121 @@
         // Fallback function for loading QRCode library
         function loadQRFallback() {
             console.warn('QR Code library failed to load from primary CDN. Trying fallback...');
-            const script = document.createElement('script');
-            script.src = 'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js';
-            script.onerror = function() {
-                console.error('Both QR Code library CDNs failed to load');
-                showLibraryError();
-            };
-            script.onload = function() {
-                console.log('QR Code library loaded from fallback CDN');
-            };
-            document.head.appendChild(script);
+            const fallbacks = [
+                'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
+                'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js?bust=' + Date.now(),
+                'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js?t=' + Date.now(),
+                'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.4.4/qrcode.min.js'
+            ];
+            
+            let fallbackIndex = 0;
+            
+            function tryNextFallback() {
+                if (fallbackIndex >= fallbacks.length) {
+                    console.error('All QR Code library CDNs failed to load');
+                    showLibraryError();
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = fallbacks[fallbackIndex];
+                script.crossOrigin = 'anonymous';
+                
+                // Set a timeout for Firefox compatibility
+                const timeout = setTimeout(function() {
+                    script.onload = script.onerror = null;
+                    console.warn(`Fallback ${fallbackIndex + 1} timeout: ${fallbacks[fallbackIndex]}`);
+                    fallbackIndex++;
+                    tryNextFallback();
+                }, 10000); // 10 second timeout
+                
+                script.onerror = function() {
+                    clearTimeout(timeout);
+                    console.warn(`Fallback ${fallbackIndex + 1} failed: ${fallbacks[fallbackIndex]}`);
+                    fallbackIndex++;
+                    tryNextFallback();
+                };
+                script.onload = function() {
+                    clearTimeout(timeout);
+                    console.log('QR Code library loaded from fallback CDN:', fallbacks[fallbackIndex]);
+                    // Check if QRCode is available after loading
+                    setTimeout(function() {
+                        if (typeof QRCode !== 'undefined') {
+                            hideLibraryError();
+                        }
+                    }, 100);
+                };
+                document.head.appendChild(script);
+            }
+            
+            tryNextFallback();
         }
 
+        let libraryErrorDiv = null;
+        
         function showLibraryError() {
-            const alertDiv = document.createElement('div');
-            alertDiv.innerHTML = `
-                <div style="background: #ff4444; color: white; padding: 10px; margin: 10px; border-radius: 5px;">
+            if (libraryErrorDiv) return; // Already showing error
+            
+            libraryErrorDiv = document.createElement('div');
+            libraryErrorDiv.id = 'qr-library-error';
+            libraryErrorDiv.innerHTML = `
+                <div style="background: #ff4444; color: white; padding: 10px; margin: 10px; border-radius: 5px; text-align: center;">
                     <strong>Error:</strong> QR Code library could not be loaded. 
-                    Please check your internet connection and refresh the page.
+                    Please check your internet connection and refresh the page, or try a different browser.
+                    <br><br>
+                    <button onclick="retryLibraryLoad()" style="background: white; color: #ff4444; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-right: 10px;">
+                        Retry Loading
+                    </button>
+                    <button onclick="this.parentElement.parentElement.remove(); libraryErrorDiv = null;" style="background: #ffaaaa; color: #000; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                        Dismiss
+                    </button>
                 </div>
             `;
-            document.body.insertBefore(alertDiv, document.querySelector('.container'));
+            document.body.insertBefore(libraryErrorDiv, document.querySelector('.container'));
+        }
+        
+        function hideLibraryError() {
+            if (libraryErrorDiv) {
+                libraryErrorDiv.remove();
+                libraryErrorDiv = null;
+            }
+        }
+        
+        function retryLibraryLoad() {
+            console.log('User requested library reload retry');
+            hideLibraryError();
+            loadQRFallback();
         }
 
         function pageLoadCheck() {
             // Check if QRCode library is available after page loads
             if (typeof QRCode === 'undefined') {
-                console.warn('QR Code library not detected, will retry in 1 second...');
+                console.warn('QR Code library not detected, will retry in 2 seconds...');
                 setTimeout(function() {
                     if (typeof QRCode === 'undefined') {
+                        console.warn('QR Code library still not available, trying fallbacks...');
+                        loadQRFallback();
+                    }
+                }, 2000);
+                
+                // Also try checking periodically in case of slow loading
+                let retryCount = 0;
+                const checkInterval = setInterval(function() {
+                    retryCount++;
+                    if (typeof QRCode !== 'undefined') {
+                        console.log('QR Code library loaded successfully on retry', retryCount);
+                        clearInterval(checkInterval);
+                        hideLibraryError();
+                    } else if (retryCount >= 10) { // Stop after 10 seconds
+                        console.warn('QR Code library failed to load after 10 seconds, trying fallbacks');
+                        clearInterval(checkInterval);
                         loadQRFallback();
                     }
                 }, 1000);
             } else {
-                console.log('QR Code library loaded successfully');
+                console.log('QR Code library loaded successfully on first check');
+                hideLibraryError();
             }
         }
 
