@@ -1,6 +1,13 @@
 User-agent: *
 Allow: /
 
+# Allow Googlebot and AdSense crawlers explicitly
+User-agent: Googlebot
+Allow: /
+
+User-agent: Mediapartners-Google
+Allow: /
+
 # Sitemap
 Sitemap: https://1page.tools/sitemap.xml
 
