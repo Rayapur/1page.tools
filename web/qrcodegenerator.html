@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../css/theme.css">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" onerror="loadQRFallback()"></script>
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
             crossorigin="anonymous"></script>
@@ -251,6 +251,13 @@
         }
 
         function generateQR() {
+            // Check if QRCode library is loaded
+            if (typeof QRCode === 'undefined') {
+                alert('QR Code library not loaded. Please wait a moment or refresh the page.');
+                loadQRFallback();
+                return;
+            }
+            
             const type = document.getElementById('qrType').value;
             let data = '';
             
@@ -295,22 +302,57 @@
             
             const canvas = document.getElementById('qrCanvas');
             
-            QRCode.toCanvas(canvas, data, options, function (error) {
-                if (error) {
-                    alert('Error generating QR code: ' + error.message);
+            if (!canvas) {
+                alert('Canvas element not found');
+                return;
+            }
+            
+            try {
+                // Clear any existing content and set up the canvas properly
+                const ctx = canvas.getContext('2d');
+                const size = parseInt(document.getElementById('qrSize').value);
+                
+                // Set the display size
+                canvas.style.width = size + 'px';
+                canvas.style.height = size + 'px';
+                
+                // Set the actual canvas size to ensure crisp rendering
+                const dpr = window.devicePixelRatio || 1;
+                canvas.width = size * dpr;
+                canvas.height = size * dpr;
+                ctx.scale(dpr, dpr);
+                
+                // Clear the canvas
+                ctx.clearRect(0, 0, size, size);
+                
+                // Add the library check here since this is where it matters most
+                if (typeof QRCode === 'undefined') {
+                    alert('QR Code library not loaded. Please refresh the page and try again.');
+                    loadQRFallback();
                     return;
                 }
                 
-                document.getElementById('qrResult').style.display = 'block';
-                updateQRInfo();
-                
-                // Enable download buttons
-                document.getElementById('downloadBtn').disabled = false;
-                document.getElementById('downloadSvgBtn').disabled = false;
-                
-                // Scroll to result
-                document.getElementById('qrResult').scrollIntoView({ behavior: 'smooth' });
-            });
+                QRCode.toCanvas(canvas, data, options, function (error) {
+                    if (error) {
+                        console.error('QR Code generation error:', error);
+                        alert('Error generating QR code: ' + error.message);
+                        return;
+                    }
+                    
+                    document.getElementById('qrResult').style.display = 'block';
+                    updateQRInfo();
+                    
+                    // Enable download buttons
+                    document.getElementById('downloadBtn').disabled = false;
+                    document.getElementById('downloadSvgBtn').disabled = false;
+                    
+                    // Scroll to result
+                    document.getElementById('qrResult').scrollIntoView({ behavior: 'smooth' });
+                });
+            } catch (error) {
+                console.error('QR Code generation error:', error);
+                alert('Error generating QR code: ' + error.message);
+            }
         }
 
         function generateWifiQR() {
@@ -412,6 +454,11 @@
         }
 
         function downloadSVG() {
+            if (!currentQRData.trim()) {
+                alert('Please generate a QR code first');
+                return;
+            }
+            
             const options = {
                 width: parseInt(document.getElementById('qrSize').value),
                 margin: parseInt(document.getElementById('margin').value),
@@ -422,22 +469,27 @@
                 errorCorrectionLevel: document.getElementById('errorLevel').value
             };
             
-            QRCode.toString(currentQRData, { ...options, type: 'svg' }, function (error, string) {
-                if (error) {
-                    alert('Error generating SVG: ' + error.message);
-                    return;
-                }
-                
-                const blob = new Blob([string], { type: 'image/svg+xml' });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.download = 'qrcode.svg';
-                link.href = url;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
-            });
+            try {
+                QRCode.toString(currentQRData, { ...options, type: 'svg' }, function (error, string) {
+                    if (error) {
+                        alert('Error generating SVG: ' + error.message);
+                        return;
+                    }
+                    
+                    const blob = new Blob([string], { type: 'image/svg+xml' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = 'qrcode.svg';
+                    link.href = url;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                });
+            } catch (error) {
+                console.error('SVG generation error:', error);
+                alert('Error generating SVG: ' + error.message);
+            }
         }
 
         function clearInput() {
@@ -454,8 +506,49 @@
             updateStats();
         }
 
+        // Fallback function for loading QRCode library
+        function loadQRFallback() {
+            console.warn('QR Code library failed to load from primary CDN. Trying fallback...');
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js';
+            script.onerror = function() {
+                console.error('Both QR Code library CDNs failed to load');
+                showLibraryError();
+            };
+            script.onload = function() {
+                console.log('QR Code library loaded from fallback CDN');
+            };
+            document.head.appendChild(script);
+        }
+
+        function showLibraryError() {
+            const alertDiv = document.createElement('div');
+            alertDiv.innerHTML = `
+                <div style="background: #ff4444; color: white; padding: 10px; margin: 10px; border-radius: 5px;">
+                    <strong>Error:</strong> QR Code library could not be loaded. 
+                    Please check your internet connection and refresh the page.
+                </div>
+            `;
+            document.body.insertBefore(alertDiv, document.querySelector('.container'));
+        }
+
+        function pageLoadCheck() {
+            // Check if QRCode library is available after page loads
+            if (typeof QRCode === 'undefined') {
+                console.warn('QR Code library not detected, will retry in 1 second...');
+                setTimeout(function() {
+                    if (typeof QRCode === 'undefined') {
+                        loadQRFallback();
+                    }
+                }, 1000);
+            } else {
+                console.log('QR Code library loaded successfully');
+            }
+        }
+
         // Initialize
         updateQrType();
+        pageLoadCheck();
     </script>
 </body>
 </html>
