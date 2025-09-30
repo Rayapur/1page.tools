@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch - 1page.tools</title>
+    <meta name="description" content="Free online stopwatch with lap timer functionality. Track time precisely with start, stop, and lap recording features.">
+    <meta name="keywords" content="stopwatch, timer, lap timer, time tracker, online stopwatch">
+    <meta name="author" content="1page.tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321" crossorigin="anonymous"></script>
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+    <link rel="manifest" href="/assets/images/site.webmanifest">
+    
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="material-icons theme-toggle-icon">dark_mode</i>
+        <span class="theme-toggle-text">Dark</span>
+    </button>
+
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <div class="header-logo">
+            <img src="../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+        </div>
+        <header>
+            <h1>Stopwatch</h1>
+            <p class="subtitle">Precise time tracking with lap functionality</p>
+        </header>
+
+        <div class="stopwatch-container">
+            <!-- Time Display -->
+            <div class="time-display">
+                <div class="time-digits" id="timeDisplay">00:00:00.00</div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="control-buttons">
+                <button class="btn btn-primary btn-large" id="startBtn" onclick="startStop()">
+                    <i class="material-icons">play_arrow</i>
+                    Start
+                </button>
+                <button class="btn btn-secondary btn-large" id="lapBtn" onclick="recordLap()" disabled>
+                    <i class="material-icons">flag</i>
+                    Lap
+                </button>
+                <button class="btn btn-danger btn-large" id="resetBtn" onclick="reset()" disabled>
+                    <i class="material-icons">refresh</i>
+                    Reset
+                </button>
+            </div>
+
+            <!-- Lap Times -->
+            <div class="laps-container" id="lapsContainer" style="display: none;">
+                <h3>Lap Times</h3>
+                <div class="laps-list" id="lapsList">
+                    <!-- Laps will be added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- AdSense Banner Ad -->
+        <div class="ad-container ad-banner">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3527668902044321"
+                 data-ad-slot="1234567890"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval = null;
+        let isRunning = false;
+        let lapCounter = 0;
+        let laps = [];
+
+        function startStop() {
+            if (isRunning) {
+                // Stop
+                clearInterval(timerInterval);
+                isRunning = false;
+                document.getElementById('startBtn').innerHTML = '<i class="material-icons">play_arrow</i>Start';
+                document.getElementById('startBtn').className = 'btn btn-primary btn-large';
+                document.getElementById('resetBtn').disabled = false;
+            } else {
+                // Start
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(updateDisplay, 10);
+                isRunning = true;
+                document.getElementById('startBtn').innerHTML = '<i class="material-icons">pause</i>Pause';
+                document.getElementById('startBtn').className = 'btn btn-warning btn-large';
+                document.getElementById('lapBtn').disabled = false;
+                document.getElementById('resetBtn').disabled = true;
+            }
+        }
+
+        function updateDisplay() {
+            elapsedTime = Date.now() - startTime;
+            
+            const hours = Math.floor(elapsedTime / 3600000);
+            const minutes = Math.floor((elapsedTime % 3600000) / 60000);
+            const seconds = Math.floor((elapsedTime % 60000) / 1000);
+            const centiseconds = Math.floor((elapsedTime % 1000) / 10);
+            
+            const timeString = 
+                String(hours).padStart(2, '0') + ':' +
+                String(minutes).padStart(2, '0') + ':' +
+                String(seconds).padStart(2, '0') + '.' +
+                String(centiseconds).padStart(2, '0');
+            
+            document.getElementById('timeDisplay').textContent = timeString;
+        }
+
+        function recordLap() {
+            if (!isRunning) return;
+            
+            lapCounter++;
+            const currentTime = elapsedTime;
+            const lapTime = lapCounter === 1 ? currentTime : currentTime - laps[laps.length - 1].total;
+            
+            laps.push({
+                number: lapCounter,
+                lapTime: lapTime,
+                total: currentTime
+            });
+            
+            displayLaps();
+        }
+
+        function displayLaps() {
+            const lapsContainer = document.getElementById('lapsContainer');
+            const lapsList = document.getElementById('lapsList');
+            
+            lapsContainer.style.display = 'block';
+            lapsList.innerHTML = '';
+            
+            // Display laps in reverse order (newest first)
+            for (let i = laps.length - 1; i >= 0; i--) {
+                const lap = laps[i];
+                const lapElement = document.createElement('div');
+                lapElement.className = 'lap-item';
+                lapElement.innerHTML = `
+                    <div class="lap-number">Lap ${lap.number}</div>
+                    <div class="lap-times">
+                        <div class="lap-time">${formatTime(lap.lapTime)}</div>
+                        <div class="lap-total">Total: ${formatTime(lap.total)}</div>
+                    </div>
+                `;
+                lapsList.appendChild(lapElement);
+            }
+        }
+
+        function formatTime(ms) {
+            const hours = Math.floor(ms / 3600000);
+            const minutes = Math.floor((ms % 3600000) / 60000);
+            const seconds = Math.floor((ms % 60000) / 1000);
+            const centiseconds = Math.floor((ms % 1000) / 10);
+            
+            return String(hours).padStart(2, '0') + ':' +
+                   String(minutes).padStart(2, '0') + ':' +
+                   String(seconds).padStart(2, '0') + '.' +
+                   String(centiseconds).padStart(2, '0');
+        }
+
+        function reset() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            startTime = 0;
+            elapsedTime = 0;
+            lapCounter = 0;
+            laps = [];
+            
+            document.getElementById('timeDisplay').textContent = '00:00:00.00';
+            document.getElementById('startBtn').innerHTML = '<i class="material-icons">play_arrow</i>Start';
+            document.getElementById('startBtn').className = 'btn btn-primary btn-large';
+            document.getElementById('lapBtn').disabled = true;
+            document.getElementById('resetBtn').disabled = true;
+            document.getElementById('lapsContainer').style.display = 'none';
+        }
+
+        // Dark Mode Toggle Functions
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeToggle(newTheme);
+        }
+
+        function updateThemeToggle(theme) {
+            const icon = document.querySelector('.theme-toggle-icon');
+            const text = document.querySelector('.theme-toggle-text');
+            
+            if (theme === 'dark') {
+                icon.textContent = 'light_mode';
+                text.textContent = 'Light';
+            } else {
+                icon.textContent = 'dark_mode';
+                text.textContent = 'Dark';
+            }
+        }
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeToggle(theme);
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+    </script>
+</body>
+</html>

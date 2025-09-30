@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer - 1page.tools</title>
+    <meta name="description" content="Free online countdown timer with lap functionality. Set custom timers and track intervals with precision.">
+    <meta name="keywords" content="timer, countdown timer, online timer, interval timer, countdown clock">
+    <meta name="author" content="1page.tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321" crossorigin="anonymous"></script>
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+    <link rel="manifest" href="/assets/images/site.webmanifest">
+    
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="material-icons theme-toggle-icon">dark_mode</i>
+        <span class="theme-toggle-text">Dark</span>
+    </button>
+
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <div class="header-logo">
+            <img src="../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+        </div>
+        <header>
+            <h1>Countdown Timer</h1>
+            <p class="subtitle">Set custom timers with lap tracking</p>
+        </header>
+
+        <div class="timer-container">
+            <!-- Time Display -->
+            <div class="time-display">
+                <div class="time-digits" id="timeDisplay">00:00:00</div>
+            </div>
+
+            <!-- Time Input -->
+            <div class="time-input" id="timeInput">
+                <div class="input-group">
+                    <label>Hours</label>
+                    <input type="number" id="hoursInput" min="0" max="23" value="0" class="time-input-field">
+                </div>
+                <div class="input-separator">:</div>
+                <div class="input-group">
+                    <label>Minutes</label>
+                    <input type="number" id="minutesInput" min="0" max="59" value="5" class="time-input-field">
+                </div>
+                <div class="input-separator">:</div>
+                <div class="input-group">
+                    <label>Seconds</label>
+                    <input type="number" id="secondsInput" min="0" max="59" value="0" class="time-input-field">
+                </div>
+            </div>
+
+            <!-- Quick Presets -->
+            <div class="presets-container">
+                <h3>Quick Presets</h3>
+                <div class="presets-grid">
+                    <button class="btn btn-secondary" onclick="setPreset(1, 0, 0)">1 min</button>
+                    <button class="btn btn-secondary" onclick="setPreset(5, 0, 0)">5 min</button>
+                    <button class="btn btn-secondary" onclick="setPreset(10, 0, 0)">10 min</button>
+                    <button class="btn btn-secondary" onclick="setPreset(15, 0, 0)">15 min</button>
+                    <button class="btn btn-secondary" onclick="setPreset(30, 0, 0)">30 min</button>
+                    <button class="btn btn-secondary" onclick="setPreset(60, 0, 0)">1 hour</button>
+                </div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="control-buttons">
+                <button class="btn btn-primary btn-large" id="startBtn" onclick="startStop()">
+                    <i class="material-icons">play_arrow</i>
+                    Start
+                </button>
+                <button class="btn btn-secondary btn-large" id="lapBtn" onclick="recordLap()" disabled>
+                    <i class="material-icons">flag</i>
+                    Lap
+                </button>
+                <button class="btn btn-danger btn-large" id="resetBtn" onclick="reset()">
+                    <i class="material-icons">refresh</i>
+                    Reset
+                </button>
+            </div>
+
+            <!-- Lap Times -->
+            <div class="laps-container" id="lapsContainer" style="display: none;">
+                <h3>Lap Times</h3>
+                <div class="laps-list" id="lapsList">
+                    <!-- Laps will be added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- AdSense Banner Ad -->
+        <div class="ad-container ad-banner">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3527668902044321"
+                 data-ad-slot="1234567890"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let totalTime = 0;
+        let remainingTime = 0;
+        let timerInterval = null;
+        let isRunning = false;
+        let lapCounter = 0;
+        let laps = [];
+
+        function setPreset(minutes, seconds, hours = 0) {
+            if (isRunning) return;
+            
+            document.getElementById('hoursInput').value = hours;
+            document.getElementById('minutesInput').value = minutes;
+            document.getElementById('secondsInput').value = seconds;
+            
+            updateTotalTime();
+        }
+
+        function updateTotalTime() {
+            const hours = parseInt(document.getElementById('hoursInput').value) || 0;
+            const minutes = parseInt(document.getElementById('minutesInput').value) || 0;
+            const seconds = parseInt(document.getElementById('secondsInput').value) || 0;
+            
+            totalTime = (hours * 3600) + (minutes * 60) + seconds;
+            remainingTime = totalTime;
+            
+            updateDisplay();
+        }
+
+        function startStop() {
+            if (isRunning) {
+                // Pause
+                clearInterval(timerInterval);
+                isRunning = false;
+                document.getElementById('startBtn').innerHTML = '<i class="material-icons">play_arrow</i>Resume';
+                document.getElementById('startBtn').className = 'btn btn-primary btn-large';
+            } else {
+                // Start or Resume
+                if (remainingTime === totalTime) {
+                    updateTotalTime();
+                }
+                
+                if (remainingTime <= 0) {
+                    alert('Please set a time greater than 0');
+                    return;
+                }
+                
+                isRunning = true;
+                timerInterval = setInterval(countdown, 1000);
+                document.getElementById('startBtn').innerHTML = '<i class="material-icons">pause</i>Pause';
+                document.getElementById('startBtn').className = 'btn btn-warning btn-large';
+                document.getElementById('lapBtn').disabled = false;
+                document.getElementById('timeInput').style.display = 'none';
+                document.querySelector('.presets-container').style.display = 'none';
+            }
+        }
+
+        function countdown() {
+            remainingTime--;
+            updateDisplay();
+            
+            if (remainingTime <= 0) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                document.getElementById('startBtn').innerHTML = '<i class="material-icons">play_arrow</i>Start';
+                document.getElementById('startBtn').className = 'btn btn-primary btn-large';
+                document.getElementById('lapBtn').disabled = true;
+                
+                // Play sound/notification
+                playNotification();
+            }
+        }
+
+        function updateDisplay() {
+            const hours = Math.floor(remainingTime / 3600);
+            const minutes = Math.floor((remainingTime % 3600) / 60);
+            const seconds = remainingTime % 60;
+            
+            const timeString = 
+                String(hours).padStart(2, '0') + ':' +
+                String(minutes).padStart(2, '0') + ':' +
+                String(seconds).padStart(2, '0');
+            
+            document.getElementById('timeDisplay').textContent = timeString;
+            
+            // Update page title with remaining time
+            document.title = timeString + ' - Timer - 1page.tools';
+        }
+
+        function recordLap() {
+            if (!isRunning) return;
+            
+            lapCounter++;
+            const currentElapsed = totalTime - remainingTime;
+            const lapTime = lapCounter === 1 ? currentElapsed : currentElapsed - laps[laps.length - 1].elapsed;
+            
+            laps.push({
+                number: lapCounter,
+                lapTime: lapTime,
+                elapsed: currentElapsed,
+                remaining: remainingTime
+            });
+            
+            displayLaps();
+        }
+
+        function displayLaps() {
+            const lapsContainer = document.getElementById('lapsContainer');
+            const lapsList = document.getElementById('lapsList');
+            
+            lapsContainer.style.display = 'block';
+            lapsList.innerHTML = '';
+            
+            // Display laps in reverse order (newest first)
+            for (let i = laps.length - 1; i >= 0; i--) {
+                const lap = laps[i];
+                const lapElement = document.createElement('div');
+                lapElement.className = 'lap-item';
+                lapElement.innerHTML = `
+                    <div class="lap-number">Lap ${lap.number}</div>
+                    <div class="lap-times">
+                        <div class="lap-time">${formatTime(lap.lapTime)}</div>
+                        <div class="lap-total">Elapsed: ${formatTime(lap.elapsed)} | Remaining: ${formatTime(lap.remaining)}</div>
+                    </div>
+                `;
+                lapsList.appendChild(lapElement);
+            }
+        }
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            
+            return String(hours).padStart(2, '0') + ':' +
+                   String(minutes).padStart(2, '0') + ':' +
+                   String(secs).padStart(2, '0');
+        }
+
+        function reset() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            lapCounter = 0;
+            laps = [];
+            
+            updateTotalTime();
+            
+            document.getElementById('startBtn').innerHTML = '<i class="material-icons">play_arrow</i>Start';
+            document.getElementById('startBtn').className = 'btn btn-primary btn-large';
+            document.getElementById('lapBtn').disabled = true;
+            document.getElementById('lapsContainer').style.display = 'none';
+            document.getElementById('timeInput').style.display = 'flex';
+            document.querySelector('.presets-container').style.display = 'block';
+            document.title = 'Countdown Timer - 1page.tools';
+        }
+
+        function playNotification() {
+            // Visual notification
+            document.getElementById('timeDisplay').style.color = '#2ecc71';
+            setTimeout(() => {
+                document.getElementById('timeDisplay').style.color = '';
+            }, 2000);
+            
+            // Try to play system notification sound
+            try {
+                const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTcIF2W47OihUhMITarj87FgGwU3kdfw0IEsigSBhYuGbFxgdJivr');
+                audio.play().catch(() => {});
+            } catch (e) {}
+        }
+
+        // Input change listeners
+        document.getElementById('hoursInput').addEventListener('change', () => {
+            if (!isRunning) updateTotalTime();
+        });
+        document.getElementById('minutesInput').addEventListener('change', () => {
+            if (!isRunning) updateTotalTime();
+        });
+        document.getElementById('secondsInput').addEventListener('change', () => {
+            if (!isRunning) updateTotalTime();
+        });
+
+        // Initialize
+        updateTotalTime();
+
+        // Dark Mode Toggle Functions
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeToggle(newTheme);
+        }
+
+        function updateThemeToggle(theme) {
+            const icon = document.querySelector('.theme-toggle-icon');
+            const text = document.querySelector('.theme-toggle-text');
+            
+            if (theme === 'dark') {
+                icon.textContent = 'light_mode';
+                text.textContent = 'Light';
+            } else {
+                icon.textContent = 'dark_mode';
+                text.textContent = 'Dark';
+            }
+        }
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeToggle(theme);
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+    </script>
+</body>
+</html>
