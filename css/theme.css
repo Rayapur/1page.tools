@@ -1707,7 +1707,7 @@ input[type="color"] {
     margin: 0.5rem 0 1rem 0;
     display: flex;
     justify-content: center;
-    width: 100%;
+    width: 50%;
 }
 
 /* Search and Recent Tools Row */
