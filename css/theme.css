@@ -1160,16 +1160,29 @@ input[type="color"] {
 }
 
 .calc-btn-number {
-    background: var(--input-bg);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.calc-btn-number:hover {
+    background: var(--hover-bg);
+    border-color: var(--primary-color);
 }
 
 .calc-btn-operator {
     background: var(--button-bg);
     color: var(--button-text);
+    border: 1px solid var(--border-color);
+}
+
+.calc-btn-operator:hover {
+    background: var(--button-hover-bg);
 }
 
 .calc-btn-equals {
     background: var(--button-hover-bg);
+    border: 1px solid var(--primary-color);
     color: var(--button-text);
     grid-row: span 2;
 }
@@ -1177,6 +1190,12 @@ input[type="color"] {
 .calc-btn-clear {
     background: #dc3545;
     color: white;
+    border: 1px solid #dc3545;
+}
+
+.calc-btn-clear:hover {
+    background: #c82333;
+    border-color: #c82333;
 }
 
 .calc-btn-zero {
