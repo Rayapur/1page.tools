@@ -105,6 +105,19 @@
                 </div>
             </div>
 
+            <!-- Image Preview -->
+            <div class="image-preview-section" id="imagePreviewSection" style="display: none;">
+                <h3>Preview</h3>
+                <div class="image-preview-container">
+                    <canvas id="imageCanvas" class="image-canvas"></canvas>
+                </div>
+                <div class="image-info">
+                    <p><strong>Original:</strong> <span id="originalDimensions"></span></p>
+                    <p><strong>Current:</strong> <span id="currentDimensions"></span></p>
+                    <p><strong>Transformations:</strong> <span id="transformations"></span></p>
+                </div>
+            </div>
+
             <!-- Rotation Controls -->
             <div class="rotation-controls" id="rotationControls" style="display: none;">
                 <h3>Rotation & Flip Controls</h3>
@@ -149,19 +162,6 @@
                         <i class="material-icons">refresh</i>
                         Reset to Original
                     </button>
-                </div>
-            </div>
-
-            <!-- Image Preview -->
-            <div class="image-preview-section" id="imagePreviewSection" style="display: none;">
-                <h3>Preview</h3>
-                <div class="image-preview-container">
-                    <canvas id="imageCanvas" class="image-canvas"></canvas>
-                </div>
-                <div class="image-info">
-                    <p><strong>Original:</strong> <span id="originalDimensions"></span></p>
-                    <p><strong>Current:</strong> <span id="currentDimensions"></span></p>
-                    <p><strong>Transformations:</strong> <span id="transformations"></span></p>
                 </div>
             </div>
 
