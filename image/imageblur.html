@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Blur Tool - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
+            crossorigin="anonymous"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon-16x16.png">
+    <link rel="manifest" href="../assets/images/site.webmanifest">
+</head>
+<body>
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <div class="header-logo">
+            <img src="../../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+        </div>
+        <header>
+            <h1>Image Blur Tool</h1>
+            <p class="subtitle">Apply blur effects to images with adjustable intensity</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Upload an image and use the slider to adjust blur intensity from 0% to 100%. Download the blurred result.</p>
+        </div>
+        
+        <div class="image-tools-container">
+            <div class="input-section">
+                <div class="input-header">
+                    <label for="imageInput">Select Image:</label>
+                    <div class="input-actions">
+                        <button class="btn btn-secondary" onclick="clearImage()">Clear</button>
+                        <button class="btn btn-secondary" onclick="loadSample()">Load Sample</button>
+                    </div>
+                </div>
+                <input type="file" id="imageInput" accept="image/*" onchange="loadImage()">
+                <div class="input-stats" id="inputStats">
+                    <span id="imageSize">Size: -</span>
+                    <span id="imageFormat">Format: -</span>
+                </div>
+            </div>
+            
+            <div class="blur-controls">
+                <h3>Blur Controls</h3>
+                <div class="control-group">
+                    <label for="blurSlider">Blur Intensity: <span id="blurValue">0%</span></label>
+                    <input type="range" id="blurSlider" min="0" max="100" value="0" oninput="updateBlur()">
+                    <div class="slider-labels">
+                        <span>0%</span>
+                        <span>25%</span>
+                        <span>50%</span>
+                        <span>75%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+                
+                <div class="preset-buttons">
+                    <button class="btn btn-small" onclick="setBlur(0)">No Blur</button>
+                    <button class="btn btn-small" onclick="setBlur(25)">Light</button>
+                    <button class="btn btn-small" onclick="setBlur(50)">Medium</button>
+                    <button class="btn btn-small" onclick="setBlur(75)">Heavy</button>
+                    <button class="btn btn-small" onclick="setBlur(100)">Maximum</button>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h3>Preview</h3>
+                <div class="image-preview-container">
+                    <div class="original-image">
+                        <h4>Original</h4>
+                        <div class="image-wrapper">
+                            <img id="originalImage" style="display: none;" alt="Original image">
+                            <div id="noImagePlaceholder" class="no-image-placeholder">
+                                <i class="material-icons">image</i>
+                                <p>No image selected</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="blurred-image">
+                        <h4>Blurred Result</h4>
+                        <div class="image-wrapper">
+                            <img id="blurredImage" style="display: none;" alt="Blurred image">
+                            <div id="noBlurPlaceholder" class="no-image-placeholder">
+                                <i class="material-icons">blur_on</i>
+                                <p>Adjust blur to see result</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn" onclick="downloadBlurred()" id="downloadBtn" disabled>Download Blurred Image</button>
+                <button class="btn btn-secondary" onclick="resetBlur()">Reset Blur</button>
+            </div>
+            
+            <div class="image-info">
+                <h3>Image Blur Information</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>What is Image Blur?</strong>
+                        <p>Image blur reduces image sharpness by averaging nearby pixels, creating a soft, unfocused effect.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Blur Intensity</strong>
+                        <p>Higher percentages create more pronounced blur effects. 0% = sharp, 100% = maximum blur.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Use Cases</strong>
+                        <p>Background blur, privacy protection, artistic effects, focus emphasis, and visual hierarchy.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Supported Formats</strong>
+                        <p>Works with JPEG, PNG, WebP, GIF, and other common image formats. Output matches input format.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        let originalImageData = null;
+        let currentBlurValue = 0;
+
+        function loadImage() {
+            const fileInput = document.getElementById('imageInput');
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('originalImage');
+                img.src = e.target.result;
+                img.style.display = 'block';
+                document.getElementById('noImagePlaceholder').style.display = 'none';
+                
+                // Store original image data
+                originalImageData = e.target.result;
+                
+                // Update stats
+                const sizeKB = Math.round(file.size / 1024);
+                document.getElementById('imageSize').textContent = `Size: ${sizeKB} KB`;
+                document.getElementById('imageFormat').textContent = `Format: ${file.type.split('/')[1].toUpperCase()}`;
+                
+                // Reset blur and update
+                currentBlurValue = 0;
+                document.getElementById('blurSlider').value = 0;
+                updateBlur();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateBlur() {
+            const blurValue = parseInt(document.getElementById('blurSlider').value);
+            currentBlurValue = blurValue;
+            document.getElementById('blurValue').textContent = blurValue + '%';
+            
+            if (!originalImageData) {
+                document.getElementById('noBlurPlaceholder').style.display = 'block';
+                document.getElementById('blurredImage').style.display = 'none';
+                return;
+            }
+            
+            if (blurValue === 0) {
+                // No blur - show original
+                const blurredImg = document.getElementById('blurredImage');
+                blurredImg.src = originalImageData;
+                blurredImg.style.display = 'block';
+                document.getElementById('noBlurPlaceholder').style.display = 'none';
+            } else {
+                // Apply blur using CSS filter
+                const blurredImg = document.getElementById('blurredImage');
+                blurredImg.src = originalImageData;
+                blurredImg.style.display = 'block';
+                blurredImg.style.filter = `blur(${blurValue * 0.1}px)`;
+                document.getElementById('noBlurPlaceholder').style.display = 'none';
+            }
+            
+            // Enable download button
+            document.getElementById('downloadBtn').disabled = false;
+        }
+
+        function setBlur(value) {
+            document.getElementById('blurSlider').value = value;
+            updateBlur();
+        }
+
+        function resetBlur() {
+            setBlur(0);
+        }
+
+        function downloadBlurred() {
+            if (!originalImageData || currentBlurValue === 0) {
+                alert('Please select an image and apply some blur first');
+                return;
+            }
+            
+            // Create canvas to apply blur and download
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                // Apply blur using canvas
+                ctx.filter = `blur(${currentBlurValue * 0.1}px)`;
+                ctx.drawImage(img, 0, 0);
+                
+                // Download
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = `blurred-image-${currentBlurValue}percent.png`;
+                    link.href = url;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }, 'image/png');
+            };
+            
+            img.src = originalImageData;
+        }
+
+        function clearImage() {
+            document.getElementById('imageInput').value = '';
+            document.getElementById('originalImage').style.display = 'none';
+            document.getElementById('blurredImage').style.display = 'none';
+            document.getElementById('noImagePlaceholder').style.display = 'block';
+            document.getElementById('noBlurPlaceholder').style.display = 'block';
+            document.getElementById('downloadBtn').disabled = true;
+            document.getElementById('imageSize').textContent = 'Size: -';
+            document.getElementById('imageFormat').textContent = 'Format: -';
+            originalImageData = null;
+            resetBlur();
+        }
+
+        function loadSample() {
+            // Create a sample image with text
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 300;
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 400, 300);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 400, 300);
+            
+            // Add text
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 32px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Sample Image', 200, 120);
+            ctx.font = '20px Arial';
+            ctx.fillText('Perfect for testing blur effects', 200, 160);
+            ctx.fillText('Adjust the slider to see changes', 200, 190);
+            
+            // Add some shapes
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.beginPath();
+            ctx.arc(100, 80, 30, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(300, 220, 40, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Convert to data URL
+            const dataURL = canvas.toDataURL('image/png');
+            
+            // Set as image
+            const img = document.getElementById('originalImage');
+            img.src = dataURL;
+            img.style.display = 'block';
+            document.getElementById('noImagePlaceholder').style.display = 'none';
+            
+            // Store original image data
+            originalImageData = dataURL;
+            
+            // Update stats
+            document.getElementById('imageSize').textContent = 'Size: Sample';
+            document.getElementById('imageFormat').textContent = 'Format: PNG';
+            
+            // Reset blur and update
+            currentBlurValue = 0;
+            document.getElementById('blurSlider').value = 0;
+            updateBlur();
+        }
+    </script>
+</body>
+</html>
