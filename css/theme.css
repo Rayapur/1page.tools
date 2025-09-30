@@ -1702,12 +1702,21 @@ input[type="color"] {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
+/* Search and Recent Tools Row */
+.search-recent-row {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    margin: 1rem 0 2rem 0;
+    width: 100%;
+}
+
 /* Search Bar Styles */
 .search-container {
-    margin: 1rem 0 2rem 0;
+    flex: 1;
     display: flex;
     justify-content: center;
-    width: 100%;
+    max-width: 500px;
 }
 
 .search-box {
@@ -1789,10 +1798,16 @@ input[type="color"] {
     opacity: 0.5;
 }
 
-/* Responsive search */
+/* Responsive search and recent tools */
 @media (max-width: 768px) {
-    .search-container {
+    .search-recent-row {
+        flex-direction: column;
+        gap: 1rem;
         margin: 1rem 0;
+    }
+    
+    .search-container {
+        max-width: 100%;
         padding: 0 1rem;
     }
     
@@ -1803,16 +1818,24 @@ input[type="color"] {
     #toolSearch {
         font-size: 16px; /* Prevents zoom on iOS */
     }
+    
+    .recent-tools {
+        max-width: 100%;
+        min-width: auto;
+        margin: 0 1rem;
+    }
 }
 
 /* Recent Tools Widget Styles */
 .recent-tools {
     background: var(--card-bg);
     border-radius: var(--container-radius);
-    padding: 1.5rem;
-    margin: 2rem 0;
+    padding: 1rem;
     box-shadow: var(--container-shadow);
     border: 1px solid var(--border-color);
+    flex: 1;
+    max-width: 400px;
+    min-width: 300px;
 }
 
 .recent-tools h3 {
