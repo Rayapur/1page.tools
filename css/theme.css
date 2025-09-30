@@ -5462,7 +5462,7 @@ input[type="color"] {
 
 .calculator-buttons {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(8, 1fr);
     gap: 0.75rem;
     margin-bottom: 1.5rem;
 }
