@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart Generator - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
+            crossorigin="anonymous"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon-16x16.png">
+    <link rel="manifest" href="../assets/images/site.webmanifest">
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="material-icons theme-toggle-icon">dark_mode</i>
+        <span class="theme-toggle-text">Dark</span>
+    </button>
+
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <div class="header-logo">
+            <img src="../../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+        </div>
+        <header>
+            <h1>Chart Generator</h1>
+            <p class="subtitle">Create beautiful charts from CSV data with multiple chart types</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Upload a CSV file or paste CSV data to generate interactive charts. Choose from bar, line, pie, and doughnut charts with customizable colors and styling.</p>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-controls">
+                <div class="control-group">
+                    <label for="csvInput">CSV Data:</label>
+                    <textarea id="csvInput" placeholder="Paste your CSV data here or upload a file..." rows="8"></textarea>
+                </div>
+                
+                <div class="control-group">
+                    <label for="csvFile">Or Upload CSV File:</label>
+                    <input type="file" id="csvFile" accept=".csv" onchange="handleFileUpload()">
+                </div>
+                
+                <div class="control-group">
+                    <label for="chartType">Chart Type:</label>
+                    <select id="chartType" onchange="updateChart()">
+                        <option value="bar">Bar Chart</option>
+                        <option value="line">Line Chart</option>
+                        <option value="pie">Pie Chart</option>
+                        <option value="doughnut">Doughnut Chart</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="xColumn">X-Axis Column:</label>
+                    <select id="xColumn" onchange="updateChart()">
+                        <option value="">Select column...</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="yColumn">Y-Axis Column:</label>
+                    <select id="yColumn" onchange="updateChart()">
+                        <option value="">Select column...</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="chartTitle">Chart Title:</label>
+                    <input type="text" id="chartTitle" placeholder="Enter chart title..." onchange="updateChart()">
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="generateChart()">
+                        <i class="material-icons">show_chart</i>
+                        Generate Chart
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadSampleData()">
+                        <i class="material-icons">data_usage</i>
+                        Load Sample Data
+                    </button>
+                    <button class="btn" onclick="clearChart()">
+                        <i class="material-icons">clear</i>
+                        Clear
+                    </button>
+                    <button class="btn" onclick="downloadChart()" id="downloadBtn" disabled>
+                        <i class="material-icons">download</i>
+                        Download Chart
+                    </button>
+                </div>
+            </div>
+            
+            <div class="chart-preview">
+                <div class="chart-wrapper">
+                    <canvas id="chartCanvas" width="800" height="400"></canvas>
+                </div>
+                <div class="chart-info" id="chartInfo" style="display: none;">
+                    <h4>Chart Information</h4>
+                    <p><strong>Type:</strong> <span id="chartTypeInfo"></span></p>
+                    <p><strong>Data Points:</strong> <span id="dataPointsInfo"></span></p>
+                    <p><strong>Columns:</strong> <span id="columnsInfo"></span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h3>How to Use</h3>
+            <ol>
+                <li><strong>Prepare Data:</strong> Ensure your CSV has headers in the first row</li>
+                <li><strong>Upload/Paste:</strong> Upload a CSV file or paste CSV data directly</li>
+                <li><strong>Select Columns:</strong> Choose which columns to use for X and Y axes</li>
+                <li><strong>Choose Chart Type:</strong> Select bar, line, pie, or doughnut chart</li>
+                <li><strong>Customize:</strong> Add a title and adjust settings as needed</li>
+                <li><strong>Generate:</strong> Click "Generate Chart" to create your visualization</li>
+                <li><strong>Download:</strong> Save your chart as PNG image</li>
+            </ol>
+            
+            <h3>Sample CSV Format</h3>
+            <pre>Month,Sales,Profit
+January,1000,200
+February,1200,300
+March,900,150
+April,1500,400</pre>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+    
+    <script>
+        // Dark Mode Toggle Functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update toggle button
+            updateThemeToggle(newTheme);
+        }
+
+        function updateThemeToggle(theme) {
+            const icon = document.querySelector('.theme-toggle-icon');
+            const text = document.querySelector('.theme-toggle-text');
+            
+            if (theme === 'dark') {
+                icon.textContent = 'light_mode';
+                text.textContent = 'Light';
+            } else {
+                icon.textContent = 'dark_mode';
+                text.textContent = 'Dark';
+            }
+        }
+
+        // Initialize theme on page load
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeToggle(theme);
+        }
+
+        // Initialize theme when page loads
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+
+        // Chart Generator Variables
+        let chart = null;
+        let csvData = null;
+        let chartData = null;
+        
+        const chartCanvas = document.getElementById('chartCanvas');
+        const ctx = chartCanvas.getContext('2d');
+        
+        function handleFileUpload() {
+            const file = document.getElementById('csvFile').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('csvInput').value = e.target.result;
+                    parseCSVData(e.target.result);
+                };
+                reader.readAsText(file);
+            }
+        }
+        
+        function parseCSVData(csvText) {
+            const lines = csvText.trim().split('\n');
+            if (lines.length < 2) {
+                alert('CSV data must have at least a header row and one data row.');
+                return;
+            }
+            
+            const headers = lines[0].split(',').map(h => h.trim());
+            const rows = lines.slice(1).map(line => 
+                line.split(',').map(cell => cell.trim())
+            );
+            
+            csvData = { headers, rows };
+            updateColumnSelects();
+        }
+        
+        function updateColumnSelects() {
+            if (!csvData) return;
+            
+            const xSelect = document.getElementById('xColumn');
+            const ySelect = document.getElementById('yColumn');
+            
+            // Clear existing options
+            xSelect.innerHTML = '<option value="">Select column...</option>';
+            ySelect.innerHTML = '<option value="">Select column...</option>';
+            
+            // Add header options
+            csvData.headers.forEach((header, index) => {
+                const option1 = new Option(header, index);
+                const option2 = new Option(header, index);
+                xSelect.add(option1);
+                ySelect.add(option2);
+            });
+        }
+        
+        function generateChart() {
+            const csvText = document.getElementById('csvInput').value.trim();
+            if (!csvText) {
+                alert('Please enter or upload CSV data first.');
+                return;
+            }
+            
+            if (!csvData) {
+                parseCSVData(csvText);
+            }
+            
+            if (!csvData) return;
+            
+            const chartType = document.getElementById('chartType').value;
+            const xColumnIndex = parseInt(document.getElementById('xColumn').value);
+            const yColumnIndex = parseInt(document.getElementById('yColumn').value);
+            const chartTitle = document.getElementById('chartTitle').value || 'Chart';
+            
+            if (xColumnIndex === '' || yColumnIndex === '') {
+                alert('Please select both X and Y axis columns.');
+                return;
+            }
+            
+            // Prepare chart data
+            const labels = csvData.rows.map(row => row[xColumnIndex]);
+            const data = csvData.rows.map(row => {
+                const value = parseFloat(row[yColumnIndex]);
+                return isNaN(value) ? 0 : value;
+            });
+            
+            // Generate colors
+            const colors = generateColors(data.length);
+            
+            // Destroy existing chart
+            if (chart) {
+                chart.destroy();
+            }
+            
+            // Create new chart
+            const config = {
+                type: chartType,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: csvData.headers[yColumnIndex],
+                        data: data,
+                        backgroundColor: chartType === 'line' ? 'rgba(102, 126, 234, 0.2)' : colors.backgrounds,
+                        borderColor: colors.borders,
+                        borderWidth: chartType === 'line' ? 3 : 1,
+                        tension: chartType === 'line' ? 0.4 : 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: chartTitle,
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        legend: {
+                            display: chartType !== 'pie' && chartType !== 'doughnut'
+                        }
+                    },
+                    scales: chartType !== 'pie' && chartType !== 'doughnut' ? {
+                        x: {
+                            title: {
+                                display: true,
+                                text: csvData.headers[xColumnIndex]
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: csvData.headers[yColumnIndex]
+                            },
+                            beginAtZero: true
+                        }
+                    } : {}
+                }
+            };
+            
+            chart = new Chart(ctx, config);
+            
+            // Update chart info
+            updateChartInfo(chartType, data.length, csvData.headers.length);
+            document.getElementById('downloadBtn').disabled = false;
+        }
+        
+        function generateColors(count) {
+            const baseColors = [
+                'rgba(102, 126, 234, 0.8)',
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 205, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(153, 102, 255, 0.8)',
+                'rgba(255, 159, 64, 0.8)',
+                'rgba(199, 199, 199, 0.8)'
+            ];
+            
+            const backgrounds = [];
+            const borders = [];
+            
+            for (let i = 0; i < count; i++) {
+                const color = baseColors[i % baseColors.length];
+                backgrounds.push(color);
+                borders.push(color.replace('0.8', '1'));
+            }
+            
+            return { backgrounds, borders };
+        }
+        
+        function updateChartInfo(type, dataPoints, columns) {
+            document.getElementById('chartTypeInfo').textContent = type.charAt(0).toUpperCase() + type.slice(1);
+            document.getElementById('dataPointsInfo').textContent = dataPoints;
+            document.getElementById('columnsInfo').textContent = columns;
+            document.getElementById('chartInfo').style.display = 'block';
+        }
+        
+        function updateChart() {
+            if (chart) {
+                generateChart();
+            }
+        }
+        
+        function loadSampleData() {
+            const sampleData = `Month,Sales,Profit
+January,1000,200
+February,1200,300
+March,900,150
+April,1500,400
+May,1800,500
+June,1600,450
+July,2000,600
+August,1900,550
+September,1700,500
+October,2100,650
+November,2300,700
+December,2500,800`;
+            
+            document.getElementById('csvInput').value = sampleData;
+            parseCSVData(sampleData);
+            
+            // Auto-select columns
+            setTimeout(() => {
+                document.getElementById('xColumn').value = '0';
+                document.getElementById('yColumn').value = '1';
+                document.getElementById('chartTitle').value = 'Monthly Sales Data';
+                generateChart();
+            }, 100);
+        }
+        
+        function clearChart() {
+            document.getElementById('csvInput').value = '';
+            document.getElementById('csvFile').value = '';
+            document.getElementById('chartTitle').value = '';
+            document.getElementById('xColumn').innerHTML = '<option value="">Select column...</option>';
+            document.getElementById('yColumn').innerHTML = '<option value="">Select column...</option>';
+            document.getElementById('chartInfo').style.display = 'none';
+            document.getElementById('downloadBtn').disabled = true;
+            
+            if (chart) {
+                chart.destroy();
+                chart = null;
+            }
+            
+            csvData = null;
+        }
+        
+        function downloadChart() {
+            if (!chart) {
+                alert('Please generate a chart first.');
+                return;
+            }
+            
+            const link = document.createElement('a');
+            link.download = `chart_${Date.now()}.png`;
+            link.href = chartCanvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-resize canvas
+            function resizeCanvas() {
+                const container = chartCanvas.parentElement;
+                chartCanvas.width = container.clientWidth;
+                chartCanvas.height = Math.min(400, window.innerHeight * 0.4);
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+        });
+    </script>
+</body>
+</html>

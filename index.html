@@ -116,6 +116,12 @@
     </script>
 </head>
 <body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="material-icons theme-toggle-icon">dark_mode</i>
+        <span class="theme-toggle-text">Dark</span>
+    </button>
+
     <div class="container">
         <div class="header-logo">
             <img src="assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
@@ -124,6 +130,25 @@
         <p>Simple, fast, and free online tools for everyone. No sign-up, no clutter—just what you need, on one page.</p>
         <div class="tools-list">
         <!-- Filter capsules -->
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-box">
+                <i class="material-icons search-icon">search</i>
+                <input type="text" id="toolSearch" placeholder="Search tools..." oninput="searchTools()">
+                <button class="clear-search" onclick="clearSearch()" id="clearSearchBtn" style="display: none;">
+                    <i class="material-icons">close</i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Recent Tools Widget -->
+        <div class="recent-tools" id="recentTools" style="display: none;">
+            <h3>Recently Used Tools</h3>
+            <div class="recent-tools-list" id="recentToolsList">
+                <!-- Recent tools will be populated here -->
+            </div>
+        </div>
+
         <div class="filter-capsules" id="filterCapsules">
             <button class="filter-btn active" data-filter="all">All</button>
             <button class="filter-btn" data-filter="pdf">PDF</button>
@@ -174,6 +199,10 @@
             <div class="tool-card" data-category="image">
                 <a href="image/imageblur.html">Image Blur Tool</a>
                 <div class="tool-desc">Apply blur effects to images with adjustable intensity slider.</div>
+            </div>
+            <div class="tool-card" data-category="image">
+                <a href="image/imagecropper.html">Image Cropper Tool</a>
+                <div class="tool-desc">Crop images with aspect ratio presets and custom dimensions.</div>
             </div>
             <div class="tool-card" data-category="pdf">
                 <a href="pdf/pdfsticher.html">PDF Stitcher</a>
@@ -248,6 +277,10 @@
                 <div class="tool-desc">Convert CSV data to JSON format with customizable options and data preview.</div>
             </div>
             <div class="tool-card" data-category="code">
+                <a href="code/base64encoder.html">Base64 Encoder/Decoder</a>
+                <div class="tool-desc">Encode and decode text and files to/from Base64 format.</div>
+            </div>
+            <div class="tool-card" data-category="code">
                 <a href="code/regextester.html">Regex Tester</a>
                 <div class="tool-desc">Test and debug regular expressions with real-time matching and capture groups.</div>
             </div>
@@ -282,6 +315,10 @@
             <div class="tool-card" data-category="csv">
                 <a href="csv/colorcsv.html">Color CSV</a>
                 <div class="tool-desc">Upload a CSV file and color each column differently for better visualization.</div>
+            </div>
+            <div class="tool-card" data-category="csv">
+                <a href="csv/chartgenerator.html">Chart Generator</a>
+                <div class="tool-desc">Create beautiful charts from CSV data with multiple chart types.</div>
             </div>
             <div class="tool-card" data-category="geo">
                 <a href="geo/ipgeoloc.html">IP Geolocation</a>
@@ -338,6 +375,245 @@
                         }
                     });
                 }
+            });
+        });
+    </script>
+
+    <script>
+        // Dark Mode Toggle Functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update toggle button
+            updateThemeToggle(newTheme);
+        }
+
+        function updateThemeToggle(theme) {
+            const icon = document.querySelector('.theme-toggle-icon');
+            const text = document.querySelector('.theme-toggle-text');
+            
+            if (theme === 'dark') {
+                icon.textContent = 'light_mode';
+                text.textContent = 'Light';
+            } else {
+                icon.textContent = 'dark_mode';
+                text.textContent = 'Dark';
+            }
+        }
+
+        // Initialize theme on page load
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeToggle(theme);
+        }
+
+        // Initialize theme when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+            updateRecentToolsDisplay();
+        });
+
+        // Recent Tools Functionality
+        function trackToolUsage(toolName, toolUrl, toolCategory) {
+            const recentTools = JSON.parse(localStorage.getItem('recentTools') || '[]');
+            
+            // Remove if already exists
+            const existingIndex = recentTools.findIndex(tool => tool.url === toolUrl);
+            if (existingIndex > -1) {
+                recentTools.splice(existingIndex, 1);
+            }
+            
+            // Add to beginning
+            recentTools.unshift({
+                name: toolName,
+                url: toolUrl,
+                category: toolCategory,
+                timestamp: Date.now()
+            });
+            
+            // Keep only last 5
+            if (recentTools.length > 5) {
+                recentTools.splice(5);
+            }
+            
+            localStorage.setItem('recentTools', JSON.stringify(recentTools));
+            updateRecentToolsDisplay();
+        }
+        
+        function updateRecentToolsDisplay() {
+            const recentTools = JSON.parse(localStorage.getItem('recentTools') || '[]');
+            const recentToolsContainer = document.getElementById('recentTools');
+            const recentToolsList = document.getElementById('recentToolsList');
+            
+            if (recentTools.length === 0) {
+                recentToolsContainer.style.display = 'none';
+                return;
+            }
+            
+            recentToolsContainer.style.display = 'block';
+            
+            // Clear existing items
+            recentToolsList.innerHTML = '';
+            
+            recentTools.forEach(tool => {
+                const toolItem = document.createElement('a');
+                toolItem.className = 'recent-tool-item';
+                toolItem.href = tool.url;
+                toolItem.innerHTML = `
+                    <i class="material-icons">${getCategoryIcon(tool.category)}</i>
+                    <span>${tool.name}</span>
+                `;
+                
+                // Add click tracking
+                toolItem.addEventListener('click', function() {
+                    trackToolUsage(tool.name, tool.url, tool.category);
+                });
+                
+                recentToolsList.appendChild(toolItem);
+            });
+        }
+        
+        function getCategoryIcon(category) {
+            const icons = {
+                'pdf': 'picture_as_pdf',
+                'color': 'palette',
+                'image': 'image',
+                'text': 'text_fields',
+                'math': 'calculate',
+                'datetime': 'schedule',
+                'code': 'code',
+                'web': 'web',
+                'security': 'security',
+                'csv': 'table_chart',
+                'geo': 'place'
+            };
+            return icons[category] || 'build';
+        }
+        
+        function clearRecentTools() {
+            localStorage.removeItem('recentTools');
+            updateRecentToolsDisplay();
+        }
+
+        // Tool Search Functionality
+        function searchTools() {
+            const searchTerm = document.getElementById('toolSearch').value.toLowerCase().trim();
+            const toolCards = document.querySelectorAll('.tool-card');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const toolsList = document.getElementById('toolsList');
+            
+            // Show/hide clear button
+            clearBtn.style.display = searchTerm ? 'block' : 'none';
+            
+            if (!searchTerm) {
+                // Clear search - show all tools
+                toolCards.forEach(card => {
+                    card.style.display = '';
+                });
+                // Reset to "All" filter
+                filterBtns.forEach(btn => btn.classList.remove('active'));
+                filterBtns[0].classList.add('active');
+                return;
+            }
+            
+            // Deactivate all filter buttons during search
+            filterBtns.forEach(btn => btn.classList.remove('active'));
+            
+            let visibleCount = 0;
+            toolCards.forEach(card => {
+                const toolName = card.querySelector('a').textContent.toLowerCase();
+                const toolDesc = card.querySelector('.tool-desc').textContent.toLowerCase();
+                const toolCategory = card.getAttribute('data-category');
+                
+                const matchesSearch = toolName.includes(searchTerm) || 
+                                    toolDesc.includes(searchTerm) || 
+                                    toolCategory.includes(searchTerm);
+                
+                if (matchesSearch) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Show search results info
+            showSearchResults(visibleCount, searchTerm);
+        }
+        
+        function clearSearch() {
+            document.getElementById('toolSearch').value = '';
+            searchTools();
+        }
+        
+        function showSearchResults(count, term) {
+            // Remove existing search info
+            const existingInfo = document.querySelector('.search-results-info');
+            if (existingInfo) {
+                existingInfo.remove();
+            }
+            
+            if (count === 0) {
+                // Show no results message
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.innerHTML = `
+                    <i class="material-icons">search_off</i>
+                    <h3>No tools found</h3>
+                    <p>No tools match "${term}". Try a different search term.</p>
+                `;
+                
+                const toolsList = document.getElementById('toolsList');
+                toolsList.appendChild(noResults);
+            } else {
+                // Show results count
+                const resultsInfo = document.createElement('div');
+                resultsInfo.className = 'search-results-info';
+                resultsInfo.innerHTML = `Found ${count} tool${count !== 1 ? 's' : ''} matching "${term}"`;
+                
+                const toolsList = document.getElementById('toolsList');
+                toolsList.appendChild(resultsInfo);
+            }
+        }
+        
+        // Clear search when filter buttons are clicked
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Clear search when switching filters
+                    document.getElementById('toolSearch').value = '';
+                    document.getElementById('clearSearchBtn').style.display = 'none';
+                    
+                    // Remove search results info
+                    const searchInfo = document.querySelector('.search-results-info');
+                    const noResults = document.querySelector('.no-results');
+                    if (searchInfo) searchInfo.remove();
+                    if (noResults) noResults.remove();
+                });
+            });
+            
+            // Add click tracking to all tool cards
+            const toolCards = document.querySelectorAll('.tool-card a');
+            toolCards.forEach(link => {
+                link.addEventListener('click', function() {
+                    const toolName = this.textContent.trim();
+                    const toolUrl = this.href;
+                    const toolCategory = this.closest('.tool-card').getAttribute('data-category');
+                    
+                    // Track tool usage
+                    trackToolUsage(toolName, toolUrl, toolCategory);
+                });
             });
         });
     </script>

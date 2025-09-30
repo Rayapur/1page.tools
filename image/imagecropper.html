@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cropper Tool - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
+            crossorigin="anonymous"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon-16x16.png">
+    <link rel="manifest" href="../assets/images/site.webmanifest">
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="material-icons theme-toggle-icon">dark_mode</i>
+        <span class="theme-toggle-text">Dark</span>
+    </button>
+
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <div class="header-logo">
+            <img src="../../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+        </div>
+        <header>
+            <h1>Image Cropper Tool</h1>
+            <p class="subtitle">Crop images with aspect ratio presets and custom dimensions</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Upload an image and crop it to your desired size. Choose from preset aspect ratios or set custom dimensions. Perfect for social media, thumbnails, and profile pictures.</p>
+        </div>
+        
+        <div class="image-tools-container">
+            <div class="crop-controls">
+                <div class="control-group">
+                    <label for="imageUpload">Upload Image:</label>
+                    <input type="file" id="imageUpload" accept="image/*">
+                </div>
+                
+                <div class="control-group">
+                    <label>Aspect Ratio:</label>
+                    <div class="aspect-ratio-buttons">
+                        <button class="btn-small" onclick="setAspectRatio('free')">Free</button>
+                        <button class="btn-small" onclick="setAspectRatio('1:1')">1:1 (Square)</button>
+                        <button class="btn-small" onclick="setAspectRatio('4:3')">4:3</button>
+                        <button class="btn-small" onclick="setAspectRatio('16:9')">16:9</button>
+                        <button class="btn-small" onclick="setAspectRatio('3:2')">3:2</button>
+                        <button class="btn-small" onclick="setAspectRatio('2:3')">2:3 (Portrait)</button>
+                        <button class="btn-small" onclick="setAspectRatio('9:16')">9:16 (Story)</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>Custom Dimensions:</label>
+                    <div class="dimension-inputs">
+                        <input type="number" id="cropWidth" placeholder="Width" min="1" max="4000">
+                        <span>×</span>
+                        <input type="number" id="cropHeight" placeholder="Height" min="1" max="4000">
+                        <button class="btn-small" onclick="applyCustomDimensions()">Apply</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>Quality:</label>
+                    <input type="range" id="qualitySlider" min="0.1" max="1" step="0.1" value="0.9">
+                    <span id="qualityValue">90%</span>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn" onclick="loadSampleImage()">Load Sample Image</button>
+                    <button class="btn btn-secondary" onclick="resetCrop()">Reset</button>
+                    <button class="btn btn-primary" onclick="cropImage()" id="cropBtn" disabled>Crop Image</button>
+                </div>
+            </div>
+            
+            <div class="crop-preview-section">
+                <div class="crop-canvas-container">
+                    <canvas id="cropCanvas" style="display: none;"></canvas>
+                    <div class="no-image-placeholder" id="noImagePlaceholder">
+                        <i class="material-icons">crop</i>
+                        <p>Upload an image to start cropping</p>
+                    </div>
+                </div>
+                
+                <div class="crop-info" id="cropInfo" style="display: none;">
+                    <h4>Crop Preview</h4>
+                    <p><strong>Original:</strong> <span id="originalSize"></span></p>
+                    <p><strong>Crop Area:</strong> <span id="cropSize"></span></p>
+                    <p><strong>Aspect Ratio:</strong> <span id="aspectRatio"></span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h3>How to Use</h3>
+            <ol>
+                <li><strong>Upload Image:</strong> Select an image file from your device or load a sample</li>
+                <li><strong>Choose Aspect Ratio:</strong> Select a preset ratio or use "Free" for custom cropping</li>
+                <li><strong>Set Dimensions:</strong> Enter specific width and height values if needed</li>
+                <li><strong>Adjust Quality:</strong> Use the slider to control output quality (higher = larger file)</li>
+                <li><strong>Crop & Download:</strong> Click "Crop Image" to process and download the result</li>
+            </ol>
+            
+            <h3>Supported Formats</h3>
+            <p>Input: JPEG, PNG, WebP, GIF, BMP | Output: JPEG, PNG</p>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+    
+    <script>
+        // Dark Mode Toggle Functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update toggle button
+            updateThemeToggle(newTheme);
+        }
+
+        function updateThemeToggle(theme) {
+            const icon = document.querySelector('.theme-toggle-icon');
+            const text = document.querySelector('.theme-toggle-text');
+            
+            if (theme === 'dark') {
+                icon.textContent = 'light_mode';
+                text.textContent = 'Light';
+            } else {
+                icon.textContent = 'dark_mode';
+                text.textContent = 'Dark';
+            }
+        }
+
+        // Initialize theme on page load
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeToggle(theme);
+        }
+
+        // Initialize theme when page loads
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+
+        // Image Cropper Variables
+        let originalImage = null;
+        let currentAspectRatio = 'free';
+        let cropArea = { x: 0, y: 0, width: 0, height: 0 };
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+        
+        const canvas = document.getElementById('cropCanvas');
+        const ctx = canvas.getContext('2d');
+        const imageUpload = document.getElementById('imageUpload');
+        const qualitySlider = document.getElementById('qualitySlider');
+        const qualityValue = document.getElementById('qualityValue');
+        const cropBtn = document.getElementById('cropBtn');
+        
+        // Event Listeners
+        imageUpload.addEventListener('change', handleImageUpload);
+        qualitySlider.addEventListener('input', updateQualityDisplay);
+        canvas.addEventListener('mousedown', startDrag);
+        canvas.addEventListener('mousemove', drag);
+        canvas.addEventListener('mouseup', endDrag);
+        canvas.addEventListener('mouseleave', endDrag);
+        
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    loadImage(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function loadImage(src) {
+            const img = new Image();
+            img.onload = function() {
+                originalImage = img;
+                setupCanvas();
+                drawImageWithCropArea();
+                updateCropInfo();
+                cropBtn.disabled = false;
+            };
+            img.src = src;
+        }
+        
+        function setupCanvas() {
+            const container = canvas.parentElement;
+            const maxWidth = Math.min(container.clientWidth - 40, 600);
+            const maxHeight = 400;
+            
+            let canvasWidth = originalImage.width;
+            let canvasHeight = originalImage.height;
+            
+            // Scale down if too large
+            if (canvasWidth > maxWidth) {
+                canvasHeight = (canvasHeight * maxWidth) / canvasWidth;
+                canvasWidth = maxWidth;
+            }
+            if (canvasHeight > maxHeight) {
+                canvasWidth = (canvasWidth * maxHeight) / canvasHeight;
+                canvasHeight = maxHeight;
+            }
+            
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            canvas.style.display = 'block';
+            canvas.style.maxWidth = '100%';
+            canvas.style.height = 'auto';
+            
+            // Initialize crop area
+            cropArea = {
+                x: canvasWidth * 0.1,
+                y: canvasHeight * 0.1,
+                width: canvasWidth * 0.8,
+                height: canvasHeight * 0.8
+            };
+            
+            document.getElementById('noImagePlaceholder').style.display = 'none';
+        }
+        
+        function drawImageWithCropArea() {
+            if (!originalImage) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw image
+            ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
+            
+            // Draw overlay
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw crop area
+            ctx.clearRect(cropArea.x, cropArea.y, cropArea.width, cropArea.height);
+            ctx.drawImage(originalImage, 
+                (cropArea.x / canvas.width) * originalImage.width,
+                (cropArea.y / canvas.height) * originalImage.height,
+                (cropArea.width / canvas.width) * originalImage.width,
+                (cropArea.height / canvas.height) * originalImage.height,
+                cropArea.x, cropArea.y, cropArea.width, cropArea.height
+            );
+            
+            // Draw crop border
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(cropArea.x, cropArea.y, cropArea.width, cropArea.height);
+            
+            // Draw corner handles
+            const handleSize = 8;
+            ctx.fillStyle = '#667eea';
+            ctx.fillRect(cropArea.x - handleSize/2, cropArea.y - handleSize/2, handleSize, handleSize);
+            ctx.fillRect(cropArea.x + cropArea.width - handleSize/2, cropArea.y - handleSize/2, handleSize, handleSize);
+            ctx.fillRect(cropArea.x - handleSize/2, cropArea.y + cropArea.height - handleSize/2, handleSize, handleSize);
+            ctx.fillRect(cropArea.x + cropArea.width - handleSize/2, cropArea.y + cropArea.height - handleSize/2, handleSize, handleSize);
+        }
+        
+        function setAspectRatio(ratio) {
+            currentAspectRatio = ratio;
+            
+            // Update button states
+            document.querySelectorAll('.aspect-ratio-buttons .btn-small').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (ratio === 'free') {
+                return;
+            }
+            
+            const [w, h] = ratio.split(':').map(Number);
+            const aspectRatio = w / h;
+            
+            // Adjust crop area to maintain aspect ratio
+            const currentAspect = cropArea.width / cropArea.height;
+            
+            if (currentAspect > aspectRatio) {
+                // Too wide, adjust width
+                cropArea.width = cropArea.height * aspectRatio;
+            } else {
+                // Too tall, adjust height
+                cropArea.height = cropArea.width / aspectRatio;
+            }
+            
+            // Keep within canvas bounds
+            if (cropArea.x + cropArea.width > canvas.width) {
+                cropArea.x = canvas.width - cropArea.width;
+            }
+            if (cropArea.y + cropArea.height > canvas.height) {
+                cropArea.y = canvas.height - cropArea.height;
+            }
+            
+            drawImageWithCropArea();
+            updateCropInfo();
+        }
+        
+        function applyCustomDimensions() {
+            const width = parseInt(document.getElementById('cropWidth').value);
+            const height = parseInt(document.getElementById('cropHeight').value);
+            
+            if (width && height && width > 0 && height > 0) {
+                const aspectRatio = width / height;
+                
+                // Adjust crop area to match custom dimensions
+                const currentAspect = cropArea.width / cropArea.height;
+                
+                if (currentAspect > aspectRatio) {
+                    cropArea.width = cropArea.height * aspectRatio;
+                } else {
+                    cropArea.height = cropArea.width / aspectRatio;
+                }
+                
+                // Keep within canvas bounds
+                if (cropArea.x + cropArea.width > canvas.width) {
+                    cropArea.x = canvas.width - cropArea.width;
+                }
+                if (cropArea.y + cropArea.height > canvas.height) {
+                    cropArea.y = canvas.height - cropArea.height;
+                }
+                
+                drawImageWithCropArea();
+                updateCropInfo();
+            }
+        }
+        
+        function startDrag(e) {
+            isDragging = true;
+            const rect = canvas.getBoundingClientRect();
+            dragStart.x = e.clientX - rect.left;
+            dragStart.y = e.clientY - rect.top;
+        }
+        
+        function drag(e) {
+            if (!isDragging) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+            
+            const deltaX = currentX - dragStart.x;
+            const deltaY = currentY - dragStart.y;
+            
+            // Move crop area
+            cropArea.x += deltaX;
+            cropArea.y += deltaY;
+            
+            // Keep within canvas bounds
+            cropArea.x = Math.max(0, Math.min(cropArea.x, canvas.width - cropArea.width));
+            cropArea.y = Math.max(0, Math.min(cropArea.y, canvas.height - cropArea.height));
+            
+            dragStart.x = currentX;
+            dragStart.y = currentY;
+            
+            drawImageWithCropArea();
+            updateCropInfo();
+        }
+        
+        function endDrag() {
+            isDragging = false;
+        }
+        
+        function updateCropInfo() {
+            if (!originalImage) return;
+            
+            const originalSize = `${originalImage.width} × ${originalImage.height}`;
+            const cropWidth = Math.round((cropArea.width / canvas.width) * originalImage.width);
+            const cropHeight = Math.round((cropArea.height / canvas.height) * originalImage.height);
+            const cropSize = `${cropWidth} × ${cropHeight}`;
+            const aspectRatio = (cropWidth / cropHeight).toFixed(2);
+            
+            document.getElementById('originalSize').textContent = originalSize;
+            document.getElementById('cropSize').textContent = cropSize;
+            document.getElementById('aspectRatio').textContent = aspectRatio;
+            document.getElementById('cropInfo').style.display = 'block';
+        }
+        
+        function updateQualityDisplay() {
+            const quality = Math.round(qualitySlider.value * 100);
+            qualityValue.textContent = `${quality}%`;
+        }
+        
+        function cropImage() {
+            if (!originalImage) {
+                alert('Please upload an image first.');
+                return;
+            }
+            
+            // Calculate actual crop coordinates on original image
+            const scaleX = originalImage.width / canvas.width;
+            const scaleY = originalImage.height / canvas.height;
+            
+            const sourceX = cropArea.x * scaleX;
+            const sourceY = cropArea.y * scaleY;
+            const sourceWidth = cropArea.width * scaleX;
+            const sourceHeight = cropArea.height * scaleY;
+            
+            // Create new canvas for cropped image
+            const cropCanvas = document.createElement('canvas');
+            const cropCtx = cropCanvas.getContext('2d');
+            
+            cropCanvas.width = sourceWidth;
+            cropCanvas.height = sourceHeight;
+            
+            // Draw cropped portion
+            cropCtx.drawImage(originalImage, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, sourceWidth, sourceHeight);
+            
+            // Convert to blob and download
+            const quality = parseFloat(qualitySlider.value);
+            cropCanvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `cropped_image_${Math.round(sourceWidth)}x${Math.round(sourceHeight)}.jpg`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 'image/jpeg', quality);
+        }
+        
+        function loadSampleImage() {
+            const sampleImageUrl = 'https://via.placeholder.com/800x600/2563eb/ffffff?text=Sample+Image+for+Cropping';
+            loadImage(sampleImageUrl);
+        }
+        
+        function resetCrop() {
+            imageUpload.value = '';
+            canvas.style.display = 'none';
+            document.getElementById('noImagePlaceholder').style.display = 'block';
+            document.getElementById('cropInfo').style.display = 'none';
+            cropBtn.disabled = true;
+            originalImage = null;
+            
+            // Reset aspect ratio buttons
+            document.querySelectorAll('.aspect-ratio-buttons .btn-small').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('.aspect-ratio-buttons .btn-small').classList.add('active');
+            currentAspectRatio = 'free';
+        }
+        
+        // Initialize
+        updateQualityDisplay();
+    </script>
+</body>
+</html>

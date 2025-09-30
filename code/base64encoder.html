@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 Encoder/Decoder - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
+            crossorigin="anonymous"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon-16x16.png">
+    <link rel="manifest" href="../assets/images/site.webmanifest">
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="material-icons theme-toggle-icon">dark_mode</i>
+        <span class="theme-toggle-text">Dark</span>
+    </button>
+
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="container">
+        <div class="header-logo">
+            <img src="../../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+        </div>
+        <header>
+            <h1>Base64 Encoder/Decoder</h1>
+            <p class="subtitle">Encode and decode text and files to/from Base64 format</p>
+        </header>
+        
+        <div class="instructions">
+            <p>Convert text or files to Base64 encoding, or decode Base64 strings back to their original format. Perfect for data transmission and storage.</p>
+        </div>
+        
+        <div class="base64-container">
+            <div class="base64-tabs">
+                <button class="tab-btn active" onclick="switchTab('text')">Text</button>
+                <button class="tab-btn" onclick="switchTab('file')">File</button>
+            </div>
+            
+            <!-- Text Tab -->
+            <div id="textTab" class="tab-content active">
+                <div class="input-section">
+                    <label for="textInput">Input Text:</label>
+                    <textarea id="textInput" placeholder="Enter text to encode or Base64 to decode..." rows="6"></textarea>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="encodeText()">
+                        <i class="material-icons">arrow_downward</i>
+                        Encode to Base64
+                    </button>
+                    <button class="btn btn-secondary" onclick="decodeText()">
+                        <i class="material-icons">arrow_upward</i>
+                        Decode from Base64
+                    </button>
+                    <button class="btn" onclick="clearText()">
+                        <i class="material-icons">clear</i>
+                        Clear
+                    </button>
+                </div>
+                
+                <div class="output-section">
+                    <label for="textOutput">Output:</label>
+                    <textarea id="textOutput" placeholder="Encoded/decoded result will appear here..." rows="6" readonly></textarea>
+                    <button class="btn btn-small" onclick="copyTextOutput()" id="copyTextBtn">
+                        <i class="material-icons">content_copy</i>
+                        Copy
+                    </button>
+                </div>
+            </div>
+            
+            <!-- File Tab -->
+            <div id="fileTab" class="tab-content">
+                <div class="file-upload-section">
+                    <label for="fileInput">Select File:</label>
+                    <input type="file" id="fileInput" onchange="handleFileSelect()">
+                    <div class="file-info" id="fileInfo" style="display: none;">
+                        <p><strong>File:</strong> <span id="fileName"></span></p>
+                        <p><strong>Size:</strong> <span id="fileSize"></span></p>
+                        <p><strong>Type:</strong> <span id="fileType"></span></p>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="encodeFile()" id="encodeFileBtn" disabled>
+                        <i class="material-icons">arrow_downward</i>
+                        Encode File to Base64
+                    </button>
+                    <button class="btn btn-secondary" onclick="decodeFile()" id="decodeFileBtn" disabled>
+                        <i class="material-icons">arrow_upward</i>
+                        Decode Base64 to File
+                    </button>
+                    <button class="btn" onclick="clearFile()">
+                        <i class="material-icons">clear</i>
+                        Clear
+                    </button>
+                </div>
+                
+                <div class="output-section">
+                    <label for="fileOutput">Base64 Output:</label>
+                    <textarea id="fileOutput" placeholder="Base64 encoded data will appear here..." rows="8" readonly></textarea>
+                    <button class="btn btn-small" onclick="copyFileOutput()" id="copyFileBtn">
+                        <i class="material-icons">content_copy</i>
+                        Copy Base64
+                    </button>
+                </div>
+                
+                <div class="download-section" id="downloadSection" style="display: none;">
+                    <label>Decoded File:</label>
+                    <button class="btn btn-primary" onclick="downloadDecodedFile()" id="downloadBtn">
+                        <i class="material-icons">download</i>
+                        Download File
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h3>About Base64 Encoding</h3>
+            <ul>
+                <li><strong>Text Encoding:</strong> Convert plain text to Base64 format for safe transmission</li>
+                <li><strong>File Encoding:</strong> Convert any file to Base64 string for embedding or transmission</li>
+                <li><strong>Decoding:</strong> Convert Base64 strings back to original text or files</li>
+                <li><strong>Uses:</strong> Email attachments, data URLs, API responses, configuration files</li>
+            </ul>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+    
+    <script>
+        // Dark Mode Toggle Functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update toggle button
+            updateThemeToggle(newTheme);
+        }
+
+        function updateThemeToggle(theme) {
+            const icon = document.querySelector('.theme-toggle-icon');
+            const text = document.querySelector('.theme-toggle-text');
+            
+            if (theme === 'dark') {
+                icon.textContent = 'light_mode';
+                text.textContent = 'Light';
+            } else {
+                icon.textContent = 'dark_mode';
+                text.textContent = 'Dark';
+            }
+        }
+
+        // Initialize theme on page load
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeToggle(theme);
+        }
+
+        // Initialize theme when page loads
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Text encoding/decoding
+        function encodeText() {
+            const input = document.getElementById('textInput').value;
+            if (!input.trim()) {
+                alert('Please enter some text to encode.');
+                return;
+            }
+            
+            try {
+                const encoded = btoa(unescape(encodeURIComponent(input)));
+                document.getElementById('textOutput').value = encoded;
+            } catch (error) {
+                alert('Error encoding text: ' + error.message);
+            }
+        }
+        
+        function decodeText() {
+            const input = document.getElementById('textInput').value;
+            if (!input.trim()) {
+                alert('Please enter Base64 text to decode.');
+                return;
+            }
+            
+            try {
+                const decoded = decodeURIComponent(escape(atob(input)));
+                document.getElementById('textOutput').value = decoded;
+            } catch (error) {
+                alert('Error decoding Base64: ' + error.message);
+            }
+        }
+        
+        function clearText() {
+            document.getElementById('textInput').value = '';
+            document.getElementById('textOutput').value = '';
+        }
+        
+        function copyTextOutput() {
+            const output = document.getElementById('textOutput');
+            output.select();
+            document.execCommand('copy');
+            
+            const btn = document.getElementById('copyTextBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="material-icons">check</i> Copied!';
+            btn.style.background = '#4caf50';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '';
+            }, 2000);
+        }
+        
+        // File handling
+        let selectedFile = null;
+        let decodedFileData = null;
+        
+        function handleFileSelect() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (file) {
+                selectedFile = file;
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                document.getElementById('fileType').textContent = file.type || 'Unknown';
+                document.getElementById('fileInfo').style.display = 'block';
+                
+                document.getElementById('encodeFileBtn').disabled = false;
+                document.getElementById('decodeFileBtn').disabled = false;
+            }
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function encodeFile() {
+            if (!selectedFile) {
+                alert('Please select a file first.');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result.split(',')[1]; // Remove data:type;base64, prefix
+                document.getElementById('fileOutput').value = base64;
+            };
+            reader.readAsDataURL(selectedFile);
+        }
+        
+        function decodeFile() {
+            const base64Input = document.getElementById('fileOutput').value.trim();
+            if (!base64Input) {
+                alert('Please enter Base64 data to decode.');
+                return;
+            }
+            
+            try {
+                // Convert Base64 to binary
+                const binaryString = atob(base64Input);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                
+                decodedFileData = bytes;
+                document.getElementById('downloadSection').style.display = 'block';
+                
+                // Try to determine file type from Base64 header
+                const header = base64Input.substring(0, 20);
+                let mimeType = 'application/octet-stream';
+                
+                if (header.startsWith('/9j/')) mimeType = 'image/jpeg';
+                else if (header.startsWith('iVBORw0KGgo')) mimeType = 'image/png';
+                else if (header.startsWith('UklGR')) mimeType = 'image/webp';
+                else if (header.startsWith('R0lGOD')) mimeType = 'image/gif';
+                else if (header.startsWith('JVBERi0')) mimeType = 'application/pdf';
+                
+                document.getElementById('downloadBtn').setAttribute('data-mime-type', mimeType);
+                
+            } catch (error) {
+                alert('Error decoding Base64: ' + error.message);
+            }
+        }
+        
+        function downloadDecodedFile() {
+            if (!decodedFileData) {
+                alert('No decoded file data available.');
+                return;
+            }
+            
+            const mimeType = document.getElementById('downloadBtn').getAttribute('data-mime-type') || 'application/octet-stream';
+            const blob = new Blob([decodedFileData], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'decoded_file';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function copyFileOutput() {
+            const output = document.getElementById('fileOutput');
+            output.select();
+            document.execCommand('copy');
+            
+            const btn = document.getElementById('copyFileBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="material-icons">check</i> Copied!';
+            btn.style.background = '#4caf50';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '';
+            }, 2000);
+        }
+        
+        function clearFile() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileOutput').value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('downloadSection').style.display = 'none';
+            document.getElementById('encodeFileBtn').disabled = true;
+            document.getElementById('decodeFileBtn').disabled = true;
+            selectedFile = null;
+            decodedFileData = null;
+        }
+    </script>
+</body>
+</html>
