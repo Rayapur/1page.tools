@@ -91,6 +91,18 @@
         <priority>0.8</priority>
     </url>
     <url>
+        <loc>https://1page.tools/datetime/stopwatch.html</loc>
+        <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://1page.tools/datetime/timer.html</loc>
+        <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
         <loc>https://1page.tools/geo/ipgeoloc.html</loc>
         <lastmod>2025-01-27T12:00:00+00:00</lastmod>
         <changefreq>monthly</changefreq>
