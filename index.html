@@ -145,25 +145,22 @@
             <button class="filter-btn" data-filter="geo">Geo</button>
         </div>
 
-        <!-- Search and Recent Tools Row -->
-        <div class="search-recent-row">
-            <!-- Search Bar -->
-            <div class="search-container">
-                <div class="search-box">
-                    <i class="material-icons search-icon">search</i>
-                    <input type="text" id="toolSearch" placeholder="Search tools..." oninput="searchTools()">
-                    <button class="clear-search" onclick="clearSearch()" id="clearSearchBtn" style="display: none;">
-                        <i class="material-icons">close</i>
-                    </button>
-                </div>
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-box">
+                <i class="material-icons search-icon">search</i>
+                <input type="text" id="toolSearch" placeholder="Search tools..." oninput="searchTools()">
+                <button class="clear-search" onclick="clearSearch()" id="clearSearchBtn" style="display: none;">
+                    <i class="material-icons">close</i>
+                </button>
             </div>
+        </div>
 
-            <!-- Recent Tools Widget -->
-            <div class="recent-tools" id="recentTools" style="display: none;">
-                <h3>Recently Used Tools</h3>
-                <div class="recent-tools-list" id="recentToolsList">
-                    <!-- Recent tools will be populated here -->
-                </div>
+        <!-- Recent Tools Widget -->
+        <div class="recent-tools" id="recentTools" style="display: none;">
+            <h3>Recently Used Tools</h3>
+            <div class="recent-tools-list" id="recentToolsList">
+                <!-- Recent tools will be populated here -->
             </div>
         </div>
         </div>
