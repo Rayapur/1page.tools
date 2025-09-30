@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Rotator Tool - 1page.tools</title>
+    <meta name="description" content="Rotate and flip images with precision. Support for 90°, 180°, 270° rotations and horizontal/vertical flips. Free online image rotation tool.">
+    <meta name="keywords" content="image rotator, rotate image, flip image, image editor, photo rotation, image transformation">
+    <meta name="author" content="1page.tools">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="en">
+    <meta name="revisit-after" content="7 days">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://1page.tools/image/imagerotator.html">
+    <meta property="og:title" content="Image Rotator Tool - 1page.tools">
+    <meta property="og:description" content="Rotate and flip images with precision. Support for 90°, 180°, 270° rotations and horizontal/vertical flips. Free online image rotation tool.">
+    <meta property="og:image" content="https://1page.tools/assets/images/1page-logo.png">
+    <meta property="og:site_name" content="1page.tools">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="en_GB">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://1page.tools/image/imagerotator.html">
+    <meta property="twitter:title" content="Image Rotator Tool - 1page.tools">
+    <meta property="twitter:description" content="Rotate and flip images with precision. Support for 90°, 180°, 270° rotations and horizontal/vertical flips. Free online image rotation tool.">
+    <meta property="twitter:image" content="https://1page.tools/assets/images/1page-logo.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://1page.tools/image/imagerotator.html">
+    
+    <!-- Hreflang -->
+    <link rel="alternate" hreflang="en" href="https://1page.tools/image/imagerotator.html">
+    <link rel="alternate" hreflang="en-us" href="https://1page.tools/image/imagerotator.html">
+    <link rel="alternate" hreflang="en-gb" href="https://1page.tools/image/imagerotator.html">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+    <link rel="manifest" href="/assets/images/site.webmanifest">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321" crossorigin="anonymous"></script>
+    
+    <link rel="stylesheet" href="../css/theme.css">
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Image Rotator Tool",
+        "description": "Rotate and flip images with precision. Support for 90°, 180°, 270° rotations and horizontal/vertical flips.",
+        "url": "https://1page.tools/image/imagerotator.html",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "creator": {
+            "@type": "Organization",
+            "name": "1page.tools"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <a href="../index.html" class="back-button">
+                <i class="material-icons">arrow_back</i>
+            </a>
+            <div class="header-logo">
+                <img src="../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+            </div>
+            <h1>Image Rotator</h1>
+            <p>Rotate and flip images with precision. Support for 90°, 180°, 270° rotations and horizontal/vertical flips.</p>
+        </header>
+
+        <div class="image-tools-container">
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <i class="material-icons upload-icon">cloud_upload</i>
+                    <h3>Upload Image</h3>
+                    <p>Drag and drop an image here or click to browse</p>
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                    <button class="btn btn-primary" onclick="document.getElementById('imageInput').click()">
+                        <i class="material-icons">add_photo_alternate</i>
+                        Choose Image
+                    </button>
+                </div>
+            </div>
+
+            <!-- Rotation Controls -->
+            <div class="rotation-controls" id="rotationControls" style="display: none;">
+                <h3>Rotation & Flip Controls</h3>
+                
+                <!-- Rotation Buttons -->
+                <div class="rotation-buttons">
+                    <h4>Rotate</h4>
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="rotateImage(90)">
+                            <i class="material-icons">rotate_right</i>
+                            90° Right
+                        </button>
+                        <button class="btn btn-secondary" onclick="rotateImage(180)">
+                            <i class="material-icons">rotate_180</i>
+                            180°
+                        </button>
+                        <button class="btn btn-secondary" onclick="rotateImage(270)">
+                            <i class="material-icons">rotate_left</i>
+                            90° Left
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Flip Buttons -->
+                <div class="flip-buttons">
+                    <h4>Flip</h4>
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="flipImage('horizontal')">
+                            <i class="material-icons">flip</i>
+                            Horizontal
+                        </button>
+                        <button class="btn btn-secondary" onclick="flipImage('vertical')">
+                            <i class="material-icons">flip</i>
+                            Vertical
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Reset Button -->
+                <div class="reset-section">
+                    <button class="btn btn-danger" onclick="resetImage()">
+                        <i class="material-icons">refresh</i>
+                        Reset to Original
+                    </button>
+                </div>
+            </div>
+
+            <!-- Image Preview -->
+            <div class="image-preview-section" id="imagePreviewSection" style="display: none;">
+                <h3>Preview</h3>
+                <div class="image-preview-container">
+                    <canvas id="imageCanvas" class="image-canvas"></canvas>
+                </div>
+                <div class="image-info">
+                    <p><strong>Original:</strong> <span id="originalDimensions"></span></p>
+                    <p><strong>Current:</strong> <span id="currentDimensions"></span></p>
+                    <p><strong>Transformations:</strong> <span id="transformations"></span></p>
+                </div>
+            </div>
+
+            <!-- Download Section -->
+            <div class="download-section" id="downloadSection" style="display: none;">
+                <h3>Download Rotated Image</h3>
+                <div class="download-options">
+                    <button class="btn btn-primary" onclick="downloadImage()">
+                        <i class="material-icons">download</i>
+                        Download Image
+                    </button>
+                    <select id="downloadFormat" class="format-select">
+                        <option value="png">PNG</option>
+                        <option value="jpeg">JPEG</option>
+                        <option value="webp">WebP</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- AdSense Banner Ad -->
+        <div class="ad-container ad-banner">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3527668902044321"
+                 data-ad-slot="1234567890"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        </div>
+    </div>
+
+    <script>
+        let originalImage = null;
+        let currentImage = null;
+        let canvas = null;
+        let ctx = null;
+        let transformations = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            canvas = document.getElementById('imageCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // File input handler
+            document.getElementById('imageInput').addEventListener('change', handleFileSelect);
+            
+            // Drag and drop handlers
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('drop', handleDrop);
+        });
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.add('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                loadImage(files[0]);
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                loadImage(file);
+            }
+        }
+
+        function loadImage(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    originalImage = img;
+                    currentImage = img;
+                    transformations = [];
+                    displayImage();
+                    showControls();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function displayImage() {
+            if (!currentImage) return;
+
+            // Set canvas size to image size
+            canvas.width = currentImage.width;
+            canvas.height = currentImage.height;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw image
+            ctx.drawImage(currentImage, 0, 0);
+
+            // Update info
+            updateImageInfo();
+        }
+
+        function rotateImage(degrees) {
+            if (!originalImage) return;
+
+            const img = new Image();
+            img.onload = function() {
+                currentImage = img;
+                displayImage();
+                transformations.push(`Rotated ${degrees}°`);
+                updateTransformations();
+            };
+
+            // Create rotated image
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            if (degrees === 90 || degrees === 270) {
+                tempCanvas.width = originalImage.height;
+                tempCanvas.height = originalImage.width;
+            } else {
+                tempCanvas.width = originalImage.width;
+                tempCanvas.height = originalImage.height;
+            }
+
+            tempCtx.translate(tempCanvas.width / 2, tempCanvas.height / 2);
+            tempCtx.rotate((degrees * Math.PI) / 180);
+            tempCtx.drawImage(originalImage, -originalImage.width / 2, -originalImage.height / 2);
+
+            img.src = tempCanvas.toDataURL();
+        }
+
+        function flipImage(direction) {
+            if (!originalImage) return;
+
+            const img = new Image();
+            img.onload = function() {
+                currentImage = img;
+                displayImage();
+                transformations.push(`Flipped ${direction}`);
+                updateTransformations();
+            };
+
+            // Create flipped image
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            tempCanvas.width = originalImage.width;
+            tempCanvas.height = originalImage.height;
+
+            if (direction === 'horizontal') {
+                tempCtx.scale(-1, 1);
+                tempCtx.drawImage(originalImage, -originalImage.width, 0);
+            } else {
+                tempCtx.scale(1, -1);
+                tempCtx.drawImage(originalImage, 0, -originalImage.height);
+            }
+
+            img.src = tempCanvas.toDataURL();
+        }
+
+        function resetImage() {
+            if (!originalImage) return;
+            
+            currentImage = originalImage;
+            transformations = [];
+            displayImage();
+            updateTransformations();
+        }
+
+        function updateImageInfo() {
+            if (!originalImage || !currentImage) return;
+
+            document.getElementById('originalDimensions').textContent = 
+                `${originalImage.width} × ${originalImage.height}`;
+            document.getElementById('currentDimensions').textContent = 
+                `${currentImage.width} × ${currentImage.height}`;
+        }
+
+        function updateTransformations() {
+            const transformationsText = transformations.length > 0 ? 
+                transformations.join(', ') : 'None';
+            document.getElementById('transformations').textContent = transformationsText;
+        }
+
+        function showControls() {
+            document.getElementById('rotationControls').style.display = 'block';
+            document.getElementById('imagePreviewSection').style.display = 'block';
+            document.getElementById('downloadSection').style.display = 'block';
+        }
+
+        function downloadImage() {
+            if (!currentImage) return;
+
+            const format = document.getElementById('downloadFormat').value;
+            const mimeType = `image/${format}`;
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.download = `rotated-image.${format}`;
+            link.href = canvas.toDataURL(mimeType, 0.9);
+            link.click();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator - 1page.tools</title>
+    <meta name="description" content="Advanced scientific calculator with trigonometry, logarithms, exponentials, and more. Free online scientific calculator for complex mathematical calculations.">
+    <meta name="keywords" content="scientific calculator, trigonometry, logarithms, exponentials, math calculator, advanced calculator">
+    <meta name="author" content="1page.tools">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="en">
+    <meta name="revisit-after" content="7 days">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://1page.tools/math/scientificcalculator.html">
+    <meta property="og:title" content="Scientific Calculator - 1page.tools">
+    <meta property="og:description" content="Advanced scientific calculator with trigonometry, logarithms, exponentials, and more. Free online scientific calculator for complex mathematical calculations.">
+    <meta property="og:image" content="https://1page.tools/assets/images/1page-logo.png">
+    <meta property="og:site_name" content="1page.tools">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="en_GB">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://1page.tools/math/scientificcalculator.html">
+    <meta property="twitter:title" content="Scientific Calculator - 1page.tools">
+    <meta property="twitter:description" content="Advanced scientific calculator with trigonometry, logarithms, exponentials, and more. Free online scientific calculator for complex mathematical calculations.">
+    <meta property="twitter:image" content="https://1page.tools/assets/images/1page-logo.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://1page.tools/math/scientificcalculator.html">
+    
+    <!-- Hreflang -->
+    <link rel="alternate" hreflang="en" href="https://1page.tools/math/scientificcalculator.html">
+    <link rel="alternate" hreflang="en-us" href="https://1page.tools/math/scientificcalculator.html">
+    <link rel="alternate" hreflang="en-gb" href="https://1page.tools/math/scientificcalculator.html">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+    <link rel="manifest" href="/assets/images/site.webmanifest">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321" crossorigin="anonymous"></script>
+    
+    <link rel="stylesheet" href="../css/theme.css">
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Scientific Calculator",
+        "description": "Advanced scientific calculator with trigonometry, logarithms, exponentials, and more mathematical functions.",
+        "url": "https://1page.tools/math/scientificcalculator.html",
+        "applicationCategory": "CalculatorApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "creator": {
+            "@type": "Organization",
+            "name": "1page.tools"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <a href="../index.html" class="back-button">
+                <i class="material-icons">arrow_back</i>
+            </a>
+            <div class="header-logo">
+                <img src="../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+            </div>
+            <h1>Scientific Calculator</h1>
+            <p>Advanced scientific calculator with trigonometry, logarithms, exponentials, and more mathematical functions.</p>
+        </header>
+
+        <div class="calculator-container">
+            <!-- Display -->
+            <div class="calculator-display">
+                <div class="display-secondary" id="secondaryDisplay">0</div>
+                <div class="display-primary" id="primaryDisplay">0</div>
+            </div>
+
+            <!-- Calculator Buttons -->
+            <div class="calculator-buttons">
+                <!-- Row 1: Functions -->
+                <button class="calc-btn function-btn" onclick="clearAll()">C</button>
+                <button class="calc-btn function-btn" onclick="clearEntry()">CE</button>
+                <button class="calc-btn function-btn" onclick="backspace()">⌫</button>
+                <button class="calc-btn operator-btn" onclick="inputOperator('/')">÷</button>
+
+                <!-- Row 2: Scientific Functions -->
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('sin')">sin</button>
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('cos')">cos</button>
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('tan')">tan</button>
+                <button class="calc-btn operator-btn" onclick="inputOperator('*')">×</button>
+
+                <!-- Row 3: More Functions -->
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('log')">log</button>
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('ln')">ln</button>
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('sqrt')">√</button>
+                <button class="calc-btn operator-btn" onclick="inputOperator('-')">−</button>
+
+                <!-- Row 4: Numbers and Operations -->
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('pow')">x^y</button>
+                <button class="calc-btn number-btn" onclick="inputNumber('7')">7</button>
+                <button class="calc-btn number-btn" onclick="inputNumber('8')">8</button>
+                <button class="calc-btn number-btn" onclick="inputNumber('9')">9</button>
+                <button class="calc-btn operator-btn" onclick="inputOperator('+')">+</button>
+
+                <!-- Row 5: More Numbers -->
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('pi')">π</button>
+                <button class="calc-btn number-btn" onclick="inputNumber('4')">4</button>
+                <button class="calc-btn number-btn" onclick="inputNumber('5')">5</button>
+                <button class="calc-btn number-btn" onclick="inputNumber('6')">6</button>
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('factorial')">n!</button>
+
+                <!-- Row 6: More Numbers -->
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('e')">e</button>
+                <button class="calc-btn number-btn" onclick="inputNumber('1')">1</button>
+                <button class="calc-btn number-btn" onclick="inputNumber('2')">2</button>
+                <button class="calc-btn number-btn" onclick="inputNumber('3')">3</button>
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('abs')">|x|</button>
+
+                <!-- Row 7: Bottom Row -->
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('inv')">1/x</button>
+                <button class="calc-btn number-btn" onclick="inputNumber('0')">0</button>
+                <button class="calc-btn number-btn" onclick="inputNumber('.')">.</button>
+                <button class="calc-btn scientific-btn" onclick="toggleSign()">±</button>
+                <button class="calc-btn equals-btn" onclick="calculate()">=</button>
+            </div>
+
+            <!-- Memory Functions -->
+            <div class="memory-functions">
+                <button class="calc-btn memory-btn" onclick="memoryStore()">MS</button>
+                <button class="calc-btn memory-btn" onclick="memoryRecall()">MR</button>
+                <button class="calc-btn memory-btn" onclick="memoryClear()">MC</button>
+                <button class="calc-btn memory-btn" onclick="memoryAdd()">M+</button>
+                <button class="calc-btn memory-btn" onclick="memorySubtract()">M-</button>
+            </div>
+
+            <!-- Angle Mode Toggle -->
+            <div class="angle-mode">
+                <label class="angle-toggle">
+                    <input type="radio" name="angleMode" value="deg" checked>
+                    <span>Degrees</span>
+                </label>
+                <label class="angle-toggle">
+                    <input type="radio" name="angleMode" value="rad">
+                    <span>Radians</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- AdSense Banner Ad -->
+        <div class="ad-container ad-banner">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3527668902044321"
+                 data-ad-slot="1234567890"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        </div>
+    </div>
+
+    <script>
+        let display = '0';
+        let secondaryDisplay = '0';
+        let operator = null;
+        let previousValue = null;
+        let waitingForOperand = false;
+        let memory = 0;
+        let angleMode = 'deg'; // 'deg' or 'rad'
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDisplay();
+            
+            // Angle mode change handler
+            document.querySelectorAll('input[name="angleMode"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    angleMode = this.value;
+                });
+            });
+        });
+
+        function updateDisplay() {
+            document.getElementById('primaryDisplay').textContent = display;
+            document.getElementById('secondaryDisplay').textContent = secondaryDisplay;
+        }
+
+        function inputNumber(num) {
+            if (waitingForOperand) {
+                display = num;
+                waitingForOperand = false;
+            } else {
+                display = display === '0' ? num : display + num;
+            }
+            updateDisplay();
+        }
+
+        function inputOperator(nextOperator) {
+            const inputValue = parseFloat(display);
+
+            if (previousValue === null) {
+                previousValue = inputValue;
+            } else if (operator) {
+                const currentValue = previousValue || 0;
+                const newValue = calculateValue(currentValue, inputValue, operator);
+
+                display = String(newValue);
+                previousValue = newValue;
+            }
+
+            waitingForOperand = true;
+            operator = nextOperator;
+            secondaryDisplay = display + ' ' + operator;
+            updateDisplay();
+        }
+
+        function calculateValue(firstValue, secondValue, operator) {
+            switch (operator) {
+                case '+':
+                    return firstValue + secondValue;
+                case '-':
+                    return firstValue - secondValue;
+                case '*':
+                    return firstValue * secondValue;
+                case '/':
+                    return secondValue !== 0 ? firstValue / secondValue : 0;
+                default:
+                    return secondValue;
+            }
+        }
+
+        function calculate() {
+            const inputValue = parseFloat(display);
+
+            if (previousValue !== null && operator) {
+                const newValue = calculateValue(previousValue, inputValue, operator);
+                display = String(newValue);
+                previousValue = null;
+                operator = null;
+                waitingForOperand = true;
+                secondaryDisplay = '0';
+            }
+            updateDisplay();
+        }
+
+        function clearAll() {
+            display = '0';
+            secondaryDisplay = '0';
+            operator = null;
+            previousValue = null;
+            waitingForOperand = false;
+            updateDisplay();
+        }
+
+        function clearEntry() {
+            display = '0';
+            updateDisplay();
+        }
+
+        function backspace() {
+            if (display.length > 1) {
+                display = display.slice(0, -1);
+            } else {
+                display = '0';
+            }
+            updateDisplay();
+        }
+
+        function toggleSign() {
+            if (display !== '0') {
+                display = display.startsWith('-') ? display.slice(1) : '-' + display;
+                updateDisplay();
+            }
+        }
+
+        function scientificFunction(func) {
+            const value = parseFloat(display);
+            let result;
+
+            switch (func) {
+                case 'sin':
+                    result = Math.sin(angleMode === 'deg' ? value * Math.PI / 180 : value);
+                    break;
+                case 'cos':
+                    result = Math.cos(angleMode === 'deg' ? value * Math.PI / 180 : value);
+                    break;
+                case 'tan':
+                    result = Math.tan(angleMode === 'deg' ? value * Math.PI / 180 : value);
+                    break;
+                case 'log':
+                    result = Math.log10(value);
+                    break;
+                case 'ln':
+                    result = Math.log(value);
+                    break;
+                case 'sqrt':
+                    result = Math.sqrt(value);
+                    break;
+                case 'pow':
+                    if (previousValue !== null) {
+                        result = Math.pow(previousValue, value);
+                        previousValue = null;
+                    } else {
+                        result = value;
+                    }
+                    break;
+                case 'pi':
+                    result = Math.PI;
+                    break;
+                case 'e':
+                    result = Math.E;
+                    break;
+                case 'factorial':
+                    result = factorial(value);
+                    break;
+                case 'abs':
+                    result = Math.abs(value);
+                    break;
+                case 'inv':
+                    result = 1 / value;
+                    break;
+                default:
+                    return;
+            }
+
+            display = String(result);
+            waitingForOperand = true;
+            updateDisplay();
+        }
+
+        function factorial(n) {
+            if (n < 0 || n !== Math.floor(n)) return NaN;
+            if (n === 0 || n === 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+            }
+            return result;
+        }
+
+        // Memory functions
+        function memoryStore() {
+            memory = parseFloat(display);
+        }
+
+        function memoryRecall() {
+            display = String(memory);
+            waitingForOperand = true;
+            updateDisplay();
+        }
+
+        function memoryClear() {
+            memory = 0;
+        }
+
+        function memoryAdd() {
+            memory += parseFloat(display);
+        }
+
+        function memorySubtract() {
+            memory -= parseFloat(display);
+        }
+    </script>
+</body>
+</html>
