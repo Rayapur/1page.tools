@@ -1710,6 +1710,37 @@ input[type="color"] {
     width: 100%;
 }
 
+/* Search and Recent Tools Row */
+.search-recent-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+/* Responsive adjustments for search-recent-row */
+@media (max-width: 768px) {
+    .search-recent-row {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .search-container {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .recent-tools {
+        width: 100%;
+        max-width: 100%;
+        min-width: auto;
+    }
+}
+
 .search-box {
     position: relative;
     max-width: 350px;
@@ -1817,13 +1848,13 @@ input[type="color"] {
 .recent-tools {
     background: var(--card-bg);
     border-radius: 12px;
-    padding: 1rem;
-    margin: 1rem 0;
+    padding: 0.75rem;
+    margin: 0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--border-color);
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
 }
 
 .recent-tools h3 {
