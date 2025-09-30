@@ -50,26 +50,26 @@
             <div class="calculator-buttons">
                     <button class="calc-btn calc-btn-clear" onclick="clearDisplay()">C</button>
                     <button class="calc-btn calc-btn-operator" onclick="deleteLast()">⌫</button>
-                    <button class="calc-btn calc-btn-operator" onclick="appendToDisplay('/')">/</button>
-                    <button class="calc-btn calc-btn-operator" onclick="appendToDisplay('*')">×</button>
+                    <button class="calc-btn calc-btn-operator" onclick="setOperator('/')">/</button>
+                    <button class="calc-btn calc-btn-operator" onclick="setOperator('*')">×</button>
                     
-                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('7')">7</button>
-                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('8')">8</button>
-                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('9')">9</button>
-                    <button class="calc-btn calc-btn-operator" onclick="appendToDisplay('-')">-</button>
+                    <button class="calc-btn number-btn" onclick="appendToDisplay('7')">7</button>
+                    <button class="calc-btn number-btn" onclick="appendToDisplay('8')">8</button>
+                    <button class="calc-btn number-btn" onclick="appendToDisplay('9')">9</button>
+                    <button class="calc-btn calc-btn-operator" onclick="setOperator('-')">-</button>
                     
-                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('4')">4</button>
-                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('5')">5</button>
-                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('6')">6</button>
-                    <button class="calc-btn calc-btn-operator" onclick="appendToDisplay('+')">+</button>
+                    <button class="calc-btn number-btn" onclick="appendToDisplay('4')">4</button>
+                    <button class="calc-btn number-btn" onclick="appendToDisplay('5')">5</button>
+                    <button class="calc-btn number-btn" onclick="appendToDisplay('6')">6</button>
+                    <button class="calc-btn calc-btn-operator" onclick="setOperator('+')">+</button>
                     
-                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('1')">1</button>
-                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('2')">2</button>
-                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('3')">3</button>
+                    <button class="calc-btn number-btn" onclick="appendToDisplay('1')">1</button>
+                    <button class="calc-btn number-btn" onclick="appendToDisplay('2')">2</button>
+                    <button class="calc-btn number-btn" onclick="appendToDisplay('3')">3</button>
                     <button class="calc-btn calc-btn-equals" onclick="calculate()" rowspan="2">=</button>
                     
-                <button class="calc-btn calc-btn-number calc-btn-zero" onclick="appendToDisplay('0')">0</button>
-                <button class="calc-btn calc-btn-number" onclick="appendToDisplay('.')">.</button>
+                <button class="calc-btn number-btn" onclick="appendToDisplay('0')">0</button>
+                <button class="calc-btn number-btn" onclick="appendToDisplay('.')">.</button>
             </div>
         </div>
     </div>
