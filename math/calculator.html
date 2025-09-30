@@ -41,12 +41,13 @@
         </div>
         
         <div class="calculator-container">
-            <div class="calculator">
-                <div class="calculator-display">
-                    <input type="text" id="display" readonly placeholder="0">
-                </div>
+            <!-- Display -->
+            <div class="calculator-display">
+                <div class="display-primary" id="display">0</div>
+            </div>
                 
-                <div class="calculator-buttons">
+            <!-- Calculator Buttons -->
+            <div class="calculator-buttons">
                     <button class="calc-btn calc-btn-clear" onclick="clearDisplay()">C</button>
                     <button class="calc-btn calc-btn-operator" onclick="deleteLast()">⌫</button>
                     <button class="calc-btn calc-btn-operator" onclick="appendToDisplay('/')">/</button>
@@ -67,9 +68,8 @@
                     <button class="calc-btn calc-btn-number" onclick="appendToDisplay('3')">3</button>
                     <button class="calc-btn calc-btn-equals" onclick="calculate()" rowspan="2">=</button>
                     
-                    <button class="calc-btn calc-btn-number calc-btn-zero" onclick="appendToDisplay('0')">0</button>
-                    <button class="calc-btn calc-btn-number" onclick="appendToDisplay('.')">.</button>
-                </div>
+                <button class="calc-btn calc-btn-number calc-btn-zero" onclick="appendToDisplay('0')">0</button>
+                <button class="calc-btn calc-btn-number" onclick="appendToDisplay('.')">.</button>
             </div>
         </div>
     </div>
@@ -86,7 +86,7 @@
         let shouldResetDisplay = false;
 
         function updateDisplay(value) {
-            display.value = value;
+            display.textContent = value;
         }
 
         function clearDisplay() {
