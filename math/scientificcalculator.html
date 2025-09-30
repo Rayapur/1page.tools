@@ -103,47 +103,48 @@
                 <button class="calc-btn function-btn" onclick="clearAll()">C</button>
                 <button class="calc-btn function-btn" onclick="clearEntry()">CE</button>
                 <button class="calc-btn function-btn" onclick="backspace()">⌫</button>
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('pow')">x^y</button>
                 <button class="calc-btn operator-btn" onclick="inputOperator('/')">÷</button>
 
                 <!-- Row 2: Scientific Functions -->
                 <button class="calc-btn scientific-btn" onclick="scientificFunction('sin')">sin</button>
                 <button class="calc-btn scientific-btn" onclick="scientificFunction('cos')">cos</button>
                 <button class="calc-btn scientific-btn" onclick="scientificFunction('tan')">tan</button>
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('sqrt')">√</button>
                 <button class="calc-btn operator-btn" onclick="inputOperator('*')">×</button>
 
                 <!-- Row 3: More Functions -->
                 <button class="calc-btn scientific-btn" onclick="scientificFunction('log')">log</button>
                 <button class="calc-btn scientific-btn" onclick="scientificFunction('ln')">ln</button>
-                <button class="calc-btn scientific-btn" onclick="scientificFunction('sqrt')">√</button>
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('pi')">π</button>
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('e')">e</button>
                 <button class="calc-btn operator-btn" onclick="inputOperator('-')">−</button>
 
                 <!-- Row 4: Numbers 7,8,9 -->
-                <button class="calc-btn scientific-btn" onclick="scientificFunction('pow')">x^y</button>
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('factorial')">n!</button>
                 <button class="calc-btn number-btn" onclick="inputNumber('7')">7</button>
                 <button class="calc-btn number-btn" onclick="inputNumber('8')">8</button>
                 <button class="calc-btn number-btn" onclick="inputNumber('9')">9</button>
                 <button class="calc-btn operator-btn" onclick="inputOperator('+')">+</button>
 
                 <!-- Row 5: Numbers 4,5,6 -->
-                <button class="calc-btn scientific-btn" onclick="scientificFunction('pi')">π</button>
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('abs')">|x|</button>
                 <button class="calc-btn number-btn" onclick="inputNumber('4')">4</button>
                 <button class="calc-btn number-btn" onclick="inputNumber('5')">5</button>
                 <button class="calc-btn number-btn" onclick="inputNumber('6')">6</button>
-                <button class="calc-btn scientific-btn" onclick="scientificFunction('factorial')">n!</button>
+                <button class="calc-btn scientific-btn" onclick="toggleSign()">±</button>
 
                 <!-- Row 6: Numbers 1,2,3 -->
-                <button class="calc-btn scientific-btn" onclick="scientificFunction('e')">e</button>
+                <button class="calc-btn scientific-btn" onclick="scientificFunction('inv')">1/x</button>
                 <button class="calc-btn number-btn" onclick="inputNumber('1')">1</button>
                 <button class="calc-btn number-btn" onclick="inputNumber('2')">2</button>
                 <button class="calc-btn number-btn" onclick="inputNumber('3')">3</button>
-                <button class="calc-btn scientific-btn" onclick="scientificFunction('abs')">|x|</button>
+                <button class="calc-btn equals-btn" onclick="calculate()" style="grid-row: span 2;">=</button>
 
-                <!-- Row 7: Bottom Row 0,.,±,= -->
-                <button class="calc-btn scientific-btn" onclick="scientificFunction('inv')">1/x</button>
-                <button class="calc-btn number-btn" onclick="inputNumber('0')">0</button>
+                <!-- Row 7: Bottom Row 0,. -->
+                <button class="calc-btn number-btn" onclick="inputNumber('0')" style="grid-column: span 2;">0</button>
                 <button class="calc-btn number-btn" onclick="inputNumber('.')">.</button>
-                <button class="calc-btn scientific-btn" onclick="toggleSign()">±</button>
-                <button class="calc-btn equals-btn" onclick="calculate()">=</button>
+                <button class="calc-btn number-btn" onclick="inputNumber('00')">00</button>
             </div>
 
             <!-- Memory Functions -->

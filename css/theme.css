@@ -5462,7 +5462,7 @@ input[type="color"] {
 
 .calculator-buttons {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 0.75rem;
     margin-bottom: 1.5rem;
 }
@@ -5526,7 +5526,6 @@ input[type="color"] {
 .equals-btn {
     background: #2ecc71;
     color: white;
-    grid-column: span 2;
 }
 
 .equals-btn:hover {
