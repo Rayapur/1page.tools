@@ -85,7 +85,7 @@
         "name": "Online Tools Collection",
         "description": "Collection of free online tools for developers and professionals",
         "url": "https://1page.tools",
-        "numberOfItems": 33,
+        "numberOfItems": 34,
         "itemListElement": [
             {
                 "@type": "SoftwareApplication",
@@ -205,6 +205,10 @@
             <button class="filter-btn" data-filter="geo">
                 <i class="material-icons">place</i>
                 Geo
+            </button>
+            <button class="filter-btn" data-filter="games">
+                <i class="material-icons">sports_esports</i>
+                Games
             </button>
         </div>
         </div>
@@ -388,6 +392,10 @@
                 <a href="geo/ipgeoloc.html">IP Geolocation</a>
                 <div class="tool-desc">Find the location of any IP address.</div>
             </div>
+            <div class="tool-card" data-category="games">
+                <a href="games/wordle.html">Wordle Game</a>
+                <div class="tool-desc">Guess the 5-letter word in 6 tries! Classic word puzzle game.</div>
+            </div>
             <!-- Add more tools below as you create them, with appropriate data-category -->
         </div>
 
@@ -558,7 +566,9 @@
                 'web': 'web',
                 'security': 'security',
                 'csv': 'table_chart',
-                'geo': 'place'
+                'geo': 'place',
+                'audio': 'audiotrack',
+                'games': 'sports_esports'
             };
             return icons[category] || 'build';
         }
