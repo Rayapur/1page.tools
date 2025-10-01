@@ -28,14 +28,30 @@
 
 
     <a href="../index.html" class="back-button" title="Back to Home"></a>
-    <div class="container">
-            <div class="header-logo">
-        <img src="../../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
-    </div>
-    <header>
-            <h1>HTML Color Picker</h1>
-            <p class="subtitle">Pick a color and get its values in multiple formats</p>
-        </header>
+    
+    <div class="page-wrapper">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="ad-container vertical">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3527668902044321"
+                     data-ad-slot="1234567890"
+                     data-ad-format="rectangle"
+                     data-full-width-responsive="true"></ins>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container">
+                <div class="header-logo">
+                    <img src="../../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+                </div>
+                <header>
+                    <h1>HTML Color Picker</h1>
+                    <p class="subtitle">Pick a color and get its values in multiple formats</p>
+                </header>
         
         <div class="instructions">
             <h3>How to use:</h3>
@@ -255,14 +271,29 @@
                 darkerPalette.appendChild(swatch);
             }
         }
-        colorInput.addEventListener('input', updateColor);
-        updateColor();
-    </script>
-    
-    <footer class="site-footer">
-        &copy; 2025 1page.tools<br>
-        <a href="../privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="../terms-of-use.html" target="_blank">Terms of Use</a>
-    </footer>    <script>
+                colorInput.addEventListener('input', updateColor);
+                updateColor();
+            </script>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="sidebar">
+        <div class="ad-container vertical">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3527668902044321"
+                 data-ad-slot="1122334455"
+                 data-ad-format="rectangle"
+                 data-full-width-responsive="true"></ins>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    &copy; 2025 1page.tools<br>
+    <a href="../privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="../terms-of-use.html" target="_blank">Terms of Use</a>
+</footer>    <script>
         // Dark Mode Toggle Functionality
         function toggleTheme() {
             const html = document.documentElement;
