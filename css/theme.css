@@ -112,6 +112,80 @@ body {
     padding: 2.5rem 2rem;
 }
 
+/* Sidebar Ad Layout */
+.page-wrapper {
+    display: flex;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+.sidebar {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.ad-container {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.ad-container.vertical {
+    position: sticky;
+    top: 2rem;
+}
+
+.ad-container.horizontal {
+    margin: 2rem 0;
+}
+
+/* AdSense responsive ads */
+.ad-responsive {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Hide sidebars on mobile */
+@media (max-width: 1200px) {
+    .page-wrapper {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+    
+    .sidebar .ad-container {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-wrapper {
+        margin: 1rem auto;
+        padding: 0 0.5rem;
+    }
+    
+    .sidebar {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .ad-container {
+        margin-bottom: 1rem;
+    }
+}
+
 /* Logo styles */
 .header-logo {
     text-align: center;

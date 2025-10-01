@@ -122,12 +122,27 @@
         <span class="theme-toggle-text">Dark</span>
     </button>
 
-    <div class="container">
-        <div class="header-logo">
-            <img src="assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+    <div class="page-wrapper">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="ad-container vertical">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3527668902044321"
+                     data-ad-slot="1234567890"
+                     data-ad-format="rectangle"
+                     data-full-width-responsive="true"></ins>
+            </div>
         </div>
-        <h1>1page.tools</h1>
-        <p>Simple, fast, and free online tools for everyone. No sign-up, no clutter—just what you need, on one page.</p>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container">
+                <div class="header-logo">
+                    <img src="assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+                </div>
+                <h1>1page.tools</h1>
+                <p>Simple, fast, and free online tools for everyone. No sign-up, no clutter—just what you need, on one page.</p>
         <!-- Search Bar and Recent Tools Row -->
         <div class="search-recent-row">
             <!-- Search Bar -->
@@ -396,20 +411,36 @@
                 <a href="games/wordle.html">Wordle Game</a>
                 <div class="tool-desc">Guess the 5-letter word in 6 tries! Classic word puzzle game.</div>
             </div>
-            <!-- Add more tools below as you create them, with appropriate data-category -->
+                <!-- Add more tools below as you create them, with appropriate data-category -->
+                </div>
+
+                <!-- Horizontal Ad for Mobile/Tablet -->
+                <div class="ad-container horizontal">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-3527668902044321"
+                         data-ad-slot="0987654321"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                </div>
+
+                <div class="footer">
+                      &copy; 2025 1page.tools &mdash; Made for simplicity.<br>
+                      <a href="privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="terms-of-use.html" target="_blank">Terms of Use</a>
+                </div>
+            </div>
         </div>
 
-        <!-- AdSense Rectangle Ad - Temporarily hidden until approval -->
-        <!-- <div class="ad-container ad-rectangle">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                data-ad-client="ca-pub-3527668902044321"
-                 data-ad-format="rectangle"></ins>
-        </div> -->
-
-        <div class="footer">
-              &copy; 2025 1page.tools &mdash; Made for simplicity.<br>
-              <a href="privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="terms-of-use.html" target="_blank">Terms of Use</a>
+        <!-- Right Sidebar -->
+        <div class="sidebar">
+            <div class="ad-container vertical">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3527668902044321"
+                     data-ad-slot="1122334455"
+                     data-ad-format="rectangle"
+                     data-full-width-responsive="true"></ins>
+            </div>
         </div>
     </div>
     <script>
@@ -425,7 +456,32 @@
                     container.style.display = 'none';
                 }
             });
-        }, 3000); // Wait 3 seconds for ads to load
+        }, 5000); // Wait 5 seconds for ads to load
+        
+        // Responsive ad handling
+        function handleResponsiveAds() {
+            const sidebars = document.querySelectorAll('.sidebar');
+            const pageWrapper = document.querySelector('.page-wrapper');
+            
+            if (window.innerWidth <= 1200) {
+                // On mobile/tablet, make sidebars horizontal
+                sidebars.forEach(sidebar => {
+                    sidebar.style.flexDirection = 'row';
+                    sidebar.style.justifyContent = 'center';
+                    sidebar.style.gap = '1rem';
+                });
+            } else {
+                // On desktop, keep sidebars vertical
+                sidebars.forEach(sidebar => {
+                    sidebar.style.flexDirection = 'column';
+                    sidebar.style.justifyContent = 'flex-start';
+                });
+            }
+        }
+        
+        // Call on load and resize
+        window.addEventListener('load', handleResponsiveAds);
+        window.addEventListener('resize', handleResponsiveAds);
         
         // Filter logic
         document.addEventListener('DOMContentLoaded', function() {
