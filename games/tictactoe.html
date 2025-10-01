@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Game - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
+            crossorigin="anonymous"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon-16x16.png">
+    <link rel="manifest" href="../assets/images/site.webmanifest">
+    
+    <style>
+        .game-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        
+        .game-header {
+            margin-bottom: 2rem;
+        }
+        
+        .game-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: var(--header-color);
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .difficulty-selector {
+            margin: 1rem 0;
+        }
+        
+        .difficulty-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .difficulty-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .difficulty-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .difficulty-btn:hover {
+            background: var(--button-hover-bg);
+            color: white;
+        }
+        
+        .game-board {
+            background: var(--container-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: var(--container-shadow);
+        }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            background: var(--border-color);
+            padding: 5px;
+            border-radius: 8px;
+        }
+        
+        .cell {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 4px;
+            font-size: 3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+        }
+        
+        .cell:hover {
+            background: var(--button-hover-bg);
+            transform: scale(1.05);
+        }
+        
+        .cell:disabled {
+            cursor: not-allowed;
+        }
+        
+        .cell:disabled:hover {
+            transform: none;
+            background: var(--card-bg);
+        }
+        
+        .cell.x {
+            color: #ef4444;
+        }
+        
+        .cell.o {
+            color: #3b82f6;
+        }
+        
+        .cell.winning {
+            background: #4ade80;
+            color: white;
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .game-message {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+            min-height: 20px;
+        }
+        
+        .game-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .game-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .game-actions {
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0 0.5rem;
+            transition: background 0.2s;
+        }
+        
+        .btn:hover {
+            background: var(--button-hover-bg);
+        }
+        
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+        
+        .btn:disabled {
+            background: var(--border-color);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        
+        .player-info {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .current-player {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .game-mode {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .game-mode h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        
+        @media (max-width: 600px) {
+            .board {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .cell {
+                font-size: 2.5rem;
+            }
+            
+            .game-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .difficulty-buttons {
+                gap: 0.3rem;
+            }
+            
+            .difficulty-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Dark theme adjustments */
+        [data-theme="dark"] .game-message.success {
+            background: #1e4d2b;
+            color: #a3d9a4;
+            border-color: #2d5a3d;
+        }
+        
+        [data-theme="dark"] .game-message.error {
+            background: #4d1e1e;
+            color: #f5a3a3;
+            border-color: #5a2d2d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="material-icons theme-toggle-icon">dark_mode</i>
+        <span class="theme-toggle-text">Dark</span>
+    </button>
+
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="page-wrapper">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="ad-container vertical">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3527668902044321"
+                     data-ad-slot="1234567890"
+                     data-ad-format="rectangle"
+                     data-full-width-responsive="true"></ins>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container">
+                <div class="header-logo">
+                    <img src="../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+                </div>
+                
+                <div class="game-container">
+                    <div class="game-header">
+                        <h1>⭕ Tic-Tac-Toe</h1>
+                        <p>Classic game with smart AI opponent!</p>
+                    </div>
+                    
+                    <div class="game-stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="wins">0</div>
+                            <div class="stat-label">Wins</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="losses">0</div>
+                            <div class="stat-label">Losses</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="draws">0</div>
+                            <div class="stat-label">Draws</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="winRate">0%</div>
+                            <div class="stat-label">Win Rate</div>
+                        </div>
+                    </div>
+                    
+                    <div class="difficulty-selector">
+                        <h3>Choose Difficulty:</h3>
+                        <div class="difficulty-buttons">
+                            <button class="difficulty-btn active" data-difficulty="easy">Easy</button>
+                            <button class="difficulty-btn" data-difficulty="medium">Medium</button>
+                            <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+                        </div>
+                    </div>
+                    
+                    <div class="game-mode">
+                        <h3>Game Mode:</h3>
+                        <p id="gameModeDescription">Easy: AI makes random moves - great for beginners!</p>
+                    </div>
+                    
+                    <div class="game-message" id="gameMessage"></div>
+                    
+                    <div class="player-info">
+                        <div class="current-player" id="currentPlayer">Your turn (X)</div>
+                    </div>
+                    
+                    <div class="game-board">
+                        <div class="board" id="gameBoard">
+                            <!-- Cells will be generated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="game-actions">
+                        <button class="btn" onclick="newGame()">New Game</button>
+                        <button class="btn btn-secondary" onclick="showStats()">Stats</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="sidebar">
+            <div class="ad-container vertical">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3527668902044321"
+                     data-ad-slot="1122334455"
+                     data-ad-format="rectangle"
+                     data-full-width-responsive="true"></ins>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+    
+    <script>
+        // Game state
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let currentDifficulty = 'easy';
+        
+        // Statistics
+        let stats = {
+            gamesPlayed: 0,
+            wins: 0,
+            losses: 0,
+            draws: 0,
+            difficultyStats: {
+                easy: { played: 0, wins: 0 },
+                medium: { played: 0, wins: 0 },
+                hard: { played: 0, wins: 0 }
+            }
+        };
+        
+        // Winning combinations
+        const winningCombinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6] // Diagonals
+        ];
+        
+        // Difficulty descriptions
+        const difficultyDescriptions = {
+            easy: "Easy: AI makes random moves - great for beginners!",
+            medium: "Medium: AI blocks wins and takes opportunities - challenging!",
+            hard: "Hard: AI uses minimax algorithm - nearly impossible to beat!"
+        };
+        
+        // Initialize game
+        function initGame() {
+            loadStats();
+            setupEventListeners();
+            createBoard();
+            updateStats();
+        }
+        
+        function setupEventListeners() {
+            // Difficulty buttons
+            document.querySelectorAll('.difficulty-btn[data-difficulty]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.difficulty-btn[data-difficulty]').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentDifficulty = this.getAttribute('data-difficulty');
+                    document.getElementById('gameModeDescription').textContent = difficultyDescriptions[currentDifficulty];
+                    newGame();
+                });
+            });
+        }
+        
+        function createBoard() {
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = '';
+            
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('button');
+                cell.className = 'cell';
+                cell.dataset.index = i;
+                cell.addEventListener('click', () => makeMove(i));
+                gameBoard.appendChild(cell);
+            }
+        }
+        
+        function newGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            
+            // Reset board display
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.textContent = '';
+                cell.className = 'cell';
+                cell.disabled = false;
+            });
+            
+            document.getElementById('currentPlayer').textContent = 'Your turn (X)';
+            clearMessage();
+        }
+        
+        function makeMove(index) {
+            if (board[index] !== '' || !gameActive) return;
+            
+            board[index] = currentPlayer;
+            updateBoard();
+            
+            if (checkWinner()) {
+                endGame('win');
+                return;
+            }
+            
+            if (checkDraw()) {
+                endGame('draw');
+                return;
+            }
+            
+            // Switch to AI turn
+            currentPlayer = 'O';
+            document.getElementById('currentPlayer').textContent = 'AI thinking...';
+            
+            setTimeout(() => {
+                makeAIMove();
+            }, 500);
+        }
+        
+        function makeAIMove() {
+            if (!gameActive) return;
+            
+            let move;
+            switch (currentDifficulty) {
+                case 'easy':
+                    move = getRandomMove();
+                    break;
+                case 'medium':
+                    move = getMediumMove();
+                    break;
+                case 'hard':
+                    move = getHardMove();
+                    break;
+            }
+            
+            if (move !== -1) {
+                board[move] = 'O';
+                updateBoard();
+                
+                if (checkWinner()) {
+                    endGame('loss');
+                    return;
+                }
+                
+                if (checkDraw()) {
+                    endGame('draw');
+                    return;
+                }
+                
+                // Switch back to player
+                currentPlayer = 'X';
+                document.getElementById('currentPlayer').textContent = 'Your turn (X)';
+            }
+        }
+        
+        function getRandomMove() {
+            const emptyCells = board.map((cell, index) => cell === '' ? index : null).filter(val => val !== null);
+            return emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        }
+        
+        function getMediumMove() {
+            // Check for winning move
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'O';
+                    if (checkWinner()) {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+            
+            // Check for blocking move
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'X';
+                    if (checkWinner()) {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+            
+            // Take center if available
+            if (board[4] === '') return 4;
+            
+            // Take corner if available
+            const corners = [0, 2, 6, 8];
+            for (let corner of corners) {
+                if (board[corner] === '') return corner;
+            }
+            
+            // Take any available edge
+            const edges = [1, 3, 5, 7];
+            for (let edge of edges) {
+                if (board[edge] === '') return edge;
+            }
+            
+            return getRandomMove();
+        }
+        
+        function getHardMove() {
+            // Use minimax algorithm
+            let bestScore = -Infinity;
+            let bestMove = -1;
+            
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'O';
+                    let score = minimax(board, 0, false);
+                    board[i] = '';
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = i;
+                    }
+                }
+            }
+            
+            return bestMove;
+        }
+        
+        function minimax(board, depth, isMaximizing) {
+            if (checkWinner()) {
+                return isMaximizing ? -10 + depth : 10 - depth;
+            }
+            
+            if (checkDraw()) {
+                return 0;
+            }
+            
+            if (isMaximizing) {
+                let bestScore = -Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = 'O';
+                        let score = minimax(board, depth + 1, false);
+                        board[i] = '';
+                        bestScore = Math.max(score, bestScore);
+                    }
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = 'X';
+                        let score = minimax(board, depth + 1, true);
+                        board[i] = '';
+                        bestScore = Math.min(score, bestScore);
+                    }
+                }
+                return bestScore;
+            }
+        }
+        
+        function updateBoard() {
+            document.querySelectorAll('.cell').forEach((cell, index) => {
+                cell.textContent = board[index];
+                if (board[index] === 'X') {
+                    cell.classList.add('x');
+                } else if (board[index] === 'O') {
+                    cell.classList.add('o');
+                }
+            });
+        }
+        
+        function checkWinner() {
+            for (let combination of winningCombinations) {
+                const [a, b, c] = combination;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    // Highlight winning cells
+                    document.querySelectorAll('.cell').forEach((cell, index) => {
+                        if (combination.includes(index)) {
+                            cell.classList.add('winning');
+                        }
+                    });
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        function checkDraw() {
+            return board.every(cell => cell !== '');
+        }
+        
+        function endGame(result) {
+            gameActive = false;
+            
+            // Disable all cells
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.disabled = true;
+            });
+            
+            stats.gamesPlayed++;
+            stats.difficultyStats[currentDifficulty].played++;
+            
+            switch (result) {
+                case 'win':
+                    stats.wins++;
+                    stats.difficultyStats[currentDifficulty].wins++;
+                    showMessage('🎉 You won!', 'success');
+                    document.getElementById('currentPlayer').textContent = 'You won!';
+                    break;
+                case 'loss':
+                    stats.losses++;
+                    showMessage('😞 You lost!', 'error');
+                    document.getElementById('currentPlayer').textContent = 'AI won!';
+                    break;
+                case 'draw':
+                    stats.draws++;
+                    showMessage('🤝 It\'s a draw!', 'success');
+                    document.getElementById('currentPlayer').textContent = 'Draw!';
+                    break;
+            }
+            
+            saveStats();
+            updateStats();
+        }
+        
+        function showMessage(message, type) {
+            const messageEl = document.getElementById('gameMessage');
+            messageEl.textContent = message;
+            messageEl.className = `game-message ${type}`;
+        }
+        
+        function clearMessage() {
+            const messageEl = document.getElementById('gameMessage');
+            messageEl.textContent = '';
+            messageEl.className = 'game-message';
+        }
+        
+        function updateStats() {
+            document.getElementById('wins').textContent = stats.wins;
+            document.getElementById('losses').textContent = stats.losses;
+            document.getElementById('draws').textContent = stats.draws;
+            
+            const winRate = stats.gamesPlayed > 0 ? Math.round((stats.wins / stats.gamesPlayed) * 100) : 0;
+            document.getElementById('winRate').textContent = winRate + '%';
+        }
+        
+        function showStats() {
+            const winRate = stats.gamesPlayed > 0 ? Math.round((stats.wins / stats.gamesPlayed) * 100) : 0;
+            
+            let difficultyStatsText = '';
+            Object.keys(stats.difficultyStats).forEach(difficulty => {
+                const diffStats = stats.difficultyStats[difficulty];
+                if (diffStats.played > 0) {
+                    const diffWinRate = Math.round((diffStats.wins / diffStats.played) * 100);
+                    difficultyStatsText += `${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}: ${diffWinRate}% (${diffStats.wins}/${diffStats.played})\n`;
+                }
+            });
+            
+            alert(`Tic-Tac-Toe Statistics:\n\nGames Played: ${stats.gamesPlayed}\nWins: ${stats.wins}\nLosses: ${stats.losses}\nDraws: ${stats.draws}\nWin Rate: ${winRate}%\n\nDifficulty Breakdown:\n${difficultyStatsText || 'No difficulty data yet'}`);
+        }
+        
+        function saveStats() {
+            localStorage.setItem('ticTacToeStats', JSON.stringify(stats));
+        }
+        
+        function loadStats() {
+            const saved = localStorage.getItem('ticTacToeStats');
+            if (saved) {
+                stats = JSON.parse(saved);
+            }
+        }
+        
+        // Dark Mode Toggle Functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update toggle button
+            updateThemeToggle(newTheme);
+        }
+        
+        function updateThemeToggle(theme) {
+            const icon = document.querySelector('.theme-toggle-icon');
+            const text = document.querySelector('.theme-toggle-text');
+            
+            if (theme === 'dark') {
+                icon.textContent = 'light_mode';
+                text.textContent = 'Light';
+            } else {
+                icon.textContent = 'dark_mode';
+                text.textContent = 'Dark';
+            }
+        }
+        
+        // Initialize theme on page load
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeToggle(theme);
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+            initGame();
+        });
+    </script>
+</body>
+</html>
