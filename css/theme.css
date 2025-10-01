@@ -1070,11 +1070,7 @@ input[type="color"] {
     justify-content: center;
 }
 
-.main-content {
-    display: flex;
-    gap: 20px;
-    margin: 20px 0;
-}
+/* Removed conflicting main-content rule - using sidebar layout version instead */
 
 .upload-section {
     flex: 1;
