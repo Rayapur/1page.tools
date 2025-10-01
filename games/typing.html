@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
+            crossorigin="anonymous"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon-16x16.png">
+    <link rel="manifest" href="../assets/images/site.webmanifest">
+    
+    <style>
+        .game-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        
+        .game-header {
+            margin-bottom: 2rem;
+        }
+        
+        .game-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: var(--header-color);
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .difficulty-selector {
+            margin: 1rem 0;
+        }
+        
+        .difficulty-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .difficulty-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .difficulty-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .difficulty-btn:hover {
+            background: var(--button-hover-bg);
+            color: white;
+        }
+        
+        .typing-area {
+            background: var(--container-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: var(--container-shadow);
+        }
+        
+        .text-display {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            text-align: left;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            min-height: 200px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .text-display .correct {
+            color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+        }
+        
+        .text-display .incorrect {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .text-display .current {
+            background: var(--primary-color);
+            color: white;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.5; }
+        }
+        
+        .typing-input {
+            width: 100%;
+            font-size: 1.1rem;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            resize: none;
+            min-height: 100px;
+        }
+        
+        .typing-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .typing-input:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+        }
+        
+        .game-message {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+            min-height: 20px;
+        }
+        
+        .game-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .game-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .game-actions {
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0 0.5rem;
+            transition: background 0.2s;
+        }
+        
+        .btn:hover {
+            background: var(--button-hover-bg);
+        }
+        
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+        
+        .btn:disabled {
+            background: var(--border-color);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        
+        .timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: var(--border-color);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .results {
+            background: var(--container-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: var(--container-shadow);
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+        }
+        
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .result-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+        }
+        
+        .result-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .result-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        
+        .accuracy-bar {
+            width: 100%;
+            height: 20px;
+            background: var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .accuracy-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444 0%, #f59e0b 50%, #4ade80 100%);
+            transition: width 0.5s ease;
+        }
+        
+        @media (max-width: 600px) {
+            .game-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .text-display {
+                font-size: 1rem;
+                min-height: 150px;
+            }
+            
+            .typing-input {
+                font-size: 1rem;
+                min-height: 80px;
+            }
+            
+            .result-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .difficulty-buttons {
+                gap: 0.3rem;
+            }
+            
+            .difficulty-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Dark theme adjustments */
+        [data-theme="dark"] .game-message.success {
+            background: #1e4d2b;
+            color: #a3d9a4;
+            border-color: #2d5a3d;
+        }
+        
+        [data-theme="dark"] .game-message.error {
+            background: #4d1e1e;
+            color: #f5a3a3;
+            border-color: #5a2d2d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="material-icons theme-toggle-icon">dark_mode</i>
+        <span class="theme-toggle-text">Dark</span>
+    </button>
+
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="page-wrapper">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="ad-container vertical">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3527668902044321"
+                     data-ad-slot="1234567890"
+                     data-ad-format="rectangle"
+                     data-full-width-responsive="true"></ins>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container">
+                <div class="header-logo">
+                    <img src="../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+                </div>
+                
+                <div class="game-container">
+                    <div class="game-header">
+                        <h1>⌨️ Typing Speed Test</h1>
+                        <p>Improve your typing speed and accuracy!</p>
+                    </div>
+                    
+                    <div class="game-stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="wpm">0</div>
+                            <div class="stat-label">WPM</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="accuracy">0%</div>
+                            <div class="stat-label">Accuracy</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="timer">60</div>
+                            <div class="stat-label">Time Left</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="bestWpm">0</div>
+                            <div class="stat-label">Best WPM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="difficulty-selector">
+                        <h3>Choose Text Type:</h3>
+                        <div class="difficulty-buttons">
+                            <button class="difficulty-btn active" data-difficulty="easy">Easy</button>
+                            <button class="difficulty-btn" data-difficulty="medium">Medium</button>
+                            <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+                        </div>
+                    </div>
+                    
+                    <div class="game-message" id="gameMessage"></div>
+                    
+                    <div id="gameArea" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        
+                        <div class="typing-area">
+                            <div class="text-display" id="textDisplay">
+                                <!-- Text will be displayed here -->
+                            </div>
+                            <textarea class="typing-input" id="typingInput" placeholder="Start typing here..." disabled></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="results" id="results">
+                        <h3>🎉 Test Complete!</h3>
+                        <div class="result-stats">
+                            <div class="result-item">
+                                <div class="result-value" id="finalWpm">0</div>
+                                <div class="result-label">Words Per Minute</div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-value" id="finalAccuracy">0%</div>
+                                <div class="result-label">Accuracy</div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-value" id="finalChars">0</div>
+                                <div class="result-label">Characters Typed</div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-value" id="finalErrors">0</div>
+                                <div class="result-label">Errors</div>
+                            </div>
+                        </div>
+                        <div class="accuracy-bar">
+                            <div class="accuracy-fill" id="accuracyBar"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="game-actions">
+                        <button class="btn" onclick="startTest()" id="startBtn">Start Test</button>
+                        <button class="btn btn-secondary" onclick="showStats()">Stats</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="sidebar">
+            <div class="ad-container vertical">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3527668902044321"
+                     data-ad-slot="1122334455"
+                     data-ad-format="rectangle"
+                     data-full-width-responsive="true"></ins>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+    
+    <script>
+        // Game state
+        let currentText = '';
+        let typedText = '';
+        let startTime = null;
+        let endTime = null;
+        let isTestActive = false;
+        let currentDifficulty = 'easy';
+        let timeLeft = 60;
+        let gameTimer = null;
+        let errors = 0;
+        let totalChars = 0;
+        
+        // Statistics
+        let stats = {
+            testsCompleted: 0,
+            totalWpm: 0,
+            bestWpm: 0,
+            totalAccuracy: 0,
+            bestAccuracy: 0,
+            totalChars: 0,
+            totalErrors: 0
+        };
+        
+        // Text samples
+        const textSamples = {
+            easy: [
+                "The quick brown fox jumps over the lazy dog. This is a simple sentence for typing practice.",
+                "Hello world! This is a basic typing test. Practice makes perfect when learning to type faster.",
+                "The sun shines bright in the sky. Birds fly high above the trees. Nature is beautiful and peaceful.",
+                "I love to read books and learn new things. Knowledge is power and education is the key to success.",
+                "Cats and dogs are popular pets. They bring joy and companionship to many families around the world."
+            ],
+            medium: [
+                "The art of programming requires patience, creativity, and logical thinking. Every line of code tells a story.",
+                "Technology has revolutionized the way we communicate, work, and live our daily lives in the modern world.",
+                "Mathematics is the language of the universe. It helps us understand patterns, solve problems, and make predictions.",
+                "The human brain is incredibly complex, containing billions of neurons that process information at lightning speed.",
+                "Climate change is one of the most pressing challenges of our time, requiring global cooperation and innovative solutions."
+            ],
+            hard: [
+                "The juxtaposition of quantum mechanics and general relativity presents one of the most profound challenges in theoretical physics, requiring innovative mathematical frameworks and experimental validation.",
+                "Cryptocurrency and blockchain technology have fundamentally transformed the financial landscape, introducing decentralized systems that challenge traditional banking paradigms.",
+                "The interdisciplinary nature of artificial intelligence research encompasses computer science, cognitive psychology, neuroscience, and philosophy, creating complex ethical dilemmas.",
+                "Metamorphosis in literature often symbolizes transformation and growth, as seen in Kafka's existential exploration of identity and societal alienation.",
+                "The synthesis of organic compounds through catalytic processes represents a cornerstone of modern pharmaceutical research and sustainable chemistry initiatives."
+            ]
+        };
+        
+        // Initialize game
+        function initGame() {
+            loadStats();
+            setupEventListeners();
+            updateStats();
+        }
+        
+        function setupEventListeners() {
+            // Difficulty buttons
+            document.querySelectorAll('.difficulty-btn[data-difficulty]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.difficulty-btn[data-difficulty]').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentDifficulty = this.getAttribute('data-difficulty');
+                    resetTest();
+                });
+            });
+            
+            // Typing input
+            const typingInput = document.getElementById('typingInput');
+            typingInput.addEventListener('input', handleTyping);
+            typingInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                }
+            });
+        }
+        
+        function startTest() {
+            resetTest();
+            loadRandomText();
+            isTestActive = true;
+            startTime = Date.now();
+            
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('startBtn').textContent = 'Restart Test';
+            document.getElementById('typingInput').disabled = false;
+            document.getElementById('typingInput').focus();
+            
+            startTimer();
+            clearMessage();
+        }
+        
+        function resetTest() {
+            isTestActive = false;
+            typedText = '';
+            errors = 0;
+            totalChars = 0;
+            timeLeft = 60;
+            
+            if (gameTimer) {
+                clearInterval(gameTimer);
+                gameTimer = null;
+            }
+            
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('startBtn').textContent = 'Start Test';
+            document.getElementById('typingInput').value = '';
+            document.getElementById('typingInput').disabled = true;
+            clearMessage();
+            updateStats();
+        }
+        
+        function loadRandomText() {
+            const samples = textSamples[currentDifficulty];
+            currentText = samples[Math.floor(Math.random() * samples.length)];
+            displayText();
+        }
+        
+        function displayText() {
+            const textDisplay = document.getElementById('textDisplay');
+            textDisplay.innerHTML = '';
+            
+            for (let i = 0; i < currentText.length; i++) {
+                const span = document.createElement('span');
+                span.textContent = currentText[i];
+                span.id = `char-${i}`;
+                textDisplay.appendChild(span);
+            }
+        }
+        
+        function handleTyping(e) {
+            if (!isTestActive) return;
+            
+            typedText = e.target.value;
+            totalChars = typedText.length;
+            
+            // Update character highlighting
+            updateCharacterHighlighting();
+            
+            // Check if test is complete
+            if (typedText === currentText) {
+                endTest();
+            }
+        }
+        
+        function updateCharacterHighlighting() {
+            for (let i = 0; i < currentText.length; i++) {
+                const charElement = document.getElementById(`char-${i}`);
+                if (i < typedText.length) {
+                    if (typedText[i] === currentText[i]) {
+                        charElement.className = 'correct';
+                    } else {
+                        charElement.className = 'incorrect';
+                        if (i === typedText.length - 1) {
+                            errors++;
+                        }
+                    }
+                } else if (i === typedText.length) {
+                    charElement.className = 'current';
+                } else {
+                    charElement.className = '';
+                }
+            }
+        }
+        
+        function startTimer() {
+            gameTimer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    endTest();
+                }
+                
+                // Update real-time stats
+                updateRealTimeStats();
+            }, 1000);
+        }
+        
+        function updateRealTimeStats() {
+            if (!isTestActive || !startTime) return;
+            
+            const elapsed = (Date.now() - startTime) / 1000;
+            const minutes = elapsed / 60;
+            const words = typedText.trim().split(/\s+/).length;
+            const wpm = Math.round(words / minutes) || 0;
+            
+            const correctChars = typedText.split('').filter((char, i) => char === currentText[i]).length;
+            const accuracy = totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 0;
+            
+            document.getElementById('wpm').textContent = wpm;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            
+            // Update progress
+            const progress = (typedText.length / currentText.length) * 100;
+            document.getElementById('progressFill').style.width = `${Math.min(progress, 100)}%`;
+        }
+        
+        function endTest() {
+            isTestActive = false;
+            endTime = Date.now();
+            
+            if (gameTimer) {
+                clearInterval(gameTimer);
+                gameTimer = null;
+            }
+            
+            const elapsed = (endTime - startTime) / 1000;
+            const minutes = elapsed / 60;
+            const words = typedText.trim().split(/\s+/).length;
+            const wpm = Math.round(words / minutes) || 0;
+            
+            const correctChars = typedText.split('').filter((char, i) => char === currentText[i]).length;
+            const accuracy = totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 0;
+            
+            // Update final results
+            document.getElementById('finalWpm').textContent = wpm;
+            document.getElementById('finalAccuracy').textContent = accuracy + '%';
+            document.getElementById('finalChars').textContent = totalChars;
+            document.getElementById('finalErrors').textContent = errors;
+            
+            // Update accuracy bar
+            const accuracyBar = document.getElementById('accuracyBar');
+            accuracyBar.style.width = accuracy + '%';
+            
+            // Show results
+            document.getElementById('results').classList.add('show');
+            
+            // Update stats
+            updateGameStats(wpm, accuracy);
+            
+            // Show message
+            if (wpm > stats.bestWpm) {
+                showMessage(`🎉 New personal best! ${wpm} WPM`, 'success');
+            } else {
+                showMessage(`Test completed! ${wpm} WPM`, 'success');
+            }
+        }
+        
+        function updateGameStats(wpm, accuracy) {
+            stats.testsCompleted++;
+            stats.totalWpm += wpm;
+            stats.totalAccuracy += accuracy;
+            stats.totalChars += totalChars;
+            stats.totalErrors += errors;
+            
+            if (wpm > stats.bestWpm) {
+                stats.bestWpm = wpm;
+            }
+            
+            if (accuracy > stats.bestAccuracy) {
+                stats.bestAccuracy = accuracy;
+            }
+            
+            saveStats();
+            updateStats();
+        }
+        
+        function showMessage(message, type) {
+            const messageEl = document.getElementById('gameMessage');
+            messageEl.textContent = message;
+            messageEl.className = `game-message ${type}`;
+        }
+        
+        function clearMessage() {
+            const messageEl = document.getElementById('gameMessage');
+            messageEl.textContent = '';
+            messageEl.className = 'game-message';
+        }
+        
+        function updateStats() {
+            document.getElementById('bestWpm').textContent = stats.bestWpm;
+        }
+        
+        function showStats() {
+            const avgWpm = stats.testsCompleted > 0 ? Math.round(stats.totalWpm / stats.testsCompleted) : 0;
+            const avgAccuracy = stats.testsCompleted > 0 ? Math.round(stats.totalAccuracy / stats.testsCompleted) : 0;
+            const totalWords = Math.round(stats.totalChars / 5); // Approximate words
+            
+            alert(`Typing Speed Statistics:\n\nTests Completed: ${stats.testsCompleted}\nBest WPM: ${stats.bestWpm}\nAverage WPM: ${avgWpm}\nBest Accuracy: ${stats.bestAccuracy}%\nAverage Accuracy: ${avgAccuracy}%\nTotal Words Typed: ${totalWords}\nTotal Errors: ${stats.totalErrors}`);
+        }
+        
+        function saveStats() {
+            localStorage.setItem('typingStats', JSON.stringify(stats));
+        }
+        
+        function loadStats() {
+            const saved = localStorage.getItem('typingStats');
+            if (saved) {
+                stats = JSON.parse(saved);
+            }
+        }
+        
+        // Dark Mode Toggle Functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update toggle button
+            updateThemeToggle(newTheme);
+        }
+        
+        function updateThemeToggle(theme) {
+            const icon = document.querySelector('.theme-toggle-icon');
+            const text = document.querySelector('.theme-toggle-text');
+            
+            if (theme === 'dark') {
+                icon.textContent = 'light_mode';
+                text.textContent = 'Light';
+            } else {
+                icon.textContent = 'dark_mode';
+                text.textContent = 'Dark';
+            }
+        }
+        
+        // Initialize theme on page load
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeToggle(theme);
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+            initGame();
+        });
+    </script>
+</body>
+</html>

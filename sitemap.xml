@@ -121,6 +121,30 @@
         <priority>0.8</priority>
     </url>
     <url>
+        <loc>https://1page.tools/games/mathquiz.html</loc>
+        <lastmod>2025-10-01T12:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://1page.tools/games/typing.html</loc>
+        <lastmod>2025-10-01T12:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://1page.tools/games/2048.html</loc>
+        <lastmod>2025-10-01T12:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://1page.tools/games/simon.html</loc>
+        <lastmod>2025-10-01T12:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
         <loc>https://1page.tools/image/imageblur.html</loc>
         <lastmod>2025-01-27T12:00:00+00:00</lastmod>
         <changefreq>monthly</changefreq>

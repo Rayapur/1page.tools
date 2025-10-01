@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simon Says Game - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
+            crossorigin="anonymous"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon-16x16.png">
+    <link rel="manifest" href="../assets/images/site.webmanifest">
+    
+    <style>
+        .game-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        
+        .game-header {
+            margin-bottom: 2rem;
+        }
+        
+        .game-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: var(--header-color);
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .simon-board {
+            background: var(--container-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: var(--container-shadow);
+        }
+        
+        .simon-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+        
+        .simon-button {
+            border-radius: 50%;
+            border: 4px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .simon-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .simon-button.active {
+            transform: scale(0.95);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+        }
+        
+        .simon-button.red {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        }
+        
+        .simon-button.red.lit {
+            background: linear-gradient(135deg, #ff8e8e, #ff6b6b);
+            box-shadow: 0 0 30px #ff6b6b;
+        }
+        
+        .simon-button.blue {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        }
+        
+        .simon-button.blue.lit {
+            background: linear-gradient(135deg, #6ed5cd, #4ecdc4);
+            box-shadow: 0 0 30px #4ecdc4;
+        }
+        
+        .simon-button.green {
+            background: linear-gradient(135deg, #45b7d1, #96c93d);
+        }
+        
+        .simon-button.green.lit {
+            background: linear-gradient(135deg, #5bc5e1, #45b7d1);
+            box-shadow: 0 0 30px #45b7d1;
+        }
+        
+        .simon-button.yellow {
+            background: linear-gradient(135deg, #f9ca24, #f0932b);
+        }
+        
+        .simon-button.yellow.lit {
+            background: linear-gradient(135deg, #fbd437, #f9ca24);
+            box-shadow: 0 0 30px #f9ca24;
+        }
+        
+        .simon-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .simon-button:disabled:hover {
+            transform: none;
+        }
+        
+        .center-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--container-bg);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid var(--border-color);
+            z-index: 10;
+        }
+        
+        .center-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        .game-message {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+            min-height: 20px;
+        }
+        
+        .game-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .game-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .game-actions {
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0 0.5rem;
+            transition: background 0.2s;
+        }
+        
+        .btn:hover {
+            background: var(--button-hover-bg);
+        }
+        
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+        
+        .btn:disabled {
+            background: var(--border-color);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        
+        .instructions {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: left;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        
+        .instructions ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .instructions li {
+            margin: 0.25rem 0;
+        }
+        
+        .difficulty-selector {
+            margin: 1rem 0;
+        }
+        
+        .difficulty-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .difficulty-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .difficulty-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .difficulty-btn:hover {
+            background: var(--button-hover-bg);
+            color: white;
+        }
+        
+        @media (max-width: 600px) {
+            .simon-grid {
+                width: 250px;
+                height: 250px;
+                gap: 15px;
+            }
+            
+            .center-display {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .center-text {
+                font-size: 1rem;
+            }
+            
+            .simon-button {
+                font-size: 1.5rem;
+            }
+            
+            .difficulty-buttons {
+                gap: 0.3rem;
+            }
+            
+            .difficulty-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Dark theme adjustments */
+        [data-theme="dark"] .game-message.success {
+            background: #1e4d2b;
+            color: #a3d9a4;
+            border-color: #2d5a3d;
+        }
+        
+        [data-theme="dark"] .game-message.error {
+            background: #4d1e1e;
+            color: #f5a3a3;
+            border-color: #5a2d2d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="material-icons theme-toggle-icon">dark_mode</i>
+        <span class="theme-toggle-text">Dark</span>
+    </button>
+
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="page-wrapper">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="ad-container vertical">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3527668902044321"
+                     data-ad-slot="1234567890"
+                     data-ad-format="rectangle"
+                     data-full-width-responsive="true"></ins>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container">
+                <div class="header-logo">
+                    <img src="../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+                </div>
+                
+                <div class="game-container">
+                    <div class="game-header">
+                        <h1>🎮 Simon Says</h1>
+                        <p>Follow the sequence and test your memory!</p>
+                    </div>
+                    
+                    <div class="game-stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="score">0</div>
+                            <div class="stat-label">Score</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="level">1</div>
+                            <div class="stat-label">Level</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="bestScore">0</div>
+                            <div class="stat-label">Best Score</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="bestLevel">0</div>
+                            <div class="stat-label">Best Level</div>
+                        </div>
+                    </div>
+                    
+                    <div class="difficulty-selector">
+                        <h3>Choose Speed:</h3>
+                        <div class="difficulty-buttons">
+                            <button class="difficulty-btn active" data-difficulty="slow">Slow</button>
+                            <button class="difficulty-btn" data-difficulty="medium">Medium</button>
+                            <button class="difficulty-btn" data-difficulty="fast">Fast</button>
+                        </div>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h3>How to Play:</h3>
+                        <ul>
+                            <li>Watch the sequence of colored buttons</li>
+                            <li>Repeat the sequence by clicking the buttons in the same order</li>
+                            <li>Each level adds one more button to the sequence</li>
+                            <li>Make a mistake and the game ends!</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="game-message" id="gameMessage"></div>
+                    
+                    <div class="simon-board">
+                        <div class="simon-grid" id="simonGrid">
+                            <button class="simon-button red" data-color="red" disabled>🔴</button>
+                            <button class="simon-button blue" data-color="blue" disabled>🔵</button>
+                            <button class="simon-button green" data-color="green" disabled>🟢</button>
+                            <button class="simon-button yellow" data-color="yellow" disabled>🟡</button>
+                        </div>
+                        <div class="center-display">
+                            <div class="center-text" id="centerText">START</div>
+                        </div>
+                    </div>
+                    
+                    <div class="game-actions">
+                        <button class="btn" onclick="startGame()" id="startBtn">Start Game</button>
+                        <button class="btn btn-secondary" onclick="showStats()">Stats</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="sidebar">
+            <div class="ad-container vertical">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3527668902044321"
+                     data-ad-slot="1122334455"
+                     data-ad-format="rectangle"
+                     data-full-width-responsive="true"></ins>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+    
+    <script>
+        // Game state
+        let sequence = [];
+        let playerSequence = [];
+        let currentLevel = 1;
+        let score = 0;
+        let isPlaying = false;
+        let isShowingSequence = false;
+        let currentDifficulty = 'slow';
+        let currentStep = 0;
+        
+        // Statistics
+        let stats = {
+            gamesPlayed: 0,
+            bestScore: 0,
+            bestLevel: 0,
+            totalScore: 0,
+            totalLevels: 0
+        };
+        
+        // Difficulty settings
+        const difficultySettings = {
+            slow: { delay: 800, flashDuration: 400 },
+            medium: { delay: 600, flashDuration: 300 },
+            fast: { delay: 400, flashDuration: 200 }
+        };
+        
+        // Audio context for sound effects
+        let audioContext;
+        let sounds = {};
+        
+        // Initialize game
+        function initGame() {
+            loadStats();
+            setupEventListeners();
+            initAudio();
+            updateStats();
+        }
+        
+        function setupEventListeners() {
+            // Difficulty buttons
+            document.querySelectorAll('.difficulty-btn[data-difficulty]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.difficulty-btn[data-difficulty]').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentDifficulty = this.getAttribute('data-difficulty');
+                });
+            });
+            
+            // Simon buttons
+            document.querySelectorAll('.simon-button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!isPlaying || isShowingSequence) return;
+                    
+                    const color = this.getAttribute('data-color');
+                    handleButtonClick(color);
+                });
+            });
+        }
+        
+        function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Create sound frequencies for each color
+                sounds = {
+                    red: createTone(523.25), // C5
+                    blue: createTone(659.25), // E5
+                    green: createTone(783.99), // G5
+                    yellow: createTone(1046.50) // C6
+                };
+            } catch (e) {
+                console.log('Audio not supported');
+            }
+        }
+        
+        function createTone(frequency) {
+            return function() {
+                if (!audioContext) return;
+                
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            };
+        }
+        
+        function startGame() {
+            resetGame();
+            isPlaying = true;
+            document.getElementById('startBtn').textContent = 'Restart Game';
+            document.getElementById('centerText').textContent = 'WATCH';
+            showMessage('Watch the sequence carefully!', 'success');
+            generateSequence();
+            showSequence();
+        }
+        
+        function resetGame() {
+            sequence = [];
+            playerSequence = [];
+            currentLevel = 1;
+            score = 0;
+            isPlaying = false;
+            isShowingSequence = false;
+            currentStep = 0;
+            
+            document.getElementById('startBtn').textContent = 'Start Game';
+            document.getElementById('centerText').textContent = 'START';
+            clearMessage();
+            updateStats();
+            enableButtons(false);
+        }
+        
+        function generateSequence() {
+            const colors = ['red', 'blue', 'green', 'yellow'];
+            sequence.push(colors[Math.floor(Math.random() * colors.length)]);
+        }
+        
+        function showSequence() {
+            isShowingSequence = true;
+            enableButtons(false);
+            document.getElementById('centerText').textContent = 'WATCH';
+            
+            let step = 0;
+            const settings = difficultySettings[currentDifficulty];
+            
+            const showStep = () => {
+                if (step >= sequence.length) {
+                    isShowingSequence = false;
+                    enableButtons(true);
+                    document.getElementById('centerText').textContent = 'YOUR TURN';
+                    playerSequence = [];
+                    return;
+                }
+                
+                const color = sequence[step];
+                flashButton(color);
+                playSound(color);
+                
+                step++;
+                setTimeout(showStep, settings.delay);
+            };
+            
+            showStep();
+        }
+        
+        function flashButton(color) {
+            const button = document.querySelector(`[data-color="${color}"]`);
+            button.classList.add('lit');
+            
+            const settings = difficultySettings[currentDifficulty];
+            setTimeout(() => {
+                button.classList.remove('lit');
+            }, settings.flashDuration);
+        }
+        
+        function playSound(color) {
+            if (sounds[color]) {
+                sounds[color]();
+            }
+        }
+        
+        function handleButtonClick(color) {
+            if (!isPlaying || isShowingSequence) return;
+            
+            playerSequence.push(color);
+            flashButton(color);
+            playSound(color);
+            
+            // Check if the sequence is correct so far
+            const currentIndex = playerSequence.length - 1;
+            if (playerSequence[currentIndex] !== sequence[currentIndex]) {
+                gameOver();
+                return;
+            }
+            
+            // Check if the player has completed the sequence
+            if (playerSequence.length === sequence.length) {
+                levelComplete();
+            }
+        }
+        
+        function levelComplete() {
+            currentLevel++;
+            score += currentLevel * 10;
+            document.getElementById('centerText').textContent = 'CORRECT!';
+            showMessage(`Level ${currentLevel - 1} complete!`, 'success');
+            
+            setTimeout(() => {
+                generateSequence();
+                showSequence();
+            }, 1000);
+        }
+        
+        function gameOver() {
+            isPlaying = false;
+            enableButtons(false);
+            document.getElementById('centerText').textContent = 'GAME OVER';
+            showMessage(`Game Over! You reached level ${currentLevel - 1}`, 'error');
+            
+            // Update stats
+            updateGameStats();
+            
+            document.getElementById('startBtn').textContent = 'Play Again';
+        }
+        
+        function enableButtons(enabled) {
+            document.querySelectorAll('.simon-button').forEach(btn => {
+                btn.disabled = !enabled;
+            });
+        }
+        
+        function updateGameStats() {
+            stats.gamesPlayed++;
+            stats.totalScore += score;
+            stats.totalLevels += currentLevel - 1;
+            
+            if (score > stats.bestScore) {
+                stats.bestScore = score;
+            }
+            
+            if (currentLevel - 1 > stats.bestLevel) {
+                stats.bestLevel = currentLevel - 1;
+            }
+            
+            saveStats();
+            updateStats();
+        }
+        
+        function showMessage(message, type) {
+            const messageEl = document.getElementById('gameMessage');
+            messageEl.textContent = message;
+            messageEl.className = `game-message ${type}`;
+        }
+        
+        function clearMessage() {
+            const messageEl = document.getElementById('gameMessage');
+            messageEl.textContent = '';
+            messageEl.className = 'game-message';
+        }
+        
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('level').textContent = currentLevel;
+            document.getElementById('bestScore').textContent = stats.bestScore;
+            document.getElementById('bestLevel').textContent = stats.bestLevel;
+        }
+        
+        function showStats() {
+            const avgScore = stats.gamesPlayed > 0 ? Math.round(stats.totalScore / stats.gamesPlayed) : 0;
+            const avgLevel = stats.gamesPlayed > 0 ? Math.round(stats.totalLevels / stats.gamesPlayed) : 0;
+            
+            alert(`Simon Says Statistics:\n\nGames Played: ${stats.gamesPlayed}\nBest Score: ${stats.bestScore}\nBest Level: ${stats.bestLevel}\nAverage Score: ${avgScore}\nAverage Level: ${avgLevel}`);
+        }
+        
+        function saveStats() {
+            localStorage.setItem('simonStats', JSON.stringify(stats));
+        }
+        
+        function loadStats() {
+            const saved = localStorage.getItem('simonStats');
+            if (saved) {
+                stats = JSON.parse(saved);
+            }
+        }
+        
+        // Dark Mode Toggle Functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update toggle button
+            updateThemeToggle(newTheme);
+        }
+        
+        function updateThemeToggle(theme) {
+            const icon = document.querySelector('.theme-toggle-icon');
+            const text = document.querySelector('.theme-toggle-text');
+            
+            if (theme === 'dark') {
+                icon.textContent = 'light_mode';
+                text.textContent = 'Light';
+            } else {
+                icon.textContent = 'dark_mode';
+                text.textContent = 'Dark';
+            }
+        }
+        
+        // Initialize theme on page load
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeToggle(theme);
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+            initGame();
+        });
+    </script>
+</body>
+</html>

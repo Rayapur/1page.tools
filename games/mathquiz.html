@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quiz Game - 1Page Tools</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
+            crossorigin="anonymous"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon-16x16.png">
+    <link rel="manifest" href="../assets/images/site.webmanifest">
+    
+    <style>
+        .game-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        
+        .game-header {
+            margin-bottom: 2rem;
+        }
+        
+        .game-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: var(--header-color);
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .difficulty-selector {
+            margin: 1rem 0;
+        }
+        
+        .difficulty-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .difficulty-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .difficulty-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .difficulty-btn:hover {
+            background: var(--button-hover-bg);
+            color: white;
+        }
+        
+        .quiz-question {
+            background: var(--container-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: var(--container-shadow);
+        }
+        
+        .question-text {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            color: var(--text-color);
+        }
+        
+        .answer-input {
+            font-size: 1.5rem;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            width: 150px;
+            margin: 1rem;
+        }
+        
+        .answer-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .answer-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .answer-btn {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 8px;
+            padding: 1rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .answer-btn:hover {
+            background: var(--button-hover-bg);
+            transform: scale(1.05);
+        }
+        
+        .answer-btn.correct {
+            background: #4ade80;
+            color: white;
+        }
+        
+        .answer-btn.wrong {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .game-message {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+            min-height: 20px;
+        }
+        
+        .game-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .game-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .game-actions {
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0 0.5rem;
+            transition: background 0.2s;
+        }
+        
+        .btn:hover {
+            background: var(--button-hover-bg);
+        }
+        
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+        
+        .btn:disabled {
+            background: var(--border-color);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        
+        .timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: var(--border-color);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .score-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 1rem 0;
+        }
+        
+        @media (max-width: 600px) {
+            .answer-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .question-text {
+                font-size: 1.5rem;
+            }
+            
+            .answer-input {
+                width: 120px;
+                font-size: 1.2rem;
+            }
+            
+            .difficulty-buttons {
+                gap: 0.3rem;
+            }
+            
+            .difficulty-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Dark theme adjustments */
+        [data-theme="dark"] .game-message.success {
+            background: #1e4d2b;
+            color: #a3d9a4;
+            border-color: #2d5a3d;
+        }
+        
+        [data-theme="dark"] .game-message.error {
+            background: #4d1e1e;
+            color: #f5a3a3;
+            border-color: #5a2d2d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="material-icons theme-toggle-icon">dark_mode</i>
+        <span class="theme-toggle-text">Dark</span>
+    </button>
+
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+    
+    <div class="page-wrapper">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="ad-container vertical">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3527668902044321"
+                     data-ad-slot="1234567890"
+                     data-ad-format="rectangle"
+                     data-full-width-responsive="true"></ins>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container">
+                <div class="header-logo">
+                    <img src="../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+                </div>
+                
+                <div class="game-container">
+                    <div class="game-header">
+                        <h1>🧮 Math Quiz</h1>
+                        <p>Test your math skills with timed challenges!</p>
+                    </div>
+                    
+                    <div class="game-stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="score">0</div>
+                            <div class="stat-label">Score</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="questionNum">0</div>
+                            <div class="stat-label">Question</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="timer">60</div>
+                            <div class="stat-label">Time Left</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="bestScore">0</div>
+                            <div class="stat-label">Best Score</div>
+                        </div>
+                    </div>
+                    
+                    <div class="difficulty-selector">
+                        <h3>Choose Difficulty:</h3>
+                        <div class="difficulty-buttons">
+                            <button class="difficulty-btn active" data-difficulty="easy">Easy</button>
+                            <button class="difficulty-btn" data-difficulty="medium">Medium</button>
+                            <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+                        </div>
+                    </div>
+                    
+                    <div class="game-message" id="gameMessage"></div>
+                    
+                    <div id="gameArea" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        
+                        <div class="quiz-question">
+                            <div class="question-text" id="questionText">What is 5 + 3?</div>
+                            <div class="answer-options" id="answerOptions">
+                                <!-- Options will be generated here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="game-actions">
+                        <button class="btn" onclick="startGame()" id="startBtn">Start Quiz</button>
+                        <button class="btn btn-secondary" onclick="showStats()">Stats</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="sidebar">
+            <div class="ad-container vertical">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3527668902044321"
+                     data-ad-slot="1122334455"
+                     data-ad-format="rectangle"
+                     data-full-width-responsive="true"></ins>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+    
+    <script>
+        // Game state
+        let currentQuestion = null;
+        let score = 0;
+        let questionNumber = 0;
+        let timeLeft = 60;
+        let gameTimer = null;
+        let isGameActive = false;
+        let currentDifficulty = 'easy';
+        let totalQuestions = 10;
+        
+        // Statistics
+        let stats = {
+            gamesPlayed: 0,
+            totalScore: 0,
+            bestScores: {
+                easy: 0,
+                medium: 0,
+                hard: 0
+            },
+            totalQuestions: 0,
+            correctAnswers: 0
+        };
+        
+        // Difficulty settings
+        const difficultySettings = {
+            easy: {
+                operations: ['+', '-'],
+                maxNumber: 20,
+                timePerQuestion: 15
+            },
+            medium: {
+                operations: ['+', '-', '×'],
+                maxNumber: 50,
+                timePerQuestion: 12
+            },
+            hard: {
+                operations: ['+', '-', '×', '÷'],
+                maxNumber: 100,
+                timePerQuestion: 10
+            }
+        };
+        
+        // Initialize game
+        function initGame() {
+            loadStats();
+            setupEventListeners();
+            updateStats();
+        }
+        
+        function setupEventListeners() {
+            // Difficulty buttons
+            document.querySelectorAll('.difficulty-btn[data-difficulty]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.difficulty-btn[data-difficulty]').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentDifficulty = this.getAttribute('data-difficulty');
+                    resetGame();
+                });
+            });
+            
+            // Enter key for answer input
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && isGameActive) {
+                    const answerInput = document.querySelector('.answer-input');
+                    if (answerInput && answerInput.value) {
+                        checkAnswer(parseInt(answerInput.value));
+                    }
+                }
+            });
+        }
+        
+        function startGame() {
+            resetGame();
+            isGameActive = true;
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('startBtn').textContent = 'Restart Quiz';
+            generateQuestion();
+            startTimer();
+        }
+        
+        function resetGame() {
+            score = 0;
+            questionNumber = 0;
+            timeLeft = 60;
+            isGameActive = false;
+            
+            if (gameTimer) {
+                clearInterval(gameTimer);
+                gameTimer = null;
+            }
+            
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('startBtn').textContent = 'Start Quiz';
+            clearMessage();
+            updateStats();
+        }
+        
+        function generateQuestion() {
+            const settings = difficultySettings[currentDifficulty];
+            const operation = settings.operations[Math.floor(Math.random() * settings.operations.length)];
+            
+            let num1, num2, answer, questionText;
+            
+            switch (operation) {
+                case '+':
+                    num1 = Math.floor(Math.random() * settings.maxNumber) + 1;
+                    num2 = Math.floor(Math.random() * settings.maxNumber) + 1;
+                    answer = num1 + num2;
+                    questionText = `What is ${num1} + ${num2}?`;
+                    break;
+                case '-':
+                    num1 = Math.floor(Math.random() * settings.maxNumber) + 10;
+                    num2 = Math.floor(Math.random() * num1);
+                    answer = num1 - num2;
+                    questionText = `What is ${num1} - ${num2}?`;
+                    break;
+                case '×':
+                    num1 = Math.floor(Math.random() * 12) + 1;
+                    num2 = Math.floor(Math.random() * 12) + 1;
+                    answer = num1 * num2;
+                    questionText = `What is ${num1} × ${num2}?`;
+                    break;
+                case '÷':
+                    answer = Math.floor(Math.random() * 12) + 1;
+                    num2 = Math.floor(Math.random() * 12) + 1;
+                    num1 = answer * num2;
+                    questionText = `What is ${num1} ÷ ${num2}?`;
+                    break;
+            }
+            
+            currentQuestion = { answer, questionText };
+            questionNumber++;
+            
+            document.getElementById('questionText').textContent = questionText;
+            generateAnswerOptions(answer);
+            updateStats();
+        }
+        
+        function generateAnswerOptions(correctAnswer) {
+            const options = [correctAnswer];
+            const settings = difficultySettings[currentDifficulty];
+            
+            // Generate wrong answers
+            while (options.length < 4) {
+                let wrongAnswer;
+                if (currentDifficulty === 'easy') {
+                    wrongAnswer = correctAnswer + Math.floor(Math.random() * 10) - 5;
+                } else if (currentDifficulty === 'medium') {
+                    wrongAnswer = correctAnswer + Math.floor(Math.random() * 20) - 10;
+                } else {
+                    wrongAnswer = correctAnswer + Math.floor(Math.random() * 30) - 15;
+                }
+                
+                if (wrongAnswer !== correctAnswer && wrongAnswer > 0 && !options.includes(wrongAnswer)) {
+                    options.push(wrongAnswer);
+                }
+            }
+            
+            // Shuffle options
+            options.sort(() => Math.random() - 0.5);
+            
+            // Create buttons
+            const optionsContainer = document.getElementById('answerOptions');
+            optionsContainer.innerHTML = '';
+            
+            options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option);
+                optionsContainer.appendChild(btn);
+            });
+        }
+        
+        function checkAnswer(selectedAnswer) {
+            if (!isGameActive) return;
+            
+            const isCorrect = selectedAnswer === currentQuestion.answer;
+            
+            if (isCorrect) {
+                score += 10;
+                showMessage('✅ Correct!', 'success');
+                stats.correctAnswers++;
+            } else {
+                showMessage(`❌ Wrong! The answer was ${currentQuestion.answer}`, 'error');
+            }
+            
+            stats.totalQuestions++;
+            
+            // Update visual feedback
+            document.querySelectorAll('.answer-btn').forEach(btn => {
+                const value = parseInt(btn.textContent);
+                if (value === currentQuestion.answer) {
+                    btn.classList.add('correct');
+                } else if (value === selectedAnswer && !isCorrect) {
+                    btn.classList.add('wrong');
+                }
+                btn.disabled = true;
+            });
+            
+            setTimeout(() => {
+                if (questionNumber < totalQuestions) {
+                    generateQuestion();
+                } else {
+                    endGame();
+                }
+            }, 1500);
+        }
+        
+        function startTimer() {
+            gameTimer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        function endGame() {
+            isGameActive = false;
+            if (gameTimer) {
+                clearInterval(gameTimer);
+                gameTimer = null;
+            }
+            
+            // Update best score
+            if (score > stats.bestScores[currentDifficulty]) {
+                stats.bestScores[currentDifficulty] = score;
+                showMessage(`🎉 New best score for ${currentDifficulty} difficulty! Score: ${score}`, 'success');
+            } else {
+                showMessage(`🎉 Quiz completed! Final Score: ${score}`, 'success');
+            }
+            
+            // Update stats
+            stats.gamesPlayed++;
+            stats.totalScore += score;
+            saveStats();
+            updateStats();
+            
+            document.getElementById('startBtn').textContent = 'Play Again';
+        }
+        
+        function showMessage(message, type) {
+            const messageEl = document.getElementById('gameMessage');
+            messageEl.textContent = message;
+            messageEl.className = `game-message ${type}`;
+        }
+        
+        function clearMessage() {
+            const messageEl = document.getElementById('gameMessage');
+            messageEl.textContent = '';
+            messageEl.className = 'game-message';
+        }
+        
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('questionNum').textContent = questionNumber;
+            document.getElementById('timer').textContent = timeLeft;
+            document.getElementById('bestScore').textContent = stats.bestScores[currentDifficulty];
+            
+            // Update progress bar
+            const progress = (questionNumber / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+        
+        function showStats() {
+            const avgScore = stats.gamesPlayed > 0 ? Math.round(stats.totalScore / stats.gamesPlayed) : 0;
+            const accuracy = stats.totalQuestions > 0 ? Math.round((stats.correctAnswers / stats.totalQuestions) * 100) : 0;
+            
+            let bestScoresText = '';
+            Object.keys(stats.bestScores).forEach(difficulty => {
+                bestScoresText += `${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}: ${stats.bestScores[difficulty]}\n`;
+            });
+            
+            alert(`Math Quiz Statistics:\n\nGames Played: ${stats.gamesPlayed}\nTotal Score: ${stats.totalScore}\nAverage Score: ${avgScore}\nAccuracy: ${accuracy}%\n\nBest Scores:\n${bestScoresText}`);
+        }
+        
+        function saveStats() {
+            localStorage.setItem('mathQuizStats', JSON.stringify(stats));
+        }
+        
+        function loadStats() {
+            const saved = localStorage.getItem('mathQuizStats');
+            if (saved) {
+                stats = JSON.parse(saved);
+            }
+        }
+        
+        // Dark Mode Toggle Functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update toggle button
+            updateThemeToggle(newTheme);
+        }
+        
+        function updateThemeToggle(theme) {
+            const icon = document.querySelector('.theme-toggle-icon');
+            const text = document.querySelector('.theme-toggle-text');
+            
+            if (theme === 'dark') {
+                icon.textContent = 'light_mode';
+                text.textContent = 'Light';
+            } else {
+                icon.textContent = 'dark_mode';
+                text.textContent = 'Dark';
+            }
+        }
+        
+        // Initialize theme on page load
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeToggle(theme);
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+            initGame();
+        });
+    </script>
+</body>
+</html>
