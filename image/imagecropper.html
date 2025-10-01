@@ -165,6 +165,7 @@
         let cropArea = { x: 0, y: 0, width: 0, height: 0 };
         let isDragging = false;
         let dragStart = { x: 0, y: 0 };
+        let dragMode = 'move'; // 'move', 'resize-nw', 'resize-ne', 'resize-sw', 'resize-se', 'resize-n', 'resize-s', 'resize-e', 'resize-w'
         
         const canvas = document.getElementById('cropCanvas');
         const ctx = canvas.getContext('2d');
@@ -177,7 +178,7 @@
         imageUpload.addEventListener('change', handleImageUpload);
         qualitySlider.addEventListener('input', updateQualityDisplay);
         canvas.addEventListener('mousedown', startDrag);
-        canvas.addEventListener('mousemove', drag);
+        canvas.addEventListener('mousemove', handleMouseMove);
         canvas.addEventListener('mouseup', endDrag);
         canvas.addEventListener('mouseleave', endDrag);
         
@@ -273,6 +274,14 @@
             ctx.fillRect(cropArea.x + cropArea.width - handleSize/2, cropArea.y - handleSize/2, handleSize, handleSize);
             ctx.fillRect(cropArea.x - handleSize/2, cropArea.y + cropArea.height - handleSize/2, handleSize, handleSize);
             ctx.fillRect(cropArea.x + cropArea.width - handleSize/2, cropArea.y + cropArea.height - handleSize/2, handleSize, handleSize);
+            
+            // Draw edge handles for resizing (only in free mode)
+            if (currentAspectRatio === 'free') {
+                ctx.fillRect(cropArea.x + cropArea.width/2 - handleSize/2, cropArea.y - handleSize/2, handleSize, handleSize); // top
+                ctx.fillRect(cropArea.x + cropArea.width/2 - handleSize/2, cropArea.y + cropArea.height - handleSize/2, handleSize, handleSize); // bottom
+                ctx.fillRect(cropArea.x - handleSize/2, cropArea.y + cropArea.height/2 - handleSize/2, handleSize, handleSize); // left
+                ctx.fillRect(cropArea.x + cropArea.width - handleSize/2, cropArea.y + cropArea.height/2 - handleSize/2, handleSize, handleSize); // right
+            }
         }
         
         function setAspectRatio(ratio) {
@@ -343,40 +352,155 @@
             }
         }
         
-        function startDrag(e) {
-            isDragging = true;
+        function getMousePosition(e) {
             const rect = canvas.getBoundingClientRect();
-            dragStart.x = e.clientX - rect.left;
-            dragStart.y = e.clientY - rect.top;
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+        
+        function getHandleType(x, y) {
+            const handleSize = 8;
+            const tolerance = 12; // Larger hit area for easier interaction
+            
+            // Check corner handles
+            if (Math.abs(x - cropArea.x) <= tolerance && Math.abs(y - cropArea.y) <= tolerance) return 'resize-nw';
+            if (Math.abs(x - (cropArea.x + cropArea.width)) <= tolerance && Math.abs(y - cropArea.y) <= tolerance) return 'resize-ne';
+            if (Math.abs(x - cropArea.x) <= tolerance && Math.abs(y - (cropArea.y + cropArea.height)) <= tolerance) return 'resize-sw';
+            if (Math.abs(x - (cropArea.x + cropArea.width)) <= tolerance && Math.abs(y - (cropArea.y + cropArea.height)) <= tolerance) return 'resize-se';
+            
+            // Check edge handles (only in free mode)
+            if (currentAspectRatio === 'free') {
+                if (Math.abs(x - (cropArea.x + cropArea.width/2)) <= tolerance && Math.abs(y - cropArea.y) <= tolerance) return 'resize-n';
+                if (Math.abs(x - (cropArea.x + cropArea.width/2)) <= tolerance && Math.abs(y - (cropArea.y + cropArea.height)) <= tolerance) return 'resize-s';
+                if (Math.abs(x - cropArea.x) <= tolerance && Math.abs(y - (cropArea.y + cropArea.height/2)) <= tolerance) return 'resize-w';
+                if (Math.abs(x - (cropArea.x + cropArea.width)) <= tolerance && Math.abs(y - (cropArea.y + cropArea.height/2)) <= tolerance) return 'resize-e';
+            }
+            
+            // Check if inside crop area for moving
+            if (x >= cropArea.x && x <= cropArea.x + cropArea.width && 
+                y >= cropArea.y && y <= cropArea.y + cropArea.height) {
+                return 'move';
+            }
+            
+            return null;
+        }
+        
+        function updateCursor(handleType) {
+            const cursors = {
+                'move': 'move',
+                'resize-nw': 'nw-resize',
+                'resize-ne': 'ne-resize',
+                'resize-sw': 'sw-resize',
+                'resize-se': 'se-resize',
+                'resize-n': 'n-resize',
+                'resize-s': 's-resize',
+                'resize-e': 'e-resize',
+                'resize-w': 'w-resize'
+            };
+            
+            canvas.style.cursor = cursors[handleType] || 'default';
+        }
+        
+        function handleMouseMove(e) {
+            const pos = getMousePosition(e);
+            const handleType = getHandleType(pos.x, pos.y);
+            
+            if (!isDragging) {
+                updateCursor(handleType);
+            } else {
+                drag(e);
+            }
+        }
+        
+        function startDrag(e) {
+            const pos = getMousePosition(e);
+            dragMode = getHandleType(pos.x, pos.y);
+            
+            if (dragMode) {
+                isDragging = true;
+                dragStart = pos;
+            }
         }
         
         function drag(e) {
-            if (!isDragging) return;
+            if (!isDragging || !dragMode) return;
             
-            const rect = canvas.getBoundingClientRect();
-            const currentX = e.clientX - rect.left;
-            const currentY = e.clientY - rect.top;
+            const pos = getMousePosition(e);
+            const deltaX = pos.x - dragStart.x;
+            const deltaY = pos.y - dragStart.y;
             
-            const deltaX = currentX - dragStart.x;
-            const deltaY = currentY - dragStart.y;
+            if (dragMode === 'move') {
+                // Move crop area
+                cropArea.x += deltaX;
+                cropArea.y += deltaY;
+                
+                // Keep within canvas bounds
+                cropArea.x = Math.max(0, Math.min(cropArea.x, canvas.width - cropArea.width));
+                cropArea.y = Math.max(0, Math.min(cropArea.y, canvas.height - cropArea.height));
+            } else if (currentAspectRatio === 'free') {
+                // Handle resizing (only in free mode)
+                const minSize = 20; // Minimum crop size
+                const originalArea = { ...cropArea };
+                
+                switch (dragMode) {
+                    case 'resize-nw':
+                        cropArea.x += deltaX;
+                        cropArea.y += deltaY;
+                        cropArea.width -= deltaX;
+                        cropArea.height -= deltaY;
+                        break;
+                    case 'resize-ne':
+                        cropArea.y += deltaY;
+                        cropArea.width += deltaX;
+                        cropArea.height -= deltaY;
+                        break;
+                    case 'resize-sw':
+                        cropArea.x += deltaX;
+                        cropArea.width -= deltaX;
+                        cropArea.height += deltaY;
+                        break;
+                    case 'resize-se':
+                        cropArea.width += deltaX;
+                        cropArea.height += deltaY;
+                        break;
+                    case 'resize-n':
+                        cropArea.y += deltaY;
+                        cropArea.height -= deltaY;
+                        break;
+                    case 'resize-s':
+                        cropArea.height += deltaY;
+                        break;
+                    case 'resize-w':
+                        cropArea.x += deltaX;
+                        cropArea.width -= deltaX;
+                        break;
+                    case 'resize-e':
+                        cropArea.width += deltaX;
+                        break;
+                }
+                
+                // Ensure minimum size
+                if (cropArea.width < minSize || cropArea.height < minSize) {
+                    Object.assign(cropArea, originalArea);
+                }
+                
+                // Keep within canvas bounds
+                cropArea.x = Math.max(0, Math.min(cropArea.x, canvas.width));
+                cropArea.y = Math.max(0, Math.min(cropArea.y, canvas.height));
+                cropArea.width = Math.max(minSize, Math.min(cropArea.width, canvas.width - cropArea.x));
+                cropArea.height = Math.max(minSize, Math.min(cropArea.height, canvas.height - cropArea.y));
+            }
             
-            // Move crop area
-            cropArea.x += deltaX;
-            cropArea.y += deltaY;
-            
-            // Keep within canvas bounds
-            cropArea.x = Math.max(0, Math.min(cropArea.x, canvas.width - cropArea.width));
-            cropArea.y = Math.max(0, Math.min(cropArea.y, canvas.height - cropArea.height));
-            
-            dragStart.x = currentX;
-            dragStart.y = currentY;
-            
+            dragStart = pos;
             drawImageWithCropArea();
             updateCropInfo();
         }
         
         function endDrag() {
             isDragging = false;
+            dragMode = 'move';
         }
         
         function updateCropInfo() {
@@ -439,7 +563,7 @@
         }
         
         function loadSampleImage() {
-            const sampleImageUrl = 'https://via.placeholder.com/800x600/2563eb/ffffff?text=Sample+Image+for+Cropping';
+            const sampleImageUrl = '../assets/images/1page-logo.png';
             loadImage(sampleImageUrl);
         }
         

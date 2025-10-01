@@ -57,6 +57,17 @@
     --secondary-color: #4a5568;
 }
 
+/* Dark theme filter button styles */
+[data-theme="dark"] .filter-btn {
+    background: #4a5568;
+    color: #a0aec0;
+}
+
+[data-theme="dark"] .filter-btn.active {
+    background: #667eea;
+    color: #fff;
+}
+
 /* System preference fallback */
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -683,10 +694,17 @@ h1 {
     cursor: pointer;
     font-weight: 500;
     transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
 }
 .filter-btn.active {
     background: #2980b9;
     color: #fff;
+}
+.filter-btn i {
+    font-size: 1.1rem;
 }
 .tool-card {
     background: #f7fafd;
