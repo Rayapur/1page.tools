@@ -129,6 +129,9 @@ body {
 .main-content {
     flex: 1;
     min-width: 0;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .ad-container {
@@ -749,6 +752,9 @@ h1 {
     gap: 1rem;
     margin-bottom: 2rem;
     justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .filter-capsules {
@@ -787,6 +793,10 @@ h1 {
     padding: 1.2rem 1rem;
     text-align: center;
     transition: box-shadow 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    overflow: hidden;
 }
 .tool-card:hover {
     box-shadow: 0 4px 16px rgba(52,152,219,0.12);
@@ -796,6 +806,9 @@ h1 {
     color: #2980b9;
     font-weight: 500;
     font-size: 1.1rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
 }
 .tool-desc {
     color: #6c7a89;
