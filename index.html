@@ -829,10 +829,10 @@
             setTimeout(showInstallButton, 2000); // Show after 2 seconds
         });
 
-        // Force show install button for testing (remove this later)
+        // Additional fallback to show install button
         setTimeout(function() {
             if (!document.getElementById('pwa-install-btn')) {
-                console.log('Force showing install button for testing');
+                console.log('Fallback: showing install button');
                 showInstallButton();
             }
         }, 5000);
@@ -989,12 +989,14 @@
             }
         }
 
-        // Debug PWA status
-        console.log('PWA Debug Info:');
-        console.log('- Service Worker supported:', 'serviceWorker' in navigator);
-        console.log('- Display mode:', window.matchMedia('(display-mode: standalone)').matches);
-        console.log('- Navigator standalone:', window.navigator.standalone);
-        console.log('- User agent:', navigator.userAgent);
+        // PWA status logging
+        if (window.location.hostname !== 'localhost') {
+            console.log('PWA Status:', {
+                serviceWorkerSupported: 'serviceWorker' in navigator,
+                standaloneMode: window.matchMedia('(display-mode: standalone)').matches,
+                navigatorStandalone: window.navigator.standalone
+            });
+        }
         
         // Check if app is running in standalone mode (installed)
         if (window.matchMedia('(display-mode: standalone)').matches || 
