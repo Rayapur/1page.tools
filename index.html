@@ -824,6 +824,19 @@
         let deferredPrompt;
         let installButton;
 
+        // Show install button after page load
+        window.addEventListener('load', function() {
+            setTimeout(showInstallButton, 2000); // Show after 2 seconds
+        });
+
+        // Force show install button for testing (remove this later)
+        setTimeout(function() {
+            if (!document.getElementById('pwa-install-btn')) {
+                console.log('Force showing install button for testing');
+                showInstallButton();
+            }
+        }, 5000);
+
         window.addEventListener('beforeinstallprompt', function(e) {
             console.log('PWA install prompt triggered');
             e.preventDefault();
@@ -835,44 +848,66 @@
 
         // PWA Install Button
         function showInstallButton() {
-            // Create install button if it doesn't exist
-            if (!document.getElementById('pwa-install-btn')) {
-                const installBtn = document.createElement('button');
-                installBtn.id = 'pwa-install-btn';
-                installBtn.innerHTML = '📱 Install App';
-                installBtn.className = 'pwa-install-btn';
-                installBtn.style.cssText = `
-                    position: fixed;
-                    bottom: 20px;
-                    right: 20px;
-                    background: #4f46e5;
-                    color: white;
-                    border: none;
-                    padding: 12px 20px;
-                    border-radius: 25px;
-                    font-size: 14px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-                    z-index: 1000;
-                    transition: all 0.3s ease;
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                `;
-                
-                installBtn.addEventListener('click', installPWA);
-                installBtn.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-2px)';
-                    this.style.boxShadow = '0 6px 16px rgba(79, 70, 229, 0.4)';
-                });
-                installBtn.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                    this.style.boxShadow = '0 4px 12px rgba(79, 70, 229, 0.3)';
-                });
-                
-                document.body.appendChild(installBtn);
+            // Check if already installed
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                window.navigator.standalone === true) {
+                console.log('App is already installed');
+                return;
             }
+
+            // Check if button already exists
+            if (document.getElementById('pwa-install-btn')) {
+                return;
+            }
+
+            console.log('Showing PWA install button');
+            
+            const installBtn = document.createElement('button');
+            installBtn.id = 'pwa-install-btn';
+            installBtn.innerHTML = '📱 Install App';
+            installBtn.className = 'pwa-install-btn';
+            installBtn.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: #4f46e5;
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                border-radius: 25px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+                z-index: 1000;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-family: inherit;
+            `;
+            
+            installBtn.addEventListener('click', function() {
+                console.log('Install button clicked');
+                if (deferredPrompt) {
+                    installPWA();
+                } else {
+                    // Fallback for browsers that don't support beforeinstallprompt
+                    alert('To install this app:\n\n• On mobile: Tap the menu button and select "Add to Home Screen"\n• On desktop: Click the install icon in your browser address bar');
+                }
+            });
+            
+            installBtn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 6px 16px rgba(79, 70, 229, 0.4)';
+            });
+            installBtn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 12px rgba(79, 70, 229, 0.3)';
+            });
+            
+            document.body.appendChild(installBtn);
+            console.log('PWA install button added to DOM');
         }
 
         function installPWA() {
@@ -954,6 +989,13 @@
             }
         }
 
+        // Debug PWA status
+        console.log('PWA Debug Info:');
+        console.log('- Service Worker supported:', 'serviceWorker' in navigator);
+        console.log('- Display mode:', window.matchMedia('(display-mode: standalone)').matches);
+        console.log('- Navigator standalone:', window.navigator.standalone);
+        console.log('- User agent:', navigator.userAgent);
+        
         // Check if app is running in standalone mode (installed)
         if (window.matchMedia('(display-mode: standalone)').matches || 
             window.navigator.standalone === true) {
@@ -963,6 +1005,8 @@
             if (installBtn) {
                 installBtn.style.display = 'none';
             }
+        } else {
+            console.log('App is running in browser mode');
         }
     </script>
 </body>
