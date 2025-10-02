@@ -1,0 +1,32 @@
+Contact: mailto:security@1page.tools
+Expires: 2025-12-31T23:59:59.000Z
+Encryption: https://1page.tools/pgp-key.txt
+Preferred-Languages: en
+Canonical: https://1page.tools/.well-known/security.txt
+Policy: https://1page.tools/security-policy.html
+
+# Security Policy
+# If you discover a security vulnerability, please report it responsibly.
+# We appreciate your help in keeping our users safe.
+
+# Scope
+# This security policy applies to:
+# - 1page.tools (main domain)
+# - All subdomains
+# - All hosted tools and applications
+
+# Out of Scope
+# - Third-party services we integrate with
+# - User-generated content (we don't store user data)
+# - Social engineering attacks
+
+# Reporting
+# Please email security@1page.tools with:
+# - Description of the vulnerability
+# - Steps to reproduce
+# - Potential impact
+# - Suggested fix (if any)
+
+# Response
+# We will respond within 48 hours and work with you to resolve the issue.
+# We appreciate responsible disclosure and will give credit where appropriate.

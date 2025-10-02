@@ -1,0 +1,60 @@
+# Security Headers for 1page.tools
+# Comprehensive security configuration
+
+# Force HTTPS (HSTS)
+<IfModule mod_headers.c>
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+</IfModule>
+
+# Content Security Policy (CSP)
+# Restrictive policy for static site with Google AdSense
+<IfModule mod_headers.c>
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://www.googletagservices.com https://www.google-analytics.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com; frame-src 'self' https://pagead2.googlesyndication.com; object-src 'none'; base-uri 'self'; form-action 'self';"
+</IfModule>
+
+# Prevent clickjacking
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "DENY"
+</IfModule>
+
+# Prevent MIME type sniffing
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>
+
+# Control referrer information
+<IfModule mod_headers.c>
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Permissions Policy (restrict browser features)
+<IfModule mod_headers.c>
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), ambient-light-sensor=()"
+</IfModule>
+
+# Additional security headers
+<IfModule mod_headers.c>
+    # Remove server information
+    Header always unset Server
+    Header always unset X-Powered-By
+    
+    # Cache control for sensitive files
+    <FilesMatch "\.(htaccess|htpasswd|ini|log|sh|inc|bak)$">
+        Header always set Cache-Control "no-cache, no-store, must-revalidate"
+        Header always set Pragma "no-cache"
+        Header always set Expires "0"
+    </FilesMatch>
+</IfModule>
+
+# Redirect HTTP to HTTPS
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Security.txt (if supported)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^\.well-known/security\.txt$ /security.txt [L]
+</IfModule>
