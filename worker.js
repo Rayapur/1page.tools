@@ -10,8 +10,14 @@ async function handleRequest(request) {
     return Response.redirect(url.toString(), 301)
   }
   
+  // If it's the root domain, fetch from GitHub Pages
+  let targetUrl = request.url
+  if (url.hostname === '1page.tools' && url.pathname === '/') {
+    targetUrl = 'https://rayapur.github.io/1page.tools/'
+  }
+  
   // Get the original response from GitHub Pages
-  const response = await fetch(request)
+  const response = await fetch(targetUrl)
   
   // Clone the response so we can modify headers
   const newResponse = new Response(response.body, response)
