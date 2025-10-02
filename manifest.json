@@ -1,0 +1,91 @@
+{
+  "name": "1Page Tools - All-in-One Utility Collection",
+  "short_name": "1Page Tools",
+  "description": "40+ free online tools and games: calculators, converters, games, image tools, text utilities, and more. All-in-one productivity suite.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["productivity", "utilities", "games", "education"],
+  "icons": [
+    {
+      "src": "assets/images/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/images/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "1Page Tools Dashboard"
+    },
+    {
+      "src": "assets/images/screenshot-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "1Page Tools Mobile View"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Wordle Game",
+      "short_name": "Wordle",
+      "description": "Play the daily word puzzle game",
+      "url": "/games/wordle.html",
+      "icons": [
+        {
+          "src": "assets/images/wordle-icon.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Calculator",
+      "short_name": "Calc",
+      "description": "Quick calculations",
+      "url": "/math/calculator.html",
+      "icons": [
+        {
+          "src": "assets/images/calc-icon.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Image Tools",
+      "short_name": "Images",
+      "description": "Crop, resize, and edit images",
+      "url": "/image/",
+      "icons": [
+        {
+          "src": "assets/images/image-icon.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
