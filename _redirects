@@ -1,0 +1,6 @@
+# Redirect HTTP to HTTPS
+http://1page.tools/* https://1page.tools/:splat 301!
+http://www.1page.tools/* https://1page.tools/:splat 301!
+
+# Security.txt redirect
+/.well-known/security.txt /security.txt 200
