@@ -571,6 +571,11 @@
         document.addEventListener('keydown', function(e) {
             if (gameOver) return;
             
+            // Ignore if hidden input is focused (mobile keyboard handling)
+            if (e.target === document.getElementById('hiddenInput')) {
+                return;
+            }
+            
             const key = e.key.toUpperCase();
             
             if (key === 'ENTER') {
