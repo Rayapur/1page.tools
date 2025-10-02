@@ -428,7 +428,7 @@
     <script>
         // Word list (5-letter words)
         const wordList = [
-            'ABOUT', 'ABOVE', 'ABUSE', 'ACTOR', 'ACUTE', 'ADMIT', 'ADOPT', 'ADULT', 'AFTER', 'AGAIN',
+            'ABOUT', 'ABOVE', 'ABUSE', 'ACTOR', 'ACUTE', 'ADMIT', 'ADOPT', 'ADULT', 'AFTER', 'AGAIN', 'AUDIO',
             'AGENT', 'AGREE', 'AHEAD', 'ALARM', 'ALBUM', 'ALERT', 'ALIEN', 'ALIGN', 'ALIKE', 'ALIVE',
             'ALLOW', 'ALONE', 'ALONG', 'ALTER', 'AMONG', 'ANGER', 'ANGLE', 'ANGRY', 'APART', 'APPLE',
             'APPLY', 'ARENA', 'ARGUE', 'ARISE', 'ARRAY', 'ASIDE', 'ASSET', 'AVOID', 'AWAKE', 'AWARD',
@@ -634,6 +634,7 @@
             if (!wordList.includes(guess)) {
                 showMessage('Not a valid word!', 'error');
                 animateRow(currentRow);
+                console.log('Invalid word:', guess); // Debug log
                 return;
             }
             
@@ -750,6 +751,16 @@
             const messageEl = document.getElementById('gameMessage');
             messageEl.textContent = message;
             messageEl.className = `game-message ${type}`;
+            
+            // Clear any existing timeout
+            if (window.messageTimeout) {
+                clearTimeout(window.messageTimeout);
+            }
+            
+            // Auto-clear message after 3 seconds (longer for mobile)
+            window.messageTimeout = setTimeout(() => {
+                clearMessage();
+            }, 3000);
         }
 
         // Clear message
@@ -757,6 +768,12 @@
             const messageEl = document.getElementById('gameMessage');
             messageEl.textContent = '';
             messageEl.className = 'game-message';
+            
+            // Clear any existing timeout
+            if (window.messageTimeout) {
+                clearTimeout(window.messageTimeout);
+                window.messageTimeout = null;
+            }
         }
 
         // New game
