@@ -295,6 +295,22 @@ self.addEventListener('beforeinstallprompt', event => {
 
 // Cache management
 self.addEventListener('message', event => {
+  // Validate message origin for security
+  // Only accept messages from our own domain
+  const allowedOrigins = [
+    'https://1page.tools',
+    'https://www.1page.tools',
+    'http://localhost:8000',  // For local development
+    'http://127.0.0.1:8000'   // For local development
+  ];
+  
+  // Check if origin is provided and is in our whitelist
+  if (event.origin && !allowedOrigins.includes(event.origin)) {
+    console.warn('Rejected message from unauthorized origin:', event.origin);
+    return;
+  }
+  
+  // Process valid messages
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
