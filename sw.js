@@ -1,7 +1,7 @@
 // Service Worker for 1Page Tools PWA
-const CACHE_NAME = '1page-tools-v1.0.0';
-const STATIC_CACHE = 'static-v1';
-const DYNAMIC_CACHE = 'dynamic-v1';
+const CACHE_NAME = '1page-tools-v1.0.1';
+const STATIC_CACHE = 'static-v2';
+const DYNAMIC_CACHE = 'dynamic-v2';
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -14,7 +14,19 @@ const STATIC_FILES = [
   '/assets/images/apple-touch-icon.png',
   '/assets/images/favicon-16x16.png',
   '/assets/images/favicon-32x32.png',
+  '/assets/images/favicon-96x96.png',
+  '/assets/images/icon-72x72.png',
+  '/assets/images/icon-96x96.png',
+  '/assets/images/icon-128x128.png',
+  '/assets/images/icon-144x144.png',
+  '/assets/images/icon-152x152.png',
+  '/assets/images/icon-384x384.png',
   '/assets/images/favicon.ico',
+  '/assets/images/wordle-icon.png',
+  '/assets/images/calc-icon.png',
+  '/assets/images/image-icon.png',
+  '/assets/images/screenshot-wide.png',
+  '/assets/images/screenshot-narrow.png',
   '/manifest.json',
   // Core tool pages
   '/math/calculator.html',
