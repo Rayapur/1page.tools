@@ -2,18 +2,45 @@ addEventListener('fetch', event => {
   event.respondWith(handleRequest(event.request))
 })
 
+// Whitelist of allowed domains to prevent SSRF attacks
+const ALLOWED_HOSTNAMES = [
+  '1page.tools',
+  'www.1page.tools',
+  'rayapur.github.io'
+]
+
+const GITHUB_PAGES_ORIGIN = 'https://rayapur.github.io'
+const GITHUB_PAGES_PATH = '/1page.tools'
+
 async function handleRequest(request) {
-  // Force HTTPS redirect
   const url = new URL(request.url)
+  
+  // Validate hostname - prevent SSRF by only allowing whitelisted domains
+  if (!ALLOWED_HOSTNAMES.includes(url.hostname)) {
+    return new Response('Forbidden', { status: 403 })
+  }
+  
+  // Force HTTPS redirect
   if (url.protocol === 'http:') {
     url.protocol = 'https:'
     return Response.redirect(url.toString(), 301)
   }
   
-  // If it's the root domain, fetch from GitHub Pages
-  let targetUrl = request.url
-  if (url.hostname === '1page.tools' && url.pathname === '/') {
-    targetUrl = 'https://rayapur.github.io/1page.tools/'
+  // Redirect www to non-www
+  if (url.hostname === 'www.1page.tools') {
+    url.hostname = '1page.tools'
+    return Response.redirect(url.toString(), 301)
+  }
+  
+  // Build safe target URL - never use user input directly
+  // Always fetch from our GitHub Pages origin with sanitized path
+  const safePath = url.pathname + url.search
+  const targetUrl = GITHUB_PAGES_ORIGIN + GITHUB_PAGES_PATH + safePath
+  
+  // Validate the final target URL before fetching
+  const targetUrlObj = new URL(targetUrl)
+  if (targetUrlObj.hostname !== 'rayapur.github.io') {
+    return new Response('Invalid target', { status: 400 })
   }
   
   // Get the original response from GitHub Pages
