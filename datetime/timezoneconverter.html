@@ -195,15 +195,32 @@
             }
         }
 
-        function getTimezoneOffset(timezone) {
+        function getTimezoneOffsetString(date, timezone) {
             try {
-                const now = new Date();
-                const utc = new Date(now.getTime() + (now.getTimezoneOffset() * 60000));
-                const target = new Date(utc.toLocaleString('en-US', { timeZone: timezone }));
-                const offset = (target.getTime() - utc.getTime()) / (1000 * 60 * 60);
-                return offset;
+                const formatter = new Intl.DateTimeFormat('en-US', {
+                    timeZone: timezone,
+                    timeZoneName: 'short'
+                });
+                const parts = formatter.formatToParts(date);
+                const tzName = parts.find(part => part.type === 'timeZoneName')?.value || '';
+                
+                // Calculate offset in hours
+                const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
+                const tzDate = new Date(date.toLocaleString('en-US', { timeZone: timezone }));
+                const offsetMs = tzDate - utcDate;
+                const offsetHours = offsetMs / (1000 * 60 * 60);
+                
+                const hours = Math.floor(Math.abs(offsetHours));
+                const minutes = Math.round((Math.abs(offsetHours) - hours) * 60);
+                const sign = offsetHours >= 0 ? '+' : '-';
+                
+                if (minutes === 0) {
+                    return `${sign}${hours}`;
+                } else {
+                    return `${sign}${hours}:${String(minutes).padStart(2, '0')}`;
+                }
             } catch (error) {
-                return 0;
+                return '+0';
             }
         }
 
@@ -219,23 +236,62 @@
                 return;
             }
             
-            // Create date object from input
-            const inputDate = new Date(dateInput);
+            // Parse the datetime-local input
+            // Format: "2024-03-15T14:30"
+            const [datePart, timePart] = dateInput.split('T');
+            const [year, month, day] = datePart.split('-').map(Number);
+            const [hour, minute] = timePart.split(':').map(Number);
             
-            // Convert to UTC first
-            const utcDate = new Date(inputDate.getTime() - (inputDate.getTimezoneOffset() * 60000));
+            // Create a date string that we can parse correctly for the source timezone
+            // The trick: we create a string that looks like it's in the source timezone
+            const dateString = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`;
             
-            // Adjust for the source timezone
-            const sourceOffset = getTimezoneOffset(fromTimezone);
-            const adjustedDate = new Date(utcDate.getTime() - (sourceOffset * 60 * 60 * 1000));
+            // Method: Use toLocaleString to get what time it would be locally if this were the source timezone time
+            // Then calculate the difference to get the UTC timestamp
+            
+            // Step 1: Create a test date to see the timezone offset
+            const testDate = new Date(dateString);
+            
+            // Step 2: Format this date AS IF it were in the source timezone
+            const sourceFormatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: fromTimezone,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            
+            // Step 3: Get the actual UTC time by using the source timezone interpretation
+            // The input represents a time in the source timezone, so we need to convert it to UTC
+            
+            // Create the timestamp: interpret the input as being in the source timezone
+            // We'll use a reference approach: what UTC time gives us the input time in the source timezone?
+            
+            let utcTime = null;
+            
+            // Binary search or iteration to find the UTC time that produces the source time
+            // Simpler approach: use string manipulation
+            const inputTimeInSourceTz = `${month}/${day}/${year}, ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`;
+            
+            // Find the UTC timestamp that when formatted in source timezone gives our input time
+            // Start with a rough estimate
+            let estimatedUTC = new Date(Date.UTC(year, month - 1, day, hour, minute, 0));
+            
+            // Adjust based on source timezone
+            const sourceTimeStr = formatTimeInTimezone(estimatedUTC, fromTimezone);
+            const sourceTimeParsed = new Date(sourceTimeStr);
+            const diff = estimatedUTC - sourceTimeParsed;
+            utcTime = new Date(estimatedUTC.getTime() - diff);
             
             let resultsHTML = '';
             let resultsText = '';
             
             timezones.forEach(tz => {
-                const formattedTime = formatTimeInTimezone(adjustedDate, tz.id);
-                const offset = getTimezoneOffset(tz.id);
-                const offsetStr = offset >= 0 ? `+${offset}` : `${offset}`;
+                const formattedTime = formatTimeInTimezone(utcTime, tz.id);
+                const offsetStr = getTimezoneOffsetString(utcTime, tz.id);
                 
                 resultsHTML += `
                     <div class="timezone-result">
@@ -283,8 +339,7 @@
             
             timezones.slice(0, 8).forEach(tz => { // Show first 8 timezones for world clock
                 const formattedTime = formatTimeInTimezone(now, tz.id);
-                const offset = getTimezoneOffset(tz.id);
-                const offsetStr = offset >= 0 ? `+${offset}` : `${offset}`;
+                const offsetStr = getTimezoneOffsetString(now, tz.id);
                 
                 clockHTML += `
                     <div class="world-clock-item">
