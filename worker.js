@@ -50,6 +50,15 @@ async function handleRequest(request) {
   const newResponse = new Response(response.body, response)
   
   // Add security headers with exact values
+  // Remove old cache headers that might interfere
+  newResponse.headers.delete('cache-control')
+  newResponse.headers.delete('expires')
+  
+  // Set fresh cache control for HTML pages
+  if (response.headers.get('content-type')?.includes('text/html')) {
+    newResponse.headers.set('Cache-Control', 'public, max-age=300, must-revalidate')
+  }
+  
   newResponse.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
   newResponse.headers.set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://www.googletagservices.com https://adservice.google.com https://www.google-analytics.com https://www.gstatic.com https://googleads.g.doubleclick.net https://partner.googleadservices.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.gstatic.com; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://adtrafficquality.google https://*.adtrafficquality.google; frame-src 'self' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.google.com https://tpc.googlesyndication.com https://td.doubleclick.net https://*.googlesyndication.com; child-src 'self' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net; object-src 'none'; base-uri 'self'; form-action 'self'")
   newResponse.headers.set('X-Frame-Options', 'DENY')
