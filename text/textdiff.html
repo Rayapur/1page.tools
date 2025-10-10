@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="../css/theme.css">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- All styles are now globalized in css/theme.css -->
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
             crossorigin="anonymous"></script>
@@ -25,6 +24,297 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon-16x16.png">
     <link rel="manifest" href="../assets/images/site.webmanifest">
+    
+    <style>
+        .diff-container {
+            margin: 20px 0;
+        }
+
+        .diff-toolbar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 8px;
+        }
+
+        .diff-toolbar label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 5px;
+            background: var(--bg-secondary);
+            padding: 4px;
+            border-radius: 6px;
+        }
+
+        .view-toggle button {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .view-toggle button.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .diff-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .input-header label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .file-upload-btn {
+            padding: 6px 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .file-upload-btn:hover {
+            opacity: 0.9;
+        }
+
+        .input-section textarea {
+            min-height: 300px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            resize: vertical;
+        }
+
+        .diff-results {
+            margin-top: 30px;
+        }
+
+        .diff-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .stat-value.added { color: #22c55e; }
+        .stat-value.removed { color: #ef4444; }
+        .stat-value.modified { color: #3b82f6; }
+
+        .diff-output {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Unified View */
+        .unified-view .diff-line {
+            display: flex;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 4px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .unified-view .line-number {
+            width: 60px;
+            text-align: right;
+            padding-right: 12px;
+            color: var(--text-secondary);
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .unified-view .line-content {
+            flex: 1;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .unified-view .diff-added {
+            background: rgba(34, 197, 94, 0.15);
+        }
+
+        .unified-view .diff-added .line-content {
+            color: #22c55e;
+        }
+
+        .unified-view .diff-removed {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .unified-view .diff-removed .line-content {
+            color: #ef4444;
+        }
+
+        .unified-view .diff-unchanged {
+            background: transparent;
+        }
+
+        /* Split View */
+        .split-view {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border-color);
+        }
+
+        .split-pane {
+            background: var(--bg-secondary);
+        }
+
+        .split-pane-header {
+            padding: 12px;
+            background: var(--card-bg);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .split-line {
+            display: flex;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 4px 8px;
+            border-bottom: 1px solid var(--border-color);
+            min-height: 28px;
+        }
+
+        .split-line-number {
+            width: 40px;
+            text-align: right;
+            padding-right: 12px;
+            color: var(--text-secondary);
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .split-line-content {
+            flex: 1;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .split-line.added {
+            background: rgba(34, 197, 94, 0.15);
+        }
+
+        .split-line.added .split-line-content {
+            color: #22c55e;
+        }
+
+        .split-line.removed {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .split-line.removed .split-line-content {
+            color: #ef4444;
+        }
+
+        .split-line.modified {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .split-line.empty {
+            background: var(--bg-secondary);
+            opacity: 0.3;
+        }
+
+        .char-diff {
+            background: rgba(251, 191, 36, 0.3);
+            padding: 2px 0;
+        }
+
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .diff-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .split-view {
+                grid-template-columns: 1fr;
+            }
+
+            .diff-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .view-toggle {
+                width: 100%;
+            }
+
+            .view-toggle button {
+                flex: 1;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Dark Mode Toggle -->
@@ -32,7 +322,6 @@
         <i class="material-icons theme-toggle-icon">dark_mode</i>
         <span class="theme-toggle-text">Dark</span>
     </button>
-
 
     <a href="../index.html" class="back-button" title="Back to Home"></a>
     
@@ -52,248 +341,393 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="container">
-            <div class="header-logo">
-        <img src="../../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
-    </div>
-    <header>
-            <h1>Text Diff Checker</h1>
-            <p class="subtitle">Compare two texts and highlight the differences</p>
-        </header>
-        
-        <div class="instructions">
-            <h3>How to use:</h3>
-            <ol>
-                <li>Enter your original text in the first textarea</li>
-                <li>Enter the modified text in the second textarea</li>
-                <li>View the differences highlighted in the comparison</li>
-                <li>Copy the results or clear to start over</li>
-            </ol>
-        </div>
-        
-        <div class="text-tools-container">
-            <div class="diff-inputs">
-                <div class="input-section">
-                    <label for="originalText">Original Text:</label>
-                    <textarea id="originalText" placeholder="Enter your original text here..."></textarea>
+                <div class="header-logo">
+                    <img src="../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
                 </div>
+                <header>
+                    <h1>Text Diff Checker</h1>
+                    <p class="subtitle">Compare two texts and highlight the differences</p>
+                </header>
                 
-                <div class="input-section">
-                    <label for="modifiedText">Modified Text:</label>
-                    <textarea id="modifiedText" placeholder="Enter your modified text here..."></textarea>
+                <div class="diff-container">
+                    <div class="diff-toolbar">
+                        <div class="view-toggle">
+                            <button id="splitViewBtn" class="active" onclick="setView('split')">
+                                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">view_column</i>
+                                Split View
+                            </button>
+                            <button id="unifiedViewBtn" onclick="setView('unified')">
+                                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">view_agenda</i>
+                                Unified
+                            </button>
+                        </div>
+                        
+                        <label>
+                            <input type="checkbox" id="ignoreWhitespace">
+                            Ignore whitespace
+                        </label>
+                        <label>
+                            <input type="checkbox" id="ignoreCase">
+                            Ignore case
+                        </label>
+                        <label>
+                            <input type="checkbox" id="showLineNumbers" checked>
+                            Show line numbers
+                        </label>
+                    </div>
+
+                    <div class="diff-inputs">
+                        <div class="input-section">
+                            <div class="input-header">
+                                <label for="originalText">Original Text</label>
+                                <button class="file-upload-btn" onclick="document.getElementById('file1').click()">
+                                    <i class="material-icons" style="font-size: 18px;">upload_file</i>
+                                    Upload File
+                                </button>
+                                <input type="file" id="file1" accept=".txt,.js,.css,.html,.json,.xml,.md" style="display: none;" onchange="loadFile(1)">
+                            </div>
+                            <textarea id="originalText" placeholder="Paste your original text here or upload a file..."></textarea>
+                        </div>
+                        
+                        <div class="input-section">
+                            <div class="input-header">
+                                <label for="modifiedText">Modified Text</label>
+                                <button class="file-upload-btn" onclick="document.getElementById('file2').click()">
+                                    <i class="material-icons" style="font-size: 18px;">upload_file</i>
+                                    Upload File
+                                </button>
+                                <input type="file" id="file2" accept=".txt,.js,.css,.html,.json,.xml,.md" style="display: none;" onchange="loadFile(2)">
+                            </div>
+                            <textarea id="modifiedText" placeholder="Paste your modified text here or upload a file..."></textarea>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn" onclick="compareTexts()" style="padding: 12px 40px; font-size: 16px;">
+                            <i class="material-icons" style="font-size: 20px; vertical-align: middle;">compare_arrows</i>
+                            Find Difference
+                        </button>
+                    </div>
+                    
+                    <div class="diff-results" id="diffResults" style="display: none;">
+                        <div class="diff-stats">
+                            <div class="stat-item">
+                                <i class="material-icons" style="color: #22c55e;">add_circle</i>
+                                <span class="stat-label">Added:</span>
+                                <span class="stat-value added" id="addedCount">0</span>
+                                <span class="stat-label">lines</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="material-icons" style="color: #ef4444;">remove_circle</i>
+                                <span class="stat-label">Removed:</span>
+                                <span class="stat-value removed" id="removedCount">0</span>
+                                <span class="stat-label">lines</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="material-icons" style="color: #3b82f6;">edit</i>
+                                <span class="stat-label">Modified:</span>
+                                <span class="stat-value modified" id="modifiedCount">0</span>
+                                <span class="stat-label">lines</span>
+                            </div>
+                        </div>
+                        
+                        <div class="diff-output" id="diffOutput"></div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary" onclick="copyDiff()">
+                                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">content_copy</i>
+                                Copy Diff
+                            </button>
+                            <button class="btn btn-danger" onclick="clearAll()">
+                                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">delete</i>
+                                Clear All
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="diff-options">
-                <label>
-                    <input type="checkbox" id="ignoreWhitespace" checked>
-                    Ignore whitespace differences
-                </label>
-                <label>
-                    <input type="checkbox" id="ignoreCase">
-                    Ignore case differences
-                </label>
-                <button class="btn" id="compareBtn">Compare Texts</button>
-            </div>
-            
-            <div class="diff-results" id="diffResults" style="display: none;">
-                <h3>Comparison Results:</h3>
-                <div class="diff-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">Added:</span>
-                        <span class="stat-value added" id="addedCount">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Removed:</span>
-                        <span class="stat-value removed" id="removedCount">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Modified:</span>
-                        <span class="stat-value modified" id="modifiedCount">0</span>
-                    </div>
-                </div>
-                <div class="diff-output" id="diffOutput"></div>
-            </div>
-            
-            <div class="action-buttons">
-                <button class="btn btn-secondary" id="copyBtn" disabled>Copy Results</button>
-                <button class="btn btn-danger" id="clearBtn">Clear All</button>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="sidebar">
+            <div class="ad-container vertical">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3527668902044321"
+                     data-ad-slot="1122334455"
+                     data-ad-format="rectangle"
+                     data-full-width-responsive="true"></ins>
             </div>
         </div>
-            </div>
     </div>
 
-    <!-- Right Sidebar -->
-    <div class="sidebar">
-        <div class="ad-container vertical">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-3527668902044321"
-                 data-ad-slot="1122334455"
-                 data-ad-format="rectangle"
-                 data-full-width-responsive="true"></ins>
-        </div>
-    </div>
-</div>
-
-<footer class="site-footer">
-        &copy; 2025 1page.tools<br>
-        <a href="../privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="../terms-of-use.html" target="_blank">Terms of Use</a>
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
     </footer>
 
     <script>
-        const originalText = document.getElementById('originalText');
-        const modifiedText = document.getElementById('modifiedText');
-        const ignoreWhitespace = document.getElementById('ignoreWhitespace');
-        const ignoreCase = document.getElementById('ignoreCase');
-        const compareBtn = document.getElementById('compareBtn');
-        const diffResults = document.getElementById('diffResults');
-        const diffOutput = document.getElementById('diffOutput');
-        const addedCount = document.getElementById('addedCount');
-        const removedCount = document.getElementById('removedCount');
-        const modifiedCount = document.getElementById('modifiedCount');
-        const copyBtn = document.getElementById('copyBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        
-        // Event listeners
-        compareBtn.addEventListener('click', compareTexts);
-        copyBtn.addEventListener('click', copyResults);
-        clearBtn.addEventListener('click', clearAll);
-        
-        function compareTexts() {
-            const original = originalText.value;
-            const modified = modifiedText.value;
+        let currentView = 'split';
+        let diffData = null;
+
+        function setView(view) {
+            currentView = view;
+            document.getElementById('splitViewBtn').classList.toggle('active', view === 'split');
+            document.getElementById('unifiedViewBtn').classList.toggle('active', view === 'unified');
             
-            if (!original && !modified) {
-                alert('Please enter at least one text to compare.');
+            if (diffData) {
+                displayDiff(diffData);
+            }
+        }
+
+        function loadFile(num) {
+            const fileInput = document.getElementById('file' + num);
+            const file = fileInput.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const textarea = num === 1 ? document.getElementById('originalText') : document.getElementById('modifiedText');
+                    textarea.value = e.target.result;
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function compareTexts() {
+            let text1 = document.getElementById('originalText').value;
+            let text2 = document.getElementById('modifiedText').value;
+            
+            if (!text1 && !text2) {
+                alert('Please enter text in at least one field');
                 return;
             }
+
+            const ignoreWhitespace = document.getElementById('ignoreWhitespace').checked;
+            const ignoreCase = document.getElementById('ignoreCase').checked;
+
+            diffData = computeDiff(text1, text2, { ignoreWhitespace, ignoreCase });
+            displayDiff(diffData);
             
-            let text1 = original;
-            let text2 = modified;
-            
-            // Apply filters
-            if (ignoreWhitespace.checked) {
-                text1 = text1.replace(/\s+/g, ' ').trim();
-                text2 = text2.replace(/\s+/g, ' ').trim();
+            document.getElementById('diffResults').style.display = 'block';
+            document.getElementById('diffResults').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function computeDiff(text1, text2, options = {}) {
+            // Process texts based on options
+            if (options.ignoreWhitespace) {
+                text1 = text1.replace(/[ \t]+/g, ' ').replace(/\n\s*\n/g, '\n');
+                text2 = text2.replace(/[ \t]+/g, ' ').replace(/\n\s*\n/g, '\n');
             }
-            
-            if (ignoreCase.checked) {
+            if (options.ignoreCase) {
                 text1 = text1.toLowerCase();
                 text2 = text2.toLowerCase();
             }
-            
-            // Simple diff algorithm
-            const diff = computeDiff(text1, text2);
-            displayDiff(diff);
-            
-            diffResults.style.display = 'block';
-            copyBtn.disabled = false;
-        }
-        
-        function computeDiff(text1, text2) {
+
             const lines1 = text1.split('\n');
             const lines2 = text2.split('\n');
-            const diff = [];
             
-            let i = 0, j = 0;
+            // Use Myers diff algorithm (simplified LCS-based approach)
+            const diff = myersDiff(lines1, lines2);
+            
+            // Calculate stats
             let added = 0, removed = 0, modified = 0;
+            diff.forEach(item => {
+                if (item.type === 'added') added++;
+                if (item.type === 'removed') removed++;
+                if (item.type === 'modified') modified++;
+            });
+
+            return {
+                diff,
+                stats: { added, removed, modified },
+                lines1,
+                lines2
+            };
+        }
+
+        function myersDiff(arr1, arr2) {
+            const result = [];
+            const n = arr1.length;
+            const m = arr2.length;
             
-            while (i < lines1.length || j < lines2.length) {
-                if (i >= lines1.length) {
-                    // Only text2 has content
-                    diff.push({ type: 'added', content: lines2[j] });
-                    added++;
-                    j++;
-                } else if (j >= lines2.length) {
-                    // Only text1 has content
-                    diff.push({ type: 'removed', content: lines1[i] });
-                    removed++;
-                    i++;
-                } else if (lines1[i] === lines2[j]) {
-                    // Lines are identical
-                    diff.push({ type: 'unchanged', content: lines1[i] });
-                    i++;
-                    j++;
-                } else {
-                    // Lines are different - check if it's a modification or addition/removal
-                    const nextMatch1 = lines2.indexOf(lines1[i], j + 1);
-                    const nextMatch2 = lines1.indexOf(lines2[j], i + 1);
-                    
-                    if (nextMatch1 !== -1 && (nextMatch2 === -1 || nextMatch1 - j < nextMatch2 - i)) {
-                        // Line was added
-                        diff.push({ type: 'added', content: lines2[j] });
-                        added++;
-                        j++;
-                    } else if (nextMatch2 !== -1) {
-                        // Line was removed
-                        diff.push({ type: 'removed', content: lines1[i] });
-                        removed++;
-                        i++;
+            // Build LCS table
+            const dp = Array(n + 1).fill(null).map(() => Array(m + 1).fill(0));
+            
+            for (let i = 1; i <= n; i++) {
+                for (let j = 1; j <= m; j++) {
+                    if (arr1[i - 1] === arr2[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1] + 1;
                     } else {
-                        // Line was modified
-                        diff.push({ type: 'removed', content: lines1[i] });
-                        diff.push({ type: 'added', content: lines2[j] });
-                        removed++;
-                        added++;
-                        modified++;
-                        i++;
-                        j++;
+                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
                     }
                 }
             }
+
+            // Backtrack to build diff
+            let i = n, j = m;
+            const diffStack = [];
             
-            return { diff, stats: { added, removed, modified } };
+            while (i > 0 || j > 0) {
+                if (i > 0 && j > 0 && arr1[i - 1] === arr2[j - 1]) {
+                    diffStack.push({ type: 'unchanged', line1: i - 1, line2: j - 1, content: arr1[i - 1] });
+                    i--;
+                    j--;
+                } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+                    diffStack.push({ type: 'added', line2: j - 1, content: arr2[j - 1] });
+                    j--;
+                } else if (i > 0) {
+                    diffStack.push({ type: 'removed', line1: i - 1, content: arr1[i - 1] });
+                    i--;
+                }
+            }
+
+            return diffStack.reverse();
         }
-        
-        function displayDiff(result) {
-            const { diff, stats } = result;
+
+        function displayDiff(data) {
+            const { diff, stats } = data;
             
             // Update stats
-            addedCount.textContent = stats.added;
-            removedCount.textContent = stats.removed;
-            modifiedCount.textContent = stats.modified;
-            
-            // Display diff
+            document.getElementById('addedCount').textContent = stats.added;
+            document.getElementById('removedCount').textContent = stats.removed;
+            document.getElementById('modifiedCount').textContent = stats.modified;
+
+            const output = document.getElementById('diffOutput');
+            const showLineNumbers = document.getElementById('showLineNumbers').checked;
+
+            if (currentView === 'unified') {
+                output.innerHTML = renderUnifiedView(diff, showLineNumbers);
+                output.className = 'diff-output unified-view';
+            } else {
+                output.innerHTML = renderSplitView(diff, showLineNumbers);
+                output.className = 'diff-output split-view';
+            }
+        }
+
+        function renderUnifiedView(diff, showLineNumbers) {
             let html = '';
+            let lineNum = 1;
+
             diff.forEach(item => {
-                const className = `diff-${item.type}`;
-                const prefix = item.type === 'added' ? '+' : 
-                              item.type === 'removed' ? '-' : ' ';
-                html += `<div class="diff-line ${className}">${prefix} ${escapeHtml(item.content)}</div>`;
+                const lineNumber = showLineNumbers ? `<span class="line-number">${lineNum}</span>` : '';
+                const content = escapeHtml(item.content || '');
+                
+                if (item.type === 'added') {
+                    html += `<div class="diff-line diff-added">${lineNumber}<span class="line-content">+ ${content}</span></div>`;
+                } else if (item.type === 'removed') {
+                    html += `<div class="diff-line diff-removed">${lineNumber}<span class="line-content">- ${content}</span></div>`;
+                } else {
+                    html += `<div class="diff-line diff-unchanged">${lineNumber}<span class="line-content">  ${content}</span></div>`;
+                }
+                lineNum++;
+            });
+
+            return html;
+        }
+
+        function renderSplitView(diff, showLineNumbers) {
+            let html = `
+                <div class="split-pane">
+                    <div class="split-pane-header">
+                        <i class="material-icons" style="font-size: 18px;">description</i>
+                        Original Text
+                    </div>
+            `;
+            
+            let leftLineNum = 1;
+            diff.forEach(item => {
+                if (item.type === 'removed' || item.type === 'unchanged') {
+                    const lineNumber = showLineNumbers ? `<span class="split-line-number">${leftLineNum}</span>` : '';
+                    const content = escapeHtml(item.content || '');
+                    const className = item.type === 'removed' ? 'removed' : '';
+                    html += `<div class="split-line ${className}">${lineNumber}<span class="split-line-content">${content}</span></div>`;
+                    leftLineNum++;
+                } else if (item.type === 'added') {
+                    html += `<div class="split-line empty"><span class="split-line-number"></span><span class="split-line-content"></span></div>`;
+                }
             });
             
-            diffOutput.innerHTML = html;
+            html += `</div><div class="split-pane">
+                <div class="split-pane-header">
+                    <i class="material-icons" style="font-size: 18px;">description</i>
+                    Modified Text
+                </div>
+            `;
+            
+            let rightLineNum = 1;
+            diff.forEach(item => {
+                if (item.type === 'added' || item.type === 'unchanged') {
+                    const lineNumber = showLineNumbers ? `<span class="split-line-number">${rightLineNum}</span>` : '';
+                    const content = escapeHtml(item.content || '');
+                    const className = item.type === 'added' ? 'added' : '';
+                    html += `<div class="split-line ${className}">${lineNumber}<span class="split-line-content">${content}</span></div>`;
+                    rightLineNum++;
+                } else if (item.type === 'removed') {
+                    html += `<div class="split-line empty"><span class="split-line-number"></span><span class="split-line-content"></span></div>`;
+                }
+            });
+            
+            html += '</div>';
+            return html;
         }
-        
+
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
-        
-        function copyResults() {
-            const diffText = diffOutput.textContent;
-            if (diffText) {
-                navigator.clipboard.writeText(diffText).then(() => {
-                    const originalText = copyBtn.textContent;
-                    copyBtn.textContent = 'Copied!';
-                    copyBtn.style.background = '#27ae60';
-                    setTimeout(() => {
-                        copyBtn.textContent = originalText;
-                        copyBtn.style.background = '';
-                    }, 2000);
-                });
-            }
+
+        function copyDiff() {
+            const output = document.getElementById('diffOutput');
+            const text = output.innerText;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Diff copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
         }
-        
+
         function clearAll() {
-            originalText.value = '';
-            modifiedText.value = '';
-            diffResults.style.display = 'none';
-            copyBtn.disabled = true;
-            originalText.focus();
+            document.getElementById('originalText').value = '';
+            document.getElementById('modifiedText').value = '';
+            document.getElementById('diffResults').style.display = 'none';
+            diffData = null;
         }
-    </script>    <script>
+
+        // Auto-compare on input change (debounced)
+        let compareTimeout;
+        document.getElementById('originalText').addEventListener('input', () => {
+            clearTimeout(compareTimeout);
+            compareTimeout = setTimeout(() => {
+                const text1 = document.getElementById('originalText').value;
+                const text2 = document.getElementById('modifiedText').value;
+                if (text1 && text2) compareTexts();
+            }, 1000);
+        });
+
+        document.getElementById('modifiedText').addEventListener('input', () => {
+            clearTimeout(compareTimeout);
+            compareTimeout = setTimeout(() => {
+                const text1 = document.getElementById('originalText').value;
+                const text2 = document.getElementById('modifiedText').value;
+                if (text1 && text2) compareTexts();
+            }, 1000);
+        });
+
+        // Re-render on option change
+        document.getElementById('ignoreWhitespace').addEventListener('change', () => {
+            if (diffData) compareTexts();
+        });
+        document.getElementById('ignoreCase').addEventListener('change', () => {
+            if (diffData) compareTexts();
+        });
+        document.getElementById('showLineNumbers').addEventListener('change', () => {
+            if (diffData) displayDiff(diffData);
+        });
+    </script>
+    
+    <script>
         // Dark Mode Toggle Functionality
         function toggleTheme() {
             const html = document.documentElement;
@@ -333,6 +767,5 @@
         // Initialize theme when page loads
         document.addEventListener('DOMContentLoaded', initializeTheme);
     </script>
-
 </body>
 </html>
