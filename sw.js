@@ -1,7 +1,7 @@
 // Service Worker for 1Page Tools PWA
-const CACHE_NAME = '1page-tools-v1.0.1';
-const STATIC_CACHE = 'static-v2';
-const DYNAMIC_CACHE = 'dynamic-v2';
+const CACHE_NAME = '1page-tools-v1.0.2';
+const STATIC_CACHE = 'static-v3';
+const DYNAMIC_CACHE = 'dynamic-v3';
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -140,21 +140,9 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Skip external requests (except for essential resources)
+  // Skip external requests - let them pass through normally
+  // Don't cache external resources, just let the browser handle them
   if (url.origin !== location.origin) {
-    // Allow Google Fonts and AdSense
-    if (url.origin.includes('fonts.googleapis.com') || 
-        url.origin.includes('fonts.gstatic.com') ||
-        url.origin.includes('pagead2.googlesyndication.com') ||
-        url.origin.includes('googleads.g.doubleclick.net')) {
-      event.respondWith(
-        fetch(request)
-          .catch(() => {
-            // Return offline fallback for external resources
-            return new Response('', { status: 503, statusText: 'Service Unavailable' });
-          })
-      );
-    }
     return;
   }
 
