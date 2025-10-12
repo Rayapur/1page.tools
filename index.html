@@ -500,15 +500,28 @@
         (adsbygoogle = window.adsbygoogle || []).push({});
         
         // Hide ad containers that don't have content after a delay
-        setTimeout(function() {
+        function hideEmptyAds() {
             const adContainers = document.querySelectorAll('.ad-container');
             adContainers.forEach(function(container) {
                 const adElement = container.querySelector('.adsbygoogle');
-                if (adElement && adElement.offsetHeight === 0) {
+                // Check if ad element exists but has no content or is showing placeholder
+                if (!adElement || 
+                    adElement.offsetHeight === 0 || 
+                    adElement.innerHTML.trim() === '' ||
+                    adElement.querySelector('img[src*="placeholder"]') ||
+                    adElement.querySelector('img[alt*="Ad"]')) {
                     container.style.display = 'none';
+                    container.style.height = '0';
+                    container.style.margin = '0';
+                    container.style.padding = '0';
                 }
             });
-        }, 5000); // Wait 5 seconds for ads to load
+        }
+        
+        // Check multiple times to catch ads that load later
+        setTimeout(hideEmptyAds, 3000);
+        setTimeout(hideEmptyAds, 5000);
+        setTimeout(hideEmptyAds, 8000); // Wait 5 seconds for ads to load
         
         // Responsive ad handling
         function handleResponsiveAds() {

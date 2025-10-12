@@ -126,6 +126,15 @@ body {
     flex-shrink: 0;
 }
 
+/* Hide left sidebar if it only contains broken ads */
+.page-wrapper .sidebar:first-child:has(.ad-container:empty),
+.page-wrapper .sidebar:first-child:has(.ad-container img[src*="placeholder"]) {
+    display: none !important;
+    width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
 .main-content {
     flex: 1;
     min-width: 0;
@@ -1511,6 +1520,22 @@ input[type="color"] {
 
 .ad-container .adsbygoogle:empty {
     display: none;
+}
+
+/* Hide broken ad placeholders and broken images */
+.ad-container img[src*="placeholder"],
+.ad-container img[alt*="Ad"]:not([src*="googleusercontent"]),
+.ad-container img[alt*="Advertisement"],
+.ad-container .adsbygoogle:not(:has(img)) {
+    display: none !important;
+}
+
+/* Hide entire ad container if it only contains broken images */
+.ad-container:has(img[src*="placeholder"]):not(:has(img:not([src*="placeholder"]))) {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Responsive ad adjustments */
