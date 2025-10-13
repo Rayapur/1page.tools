@@ -7,8 +7,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image to PDF Converter</title>
+    <!-- Replace your current jsPDF CDN reference with: -->
+    <script src="../js/libs/jspdf.umd.min.js"></script>
     <!-- Try multiple CDNs for jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         // Fallback: try jsdelivr if cdnjs fails
         if (!window.jspdf) {
@@ -19,7 +21,8 @@
             script.onerror = () => console.error('jsPDF failed to load from jsdelivr too');
             document.head.appendChild(script);
         }
-    </script>
+    </script> -->
+
     <link rel="stylesheet" href="../css/theme.css">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
