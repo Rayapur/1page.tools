@@ -105,5 +105,16 @@
     
     <!-- Try to load jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Fallback: try jsdelivr if cdnjs fails
+        if (!window.jspdf) {
+            console.log('Trying jsdelivr CDN as fallback...');
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
+            script.onload = () => console.log('jsPDF loaded from jsdelivr');
+            script.onerror = () => console.error('jsPDF failed to load from jsdelivr too');
+            document.head.appendChild(script);
+        }
+    </script>
 </body>
 </html>
