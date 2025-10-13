@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Tool Test - Debug Version</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-area { border: 2px dashed #ccc; padding: 20px; margin: 20px 0; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>PDF Tool Diagnostic Test</h1>
+    
+    <div id="status"></div>
+    
+    <div class="test-area" id="uploadArea">
+        <h3>Test File Selection</h3>
+        <input type="file" id="fileInput" accept="image/*" multiple>
+        <button id="selectButton">Click to Select Files</button>
+        <p>Or drag files here</p>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        const status = document.getElementById('status');
+        const results = document.getElementById('results');
+        const fileInput = document.getElementById('fileInput');
+        const selectButton = document.getElementById('selectButton');
+        const uploadArea = document.getElementById('uploadArea');
+        
+        // Test 1: Check if basic JavaScript works
+        status.innerHTML += '<div class="status info">✓ JavaScript is working</div>';
+        
+        // Test 2: Check if jsPDF library loaded
+        if (window.jspdf) {
+            status.innerHTML += '<div class="status success">✓ jsPDF library loaded successfully</div>';
+        } else {
+            status.innerHTML += '<div class="status error">✗ jsPDF library failed to load</div>';
+        }
+        
+        // Test 3: Check if event listeners work
+        let eventListenersWorking = false;
+        
+        selectButton.addEventListener('click', () => {
+            status.innerHTML += '<div class="status success">✓ Select button click detected</div>';
+            fileInput.click();
+            eventListenersWorking = true;
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            status.innerHTML += `<div class="status success">✓ File selection detected: ${files.length} files</div>`;
+            
+            if (files.length > 0) {
+                results.innerHTML = '<h3>Selected Files:</h3>';
+                for (let i = 0; i < files.length; i++) {
+                    results.innerHTML += `<div>${i + 1}. ${files[i].name} (${files[i].type})</div>`;
+                }
+            }
+        });
+        
+        // Test 4: Check drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            status.innerHTML += '<div class="status success">✓ Drag over detected</div>';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            status.innerHTML += `<div class="status success">✓ Drop detected: ${files.length} files</div>`;
+            
+            if (files.length > 0) {
+                results.innerHTML = '<h3>Dropped Files:</h3>';
+                for (let i = 0; i < files.length; i++) {
+                    results.innerHTML += `<div>${i + 1}. ${files[i].name} (${files[i].type})</div>`;
+                }
+            }
+        });
+        
+        // Test 5: Check console errors
+        const originalError = console.error;
+        console.error = function(...args) {
+            status.innerHTML += `<div class="status error">✗ Console Error: ${args.join(' ')}</div>`;
+            originalError.apply(console, args);
+        };
+        
+        // Summary after 3 seconds
+        setTimeout(() => {
+            status.innerHTML += '<div class="status info">=== DIAGNOSTIC SUMMARY ===</div>';
+            if (!window.jspdf) {
+                status.innerHTML += '<div class="status error">ISSUE: jsPDF library not loaded - Check CSP settings</div>';
+            }
+            if (!eventListenersWorking) {
+                status.innerHTML += '<div class="status error">ISSUE: Event listeners not working - Check JavaScript errors</div>';
+            }
+        }, 3000);
+    </script>
+    
+    <!-- Try to load jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</body>
+</html>
