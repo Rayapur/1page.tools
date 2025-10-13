@@ -72,6 +72,13 @@
     </footer>
 
     <script>
+        // Check if jsPDF loaded correctly
+        if (!window.jspdf) {
+            console.error('jsPDF library failed to load. Check CSP settings.');
+            document.getElementById('statusMessage').textContent = 'Error: PDF library failed to load. Please check your internet connection and try refreshing the page.';
+            document.getElementById('statusMessage').className = 'status error';
+        }
+        
         // Initialize jsPDF
         const { jsPDF } = window.jspdf;
         
@@ -90,9 +97,20 @@
         let generatedPDF = null;
         
         // Event listeners
-        selectButton.addEventListener('click', () => fileInput.click());
+        selectButton.addEventListener('click', () => {
+            console.log('Select button clicked');
+            fileInput.click();
+        });
         fileInput.addEventListener('change', handleFileSelect);
         uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+        });
         uploadArea.addEventListener('drop', handleDrop);
         convertBtn.addEventListener('click', convertToPDF);
         downloadBtn.addEventListener('click', downloadPDF);
@@ -106,6 +124,7 @@
         
         // Handle drag over
         function handleDragOver(e) {
+            console.log('Drag over detected');
             e.preventDefault();
             e.stopPropagation();
             uploadArea.style.background = '#e8f4ff';
@@ -113,9 +132,11 @@
         
         // Handle drop
         function handleDrop(e) {
+            console.log('Drop detected', e.dataTransfer.files.length, 'files');
             e.preventDefault();
             e.stopPropagation();
             uploadArea.style.background = '#f8f9fa';
+            uploadArea.classList.remove('drag-over');
             
             const files = e.dataTransfer.files;
             processFiles(files);
@@ -250,7 +271,7 @@
             statusMessage.className = 'status';
             updateButtons();
         }
-    </script>    <script>
+        
         // Dark Mode Toggle Functionality
         function toggleTheme() {
             const html = document.documentElement;
@@ -291,50 +312,9 @@
         document.addEventListener('DOMContentLoaded', initializeTheme);
     </script>
 
-</body>
     <footer class="site-footer">
         &copy; 2025 1page.tools<br>
         <a href="../privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="../terms-of-use.html" target="_blank">Terms of Use</a>
-    </footer>    <script>
-        // Dark Mode Toggle Functionality
-        function toggleTheme() {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            
-            // Update toggle button
-            updateThemeToggle(newTheme);
-        }
-
-        function updateThemeToggle(theme) {
-            const icon = document.querySelector('.theme-toggle-icon');
-            const text = document.querySelector('.theme-toggle-text');
-            
-            if (theme === 'dark') {
-                icon.textContent = 'light_mode';
-                text.textContent = 'Light';
-            } else {
-                icon.textContent = 'dark_mode';
-                text.textContent = 'Dark';
-            }
-        }
-
-        // Initialize theme on page load
-        function initializeTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
-            
-            document.documentElement.setAttribute('data-theme', theme);
-            updateThemeToggle(theme);
-        }
-
-        // Initialize theme when page loads
-        document.addEventListener('DOMContentLoaded', initializeTheme);
-    </script>
-
+    </footer>
 </body>
 </html>
