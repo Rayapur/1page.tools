@@ -406,6 +406,34 @@
         document.addEventListener('DOMContentLoaded', initializeTheme);
     </script>
 
+
+    <script>
+        // Initialize AdSense ads and hide empty containers
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        
+        // Hide ad containers that don't have content after a delay
+        function hideEmptyAds() {
+            const adContainers = document.querySelectorAll('.ad-container');
+            adContainers.forEach(function(container) {
+                const adElement = container.querySelector('.adsbygoogle');
+                // Check if ad element exists but has no content or is showing placeholder
+                if (!adElement || 
+                    adElement.offsetHeight === 0 || 
+                    adElement.innerHTML.trim() === '' ||
+                    adElement.querySelector('img[src*="placeholder"]') ||
+                    adElement.querySelector('img[alt*="Ad"]')) {
+                    container.style.display = 'none';
+                    container.style.height = '0';
+                    container.style.margin = '0';
+                    container.style.padding = '0';
+                }
+            });
+        }
+        setTimeout(hideEmptyAds, 3000);
+        setTimeout(hideEmptyAds, 5000);
+        setTimeout(hideEmptyAds, 8000);
+    </script>
+
 </body>
     <footer class="site-footer">
         &copy; 2025 1page.tools<br>
@@ -449,6 +477,34 @@
 
         // Initialize theme when page loads
         document.addEventListener('DOMContentLoaded', initializeTheme);
+    </script>
+
+
+    <script>
+        // Initialize AdSense ads and hide empty containers
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        
+        // Hide ad containers that don't have content after a delay
+        function hideEmptyAds() {
+            const adContainers = document.querySelectorAll('.ad-container');
+            adContainers.forEach(function(container) {
+                const adElement = container.querySelector('.adsbygoogle');
+                // Check if ad element exists but has no content or is showing placeholder
+                if (!adElement || 
+                    adElement.offsetHeight === 0 || 
+                    adElement.innerHTML.trim() === '' ||
+                    adElement.querySelector('img[src*="placeholder"]') ||
+                    adElement.querySelector('img[alt*="Ad"]')) {
+                    container.style.display = 'none';
+                    container.style.height = '0';
+                    container.style.margin = '0';
+                    container.style.padding = '0';
+                }
+            });
+        }
+        setTimeout(hideEmptyAds, 3000);
+        setTimeout(hideEmptyAds, 5000);
+        setTimeout(hideEmptyAds, 8000);
     </script>
 
 </body>

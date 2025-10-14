@@ -46,6 +46,21 @@
 
 
     <a href="../index.html" class="back-button" title="Back to Home"></a>
+    <div class="page-wrapper">
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        <div class="ad-container vertical">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3527668902044321"
+                 data-ad-slot="1234567890"
+                 data-ad-format="rectangle"
+                 data-full-width-responsive="true"></ins>
+        </div>
+    </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
     <div class="header-logo">
         <img src="../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
     </div>
@@ -80,9 +95,22 @@
             <button class="btn btn-secondary" id="downloadBtn" disabled>Download PDF</button>
             <button class="btn btn-danger" id="resetBtn">Reset</button>
         </div>
+    </div>        </div>
+
+    <!-- Right Sidebar -->
+    <div class="sidebar">
+        <div class="ad-container vertical">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3527668902044321"
+                 data-ad-slot="1122334455"
+                 data-ad-format="rectangle"
+                 data-full-width-responsive="true"></ins>
+        </div>
     </div>
-    
-    <footer>
+    </div>
+
+>
         <p>This tool works entirely in your browser. Your images are not uploaded to any server.</p>
     </footer>
 
@@ -331,5 +359,33 @@
         &copy; 2025 1page.tools<br>
         <a href="../privacy-policy.html" target="_blank">Privacy Policy</a> &middot; <a href="../terms-of-use.html" target="_blank">Terms of Use</a>
     </footer>
+
+    <script>
+        // Initialize AdSense ads and hide empty containers
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        
+        // Hide ad containers that don't have content after a delay
+        function hideEmptyAds() {
+            const adContainers = document.querySelectorAll('.ad-container');
+            adContainers.forEach(function(container) {
+                const adElement = container.querySelector('.adsbygoogle');
+                // Check if ad element exists but has no content or is showing placeholder
+                if (!adElement || 
+                    adElement.offsetHeight === 0 || 
+                    adElement.innerHTML.trim() === '' ||
+                    adElement.querySelector('img[src*="placeholder"]') ||
+                    adElement.querySelector('img[alt*="Ad"]')) {
+                    container.style.display = 'none';
+                    container.style.height = '0';
+                    container.style.margin = '0';
+                    container.style.padding = '0';
+                }
+            });
+        }
+        setTimeout(hideEmptyAds, 3000);
+        setTimeout(hideEmptyAds, 5000);
+        setTimeout(hideEmptyAds, 8000);
+    </script>
+
 </body>
 </html>

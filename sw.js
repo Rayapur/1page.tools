@@ -1,13 +1,14 @@
 // Service Worker for 1Page Tools PWA
-const CACHE_NAME = '1page-tools-v1.0.2';
-const STATIC_CACHE = 'static-v3';
-const DYNAMIC_CACHE = 'dynamic-v3';
+const CACHE_NAME = '1page-tools-v1.0.3';
+const STATIC_CACHE = 'static-v4';
+const DYNAMIC_CACHE = 'dynamic-v4';
 
 // Files to cache immediately
 const STATIC_FILES = [
   '/',
   '/index.html',
   '/css/theme.css',
+  '/js/libs/jspdf.umd.min.js',
   '/assets/images/1page-logo.png',
   '/assets/images/android-chrome-192x192.png',
   '/assets/images/android-chrome-512x512.png',
