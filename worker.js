@@ -20,16 +20,14 @@ async function handleRequest(request) {
     return new Response('Forbidden', { status: 403 })
   }
   
-  // Force HTTPS redirect
-  if (url.protocol === 'http:') {
-    url.protocol = 'https:'
-    return Response.redirect(url.toString(), 301)
-  }
-  
-  // Redirect www to non-www
-  if (url.hostname === 'www.1page.tools') {
-    url.hostname = '1page.tools'
-    return Response.redirect(url.toString(), 301)
+  // Force HTTPS redirect AND www to non-www in one step to avoid double redirects
+  if (url.protocol === 'http:' || url.hostname === 'www.1page.tools') {
+    const redirectUrl = new URL(request.url)
+    redirectUrl.protocol = 'https:'
+    redirectUrl.hostname = '1page.tools'
+    
+    // Use 308 Permanent Redirect (preserves method) for HTTPS, more secure
+    return Response.redirect(redirectUrl.toString(), 308)
   }
   
   // Build safe target URL - never use user input directly
