@@ -405,6 +405,9 @@
                     
                     <div class="game-actions">
                         <button class="btn" onclick="startGame()" id="startBtn">Generate Puzzle</button>
+                        <button class="btn btn-secondary" onclick="toggleSelectionMode()" id="modeBtn" title="Switch between drag and click selection">
+                            🖱️ Drag Mode
+                        </button>
                         <button class="btn btn-secondary" onclick="showStats()">Stats</button>
                     </div>
                 </div>
@@ -440,6 +443,7 @@
         let isGameActive = false;
         let currentDifficulty = 'animals';
         let gridSize = 15;
+        let selectionMode = 'drag'; // 'drag' or 'click'
         
         // Statistics
         let stats = {
@@ -628,14 +632,136 @@
                     cell.addEventListener('mousedown', (e) => startSelection(e, x, y));
                     cell.addEventListener('mouseenter', (e) => continueSelection(e, x, y));
                     cell.addEventListener('mouseup', endSelection);
+                    cell.addEventListener('click', (e) => handleCellClick(e, x, y));
                     
                     wordGrid.appendChild(cell);
                 }
             }
         }
         
+        function toggleSelectionMode() {
+            selectionMode = selectionMode === 'drag' ? 'click' : 'drag';
+            const modeBtn = document.getElementById('modeBtn');
+            
+            if (selectionMode === 'click') {
+                modeBtn.innerHTML = '👆 Click Mode';
+                modeBtn.title = 'Click individual letters to select. Click Submit when done.';
+                showMessage('Click mode: Click each letter, then click Submit', 'info');
+            } else {
+                modeBtn.innerHTML = '🖱️ Drag Mode';
+                modeBtn.title = 'Drag across letters to select';
+                showMessage('Drag mode: Drag across letters to select word', 'info');
+            }
+            
+            // Clear selection when switching modes
+            selectedCells = [];
+            updateSelection();
+        }
+        
+        function handleCellClick(e, x, y) {
+            if (!isGameActive || selectionMode !== 'click') return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const cellIndex = selectedCells.findIndex(cell => cell.x === x && cell.y === y);
+            
+            if (cellIndex !== -1) {
+                // Cell already selected - remove it and all cells after it
+                selectedCells = selectedCells.slice(0, cellIndex);
+            } else {
+                // Add cell to selection
+                // In click mode, allow any adjacent cell (including diagonal)
+                if (selectedCells.length === 0 || isAdjacentOrSameLine(selectedCells[selectedCells.length - 1], { x, y })) {
+                    selectedCells.push({ x, y });
+                } else {
+                    showMessage('Cell must be adjacent to the last selected cell', 'error');
+                    return;
+                }
+            }
+            
+            updateSelection();
+            
+            // Auto-check if we have enough letters
+            if (selectedCells.length >= 3) {
+                checkWordInClickMode();
+            }
+        }
+        
+        function isAdjacentOrSameLine(cell1, cell2) {
+            const dx = Math.abs(cell2.x - cell1.x);
+            const dy = Math.abs(cell2.y - cell1.y);
+            
+            // Check if cells are adjacent (including diagonal) or in same line
+            if (dx <= 1 && dy <= 1 && (dx + dy) > 0) return true;
+            
+            // Check if in same row or column or diagonal
+            const allCells = [...selectedCells, cell2];
+            return isStraightLine(allCells);
+        }
+        
+        function isStraightLine(cells) {
+            if (cells.length < 2) return true;
+            
+            const dx = cells[1].x - cells[0].x;
+            const dy = cells[1].y - cells[0].y;
+            
+            for (let i = 2; i < cells.length; i++) {
+                const expectedX = cells[0].x + i * dx;
+                const expectedY = cells[0].y + i * dy;
+                
+                if (cells[i].x !== expectedX || cells[i].y !== expectedY) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        function checkWordInClickMode() {
+            // Check if current selection is a valid word
+            const word = selectedCells.map(cell => grid[cell.y][cell.x]).join('');
+            const reversedWord = word.split('').reverse().join('');
+            
+            let foundWord = null;
+            if (words.includes(word)) {
+                foundWord = word;
+            } else if (words.includes(reversedWord)) {
+                foundWord = reversedWord;
+            }
+            
+            if (foundWord && !foundWords.includes(foundWord)) {
+                // Found a word!
+                foundWords.push(foundWord);
+                
+                // Mark cells as found
+                selectedCells.forEach(cell => {
+                    const cellElement = document.querySelector(`[data-x="${cell.x}"][data-y="${cell.y}"]`);
+                    if (cellElement) {
+                        cellElement.classList.add('found');
+                    }
+                });
+                
+                // Mark word in list as found
+                const wordElement = document.getElementById(`word-${foundWord}`);
+                if (wordElement) {
+                    wordElement.classList.add('found');
+                }
+                
+                showMessage(`Found: ${foundWord}!`, 'success');
+                updateStats();
+                
+                // Clear selection
+                selectedCells = [];
+                updateSelection();
+                
+                if (foundWords.length === words.length) {
+                    endGame();
+                }
+            }
+        }
+        
         function startSelection(e, x, y) {
-            if (!isGameActive) return;
+            if (!isGameActive || selectionMode !== 'drag') return;
             
             e.preventDefault();
             isSelecting = true;
@@ -644,14 +770,14 @@
         }
         
         function continueSelection(e, x, y) {
-            if (!isSelecting || !isGameActive) return;
+            if (!isSelecting || !isGameActive || selectionMode !== 'drag') return;
             
             selectedCells.push({ x, y });
             updateSelection();
         }
         
         function endSelection() {
-            if (!isSelecting || !isGameActive) return;
+            if (!isSelecting || !isGameActive || selectionMode !== 'drag') return;
             
             isSelecting = false;
             checkWord();
