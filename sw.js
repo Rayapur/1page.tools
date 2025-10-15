@@ -290,7 +290,9 @@ self.addEventListener('message', event => {
     'https://1page.tools',
     'https://www.1page.tools',
     'http://localhost:8000',  // For local development
-    'http://127.0.0.1:8000'   // For local development
+    'http://127.0.0.1:8000',  // For local development
+    'http://localhost:8001',  // For local development
+    'http://127.0.0.1:8001'   // For local development
   ];
   
   // Check if origin is provided and is in our whitelist
@@ -301,7 +303,11 @@ self.addEventListener('message', event => {
   
   // Process valid messages
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
+    console.log('Received SKIP_WAITING message, activating new service worker...');
+    self.skipWaiting().then(() => {
+      // After skipping waiting, claim all clients immediately
+      return self.clients.claim();
+    });
   }
   
   if (event.data && event.data.type === 'GET_VERSION') {

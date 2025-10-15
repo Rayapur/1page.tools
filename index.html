@@ -998,7 +998,15 @@
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistration().then(function(registration) {
                     if (registration && registration.waiting) {
+                        // Set up listener for when the new service worker takes control
+                        navigator.serviceWorker.addEventListener('controllerchange', function() {
+                            window.location.reload();
+                        });
+                        
+                        // Tell the waiting service worker to activate
                         registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    } else {
+                        // No waiting service worker, just reload
                         window.location.reload();
                     }
                 });
