@@ -336,4 +336,22 @@
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
+    <url>
+        <loc>https://1page.tools/blog/</loc>
+        <lastmod>2025-10-16T12:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://1page.tools/blog/index.html</loc>
+        <lastmod>2025-10-16T12:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://1page.tools/blog/how-to-blur-images.html</loc>
+        <lastmod>2025-10-16T12:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
 </urlset>

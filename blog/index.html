@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Tips, Tutorials & Guides | 1Page Tools</title>
+    <meta name="description" content="Free tutorials and guides for using online tools. Learn about image optimization, PDF manipulation, security best practices, and more.">
+    <meta name="keywords" content="tool tutorials, how to guides, online tools blog, web development tips, design tutorials">
+    <meta name="author" content="1Page Tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://1page.tools/blog/">
+    <meta property="og:title" content="Blog - Tips, Tutorials & Guides">
+    <meta property="og:description" content="Free tutorials and guides for using online tools effectively.">
+    <meta property="og:image" content="https://1page.tools/og-image.png">
+    <meta property="og:site_name" content="1Page Tools">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://1page.tools/blog/">
+    
+    <link rel="stylesheet" href="../css/theme.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="material-icons theme-toggle-icon">dark_mode</i>
+        <span class="theme-toggle-text">Dark</span>
+    </button>
+
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+
+    <div class="container">
+        <div class="header-logo">
+            <img src="../assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+        </div>
+        
+        <header>
+            <h1>Blog & Tutorials</h1>
+            <p class="subtitle">Learn how to use our tools effectively with guides, tips, and best practices</p>
+        </header>
+
+        <!-- Blog Posts Grid -->
+        <div class="info-grid" style="margin-top: 2rem;">
+            <!-- Blog Post 1 -->
+            <div class="info-card">
+                <h3>How to Blur Images Online: Complete Guide 2025</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0.5rem 0;">October 16, 2025 • 5 min read</p>
+                <p>Learn how to blur images for privacy, artistic effects, and background blur. Step-by-step tutorial with examples.</p>
+                <a href="how-to-blur-images.html" style="color: #4f46e5; text-decoration: none; font-weight: 500;">Read More →</a>
+            </div>
+
+            <!-- Blog Post 2 -->
+            <div class="info-card">
+                <h3>PDF to Image Conversion: Best Practices</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0.5rem 0;">Coming Soon</p>
+                <p>Master PDF to image conversion. Learn about formats, quality settings, and when to use PNG vs JPEG.</p>
+                <a href="#" style="color: #999; text-decoration: none;">Coming Soon</a>
+            </div>
+
+            <!-- Blog Post 3 -->
+            <div class="info-card">
+                <h3>Password Security: 2025 Best Practices</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0.5rem 0;">Coming Soon</p>
+                <p>Create unbreakable passwords. Learn about password length, complexity, and secure storage strategies.</p>
+                <a href="#" style="color: #999; text-decoration: none;">Coming Soon</a>
+            </div>
+
+            <!-- Blog Post 4 -->
+            <div class="info-card">
+                <h3>JSON Validation Made Easy</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0.5rem 0;">Coming Soon</p>
+                <p>Fix common JSON errors. Understand JSON syntax and validation with practical examples.</p>
+                <a href="#" style="color: #999; text-decoration: none;">Coming Soon</a>
+            </div>
+
+            <!-- Blog Post 5 -->
+            <div class="info-card">
+                <h3>Image Optimization Without Quality Loss</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0.5rem 0;">Coming Soon</p>
+                <p>Compress images effectively. Balance file size and visual quality for web performance.</p>
+                <a href="#" style="color: #999; text-decoration: none;">Coming Soon</a>
+            </div>
+
+            <!-- Blog Post 6 -->
+            <div class="info-card">
+                <h3>QR Codes: Complete Guide for Businesses</h3>
+                <p style="color: #666; font-size: 0.9rem; margin: 0.5rem 0;">Coming Soon</p>
+                <p>Create effective QR codes. Learn about error correction, sizing, and best use cases.</p>
+                <a href="#" style="color: #999; text-decoration: none;">Coming Soon</a>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div style="margin-top: 3rem;">
+            <h2>Categories</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <strong>📄 PDF Tutorials</strong>
+                    <p>Guides for PDF conversion, splitting, merging, and manipulation</p>
+                </div>
+                <div class="info-card">
+                    <strong>🖼️ Image Guides</strong>
+                    <p>Image editing, optimization, and format conversion tutorials</p>
+                </div>
+                <div class="info-card">
+                    <strong>🔐 Security Tips</strong>
+                    <p>Password security, encryption, and data protection best practices</p>
+                </div>
+                <div class="info-card">
+                    <strong>💻 Developer Resources</strong>
+                    <p>JSON, XML, Base64, and other developer tool tutorials</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 1Page Tools. <a href="../privacy-policy.html">Privacy Policy</a> | <a href="../terms-of-use.html">Terms of Use</a></p>
+    </footer>
+
+    <script>
+        // Dark Mode Toggle Functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeToggle(newTheme);
+        }
+
+        function updateThemeToggle(theme) {
+            const icon = document.querySelector('.theme-toggle-icon');
+            const text = document.querySelector('.theme-toggle-text');
+            
+            if (theme === 'dark') {
+                icon.textContent = 'light_mode';
+                text.textContent = 'Light';
+            } else {
+                icon.textContent = 'dark_mode';
+                text.textContent = 'Dark';
+            }
+        }
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeToggle(theme);
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+    </script>
+</body>
+</html>
+
