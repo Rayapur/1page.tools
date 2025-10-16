@@ -13,6 +13,8 @@
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
             crossorigin="anonymous"></script>
+    <!-- HEIC to JPEG/PNG Converter -->
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
@@ -68,7 +70,7 @@
                         <button class="btn btn-secondary" onclick="loadSample()">Load Sample</button>
                     </div>
                 </div>
-                <input type="file" id="imageInput" accept="image/*" onchange="loadImage()">
+                <input type="file" id="imageInput" accept="image/*,.heic,.heif" onchange="loadImage()">
                 <div class="input-stats" id="inputStats">
                     <span id="imageSize">Size: -</span>
                     <span id="imageFormat">Format: -</span>
@@ -146,7 +148,7 @@
                     </div>
                     <div class="info-card">
                         <strong>Supported Formats</strong>
-                        <p>Works with JPEG, PNG, WebP, GIF, and other common image formats. Output matches input format.</p>
+                        <p>Works with JPEG, PNG, WebP, GIF, HEIC, and other common image formats. HEIC files are automatically converted.</p>
                     </div>
                 </div>
             </div>
@@ -175,11 +177,36 @@
         let originalImageData = null;
         let currentBlurValue = 0;
 
-        function loadImage() {
+        async function loadImage() {
             const fileInput = document.getElementById('imageInput');
-            const file = fileInput.files[0];
+            let file = fileInput.files[0];
             
             if (!file) return;
+            
+            // Check if file is HEIC/HEIF and convert
+            if (file.type === 'image/heic' || file.type === 'image/heif' || 
+                file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif')) {
+                try {
+                    // Show conversion message
+                    document.getElementById('imageFormat').textContent = 'Format: Converting HEIC...';
+                    
+                    // Convert HEIC to JPEG
+                    const convertedBlob = await heic2any({
+                        blob: file,
+                        toType: 'image/jpeg',
+                        quality: 0.9
+                    });
+                    
+                    // Create new file from converted blob
+                    file = new File([convertedBlob], file.name.replace(/\.heic$/i, '.jpg'), {
+                        type: 'image/jpeg'
+                    });
+                } catch (error) {
+                    alert('Error converting HEIC image. Please try a different format.');
+                    console.error('HEIC conversion error:', error);
+                    return;
+                }
+            }
             
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -194,7 +221,8 @@
                 // Update stats
                 const sizeKB = Math.round(file.size / 1024);
                 document.getElementById('imageSize').textContent = `Size: ${sizeKB} KB`;
-                document.getElementById('imageFormat').textContent = `Format: ${file.type.split('/')[1].toUpperCase()}`;
+                const format = file.type.split('/')[1] || 'JPEG';
+                document.getElementById('imageFormat').textContent = `Format: ${format.toUpperCase()}`;
                 
                 // Reset blur and update
                 currentBlurValue = 0;
@@ -222,11 +250,11 @@
                 blurredImg.style.display = 'block';
                 document.getElementById('noBlurPlaceholder').style.display = 'none';
             } else {
-                // Apply blur using CSS filter
+                // Apply blur using CSS filter (0-50px range for better visibility)
                 const blurredImg = document.getElementById('blurredImage');
                 blurredImg.src = originalImageData;
                 blurredImg.style.display = 'block';
-                blurredImg.style.filter = `blur(${blurValue * 0.1}px)`;
+                blurredImg.style.filter = `blur(${blurValue * 0.5}px)`;
                 document.getElementById('noBlurPlaceholder').style.display = 'none';
             }
             
@@ -258,8 +286,8 @@
                 canvas.width = img.width;
                 canvas.height = img.height;
                 
-                // Apply blur using canvas
-                ctx.filter = `blur(${currentBlurValue * 0.1}px)`;
+                // Apply blur using canvas (0-50px range for better visibility)
+                ctx.filter = `blur(${currentBlurValue * 0.5}px)`;
                 ctx.drawImage(img, 0, 0);
                 
                 // Download
