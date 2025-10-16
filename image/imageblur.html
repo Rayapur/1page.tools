@@ -15,6 +15,8 @@
             crossorigin="anonymous"></script>
     <!-- HEIC to JPEG/PNG Converter -->
     <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+    <!-- StackBlur for proper canvas blur -->
+    <script src="https://cdn.jsdelivr.net/npm/stackblur-canvas@2.6.0/dist/stackblur.min.js"></script>
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
@@ -286,9 +288,16 @@
                 canvas.width = img.width;
                 canvas.height = img.height;
                 
-                // Apply blur using canvas (0-50px range for better visibility)
-                ctx.filter = `blur(${currentBlurValue * 0.5}px)`;
+                // Draw original image first
                 ctx.drawImage(img, 0, 0);
+                
+                // Apply StackBlur for proper blur effect (0-50 radius)
+                // Convert percentage to blur radius (0-50)
+                const blurRadius = Math.round(currentBlurValue * 0.5);
+                
+                if (blurRadius > 0) {
+                    StackBlur.canvasRGB(canvas, 0, 0, canvas.width, canvas.height, blurRadius);
+                }
                 
                 // Download
                 canvas.toBlob(function(blob) {
