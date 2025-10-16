@@ -250,13 +250,30 @@
                 const blurredImg = document.getElementById('blurredImage');
                 blurredImg.src = originalImageData;
                 blurredImg.style.display = 'block';
+                blurredImg.style.filter = 'none';
                 document.getElementById('noBlurPlaceholder').style.display = 'none';
             } else {
-                // Apply blur using CSS filter (0-50px range for better visibility)
+                // Apply blur using CSS filter with scaling adjustment
                 const blurredImg = document.getElementById('blurredImage');
                 blurredImg.src = originalImageData;
                 blurredImg.style.display = 'block';
-                blurredImg.style.filter = `blur(${blurValue * 0.5}px)`;
+                
+                // Calculate scaled blur radius for preview
+                // We need to scale based on display size vs actual size
+                blurredImg.onload = function() {
+                    const displayWidth = blurredImg.clientWidth;
+                    const actualWidth = blurredImg.naturalWidth;
+                    const scaleFactor = displayWidth / actualWidth;
+                    
+                    // Base blur radius for full-size image (0-50)
+                    const fullSizeBlurRadius = blurValue * 0.5;
+                    
+                    // Scale down for display preview
+                    const previewBlurRadius = fullSizeBlurRadius * scaleFactor;
+                    
+                    blurredImg.style.filter = `blur(${previewBlurRadius}px)`;
+                };
+                
                 document.getElementById('noBlurPlaceholder').style.display = 'none';
             }
             
