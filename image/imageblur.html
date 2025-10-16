@@ -291,12 +291,22 @@
                 // Draw original image first
                 ctx.drawImage(img, 0, 0);
                 
-                // Apply StackBlur for proper blur effect (0-50 radius)
                 // Convert percentage to blur radius (0-50)
                 const blurRadius = Math.round(currentBlurValue * 0.5);
                 
                 if (blurRadius > 0) {
-                    StackBlur.canvasRGB(canvas, 0, 0, canvas.width, canvas.height, blurRadius);
+                    // Try using StackBlur if available
+                    if (typeof StackBlur !== 'undefined') {
+                        try {
+                            StackBlur.canvasRGB(canvas, 0, 0, canvas.width, canvas.height, blurRadius);
+                        } catch (error) {
+                            console.error('StackBlur error:', error);
+                            applyManualBlur(canvas, ctx, blurRadius);
+                        }
+                    } else {
+                        // Fallback to manual blur
+                        applyManualBlur(canvas, ctx, blurRadius);
+                    }
                 }
                 
                 // Download
@@ -313,6 +323,74 @@
             };
             
             img.src = originalImageData;
+        }
+
+        // Manual blur fallback using box blur algorithm
+        function applyManualBlur(canvas, ctx, radius) {
+            if (radius <= 0) return;
+            
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Apply box blur multiple times for smoother effect
+            const iterations = Math.min(Math.ceil(radius / 3), 5);
+            
+            for (let iter = 0; iter < iterations; iter++) {
+                boxBlurHorizontal(pixels, width, height, radius);
+                boxBlurVertical(pixels, width, height, radius);
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        function boxBlurHorizontal(pixels, width, height, radius) {
+            const tempPixels = new Uint8ClampedArray(pixels);
+            
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    let r = 0, g = 0, b = 0, count = 0;
+                    
+                    for (let kx = -radius; kx <= radius; kx++) {
+                        const px = Math.min(Math.max(x + kx, 0), width - 1);
+                        const offset = (y * width + px) * 4;
+                        r += tempPixels[offset];
+                        g += tempPixels[offset + 1];
+                        b += tempPixels[offset + 2];
+                        count++;
+                    }
+                    
+                    const offset = (y * width + x) * 4;
+                    pixels[offset] = r / count;
+                    pixels[offset + 1] = g / count;
+                    pixels[offset + 2] = b / count;
+                }
+            }
+        }
+
+        function boxBlurVertical(pixels, width, height, radius) {
+            const tempPixels = new Uint8ClampedArray(pixels);
+            
+            for (let x = 0; x < width; x++) {
+                for (let y = 0; y < height; y++) {
+                    let r = 0, g = 0, b = 0, count = 0;
+                    
+                    for (let ky = -radius; ky <= radius; ky++) {
+                        const py = Math.min(Math.max(y + ky, 0), height - 1);
+                        const offset = (py * width + x) * 4;
+                        r += tempPixels[offset];
+                        g += tempPixels[offset + 1];
+                        b += tempPixels[offset + 2];
+                        count++;
+                    }
+                    
+                    const offset = (y * width + x) * 4;
+                    pixels[offset] = r / count;
+                    pixels[offset + 1] = g / count;
+                    pixels[offset + 2] = b / count;
+                }
+            }
         }
 
         function clearImage() {
