@@ -10,7 +10,11 @@
 
 <!-- Add this before the closing </body> tag -->
 <script>
-    // Initialize AdSense ads
+    // Initialize AdSense ads - one push() per ad unit
+    // For 2 sidebars: use 2 push() calls
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    // For pages with horizontal ad (mobile/tablet): add 3rd push()
     (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
