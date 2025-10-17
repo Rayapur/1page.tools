@@ -1,9 +1,13 @@
 User-agent: *
 Allow: /
+Disallow: /adsense-template.html
+Disallow: /pdf/test-topdf.html
 
 # Allow Googlebot and AdSense crawlers explicitly
 User-agent: Googlebot
 Allow: /
+Disallow: /adsense-template.html
+Disallow: /pdf/test-topdf.html
 
 User-agent: Mediapartners-Google
 Allow: /
