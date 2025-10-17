@@ -35,6 +35,72 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- All styles are now globalized in css/theme.css -->
     
+    <style>
+        /* Quick Input Section */
+        .quick-input-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 2px solid var(--border-color);
+        }
+
+        .quick-input-section h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1.2rem;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .input-group-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+
+        .color-input-field {
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+        }
+
+        .color-input-field:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-group .btn {
+            margin-top: 0.25rem;
+            padding: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .input-group-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+    </style>
+    
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
             crossorigin="anonymous"></script>
@@ -101,11 +167,35 @@
         <div class="instructions">
             <h3>How to use:</h3>
             <ol>
-                <li>Click on the color picker to select a color</li>
+                <li>Click on the color picker OR enter a hex/RGB value below</li>
                 <li>View color values in HEX, RGB, CMYK, LAB, HSL, XYZ, LUV, and HWB formats</li>
                 <li>Click the copy icon next to any value to copy it to clipboard</li>
                 <li>Explore lighter and darker variations of your selected color</li>
             </ol>
+        </div>
+
+        <!-- Quick Input Section -->
+        <div class="quick-input-section">
+            <h3>Quick Color Input</h3>
+            <div class="input-group-row">
+                <div class="input-group">
+                    <label for="hexInput">Hex Code:</label>
+                    <input type="text" 
+                           id="hexInput" 
+                           placeholder="#3498db or 3498db" 
+                           class="color-input-field"
+                           maxlength="7">
+                    <button class="btn btn-primary" onclick="applyHexInput()">Apply</button>
+                </div>
+                <div class="input-group">
+                    <label for="rgbInput">RGB Value:</label>
+                    <input type="text" 
+                           id="rgbInput" 
+                           placeholder="52, 152, 219 or rgb(52, 152, 219)" 
+                           class="color-input-field">
+                    <button class="btn btn-primary" onclick="applyRgbInput()">Apply</button>
+                </div>
+            </div>
         </div>
         
         <div class="picker-container">
@@ -316,6 +406,79 @@
                 darkerPalette.appendChild(swatch);
             }
         }
+
+        // Handle Hex Input
+        function applyHexInput() {
+            let hexInputValue = document.getElementById('hexInput').value.trim();
+            
+            // Remove # if present
+            if (hexInputValue.startsWith('#')) {
+                hexInputValue = hexInputValue.substring(1);
+            }
+            
+            // Validate hex format (3 or 6 characters, hexadecimal)
+            const hexPattern = /^[0-9A-Fa-f]{3}$|^[0-9A-Fa-f]{6}$/;
+            if (!hexPattern.test(hexInputValue)) {
+                alert('Invalid hex color! Please enter a valid hex code like #3498db or 3498db');
+                return;
+            }
+            
+            // Expand 3-digit hex to 6-digit
+            if (hexInputValue.length === 3) {
+                hexInputValue = hexInputValue.split('').map(x => x + x).join('');
+            }
+            
+            // Apply to color picker
+            const fullHex = '#' + hexInputValue;
+            document.getElementById('colorInput').value = fullHex;
+            updateColor();
+        }
+
+        // Handle RGB Input
+        function applyRgbInput() {
+            let rgbInputValue = document.getElementById('rgbInput').value.trim();
+            
+            // Remove 'rgb(' and ')' if present
+            rgbInputValue = rgbInputValue.replace(/rgb\(|\)/g, '');
+            
+            // Split by comma or space
+            const parts = rgbInputValue.split(/[,\s]+/).filter(p => p.length > 0);
+            
+            if (parts.length !== 3) {
+                alert('Invalid RGB format! Please enter 3 values like "52, 152, 219" or "rgb(52, 152, 219)"');
+                return;
+            }
+            
+            // Parse and validate RGB values
+            const r = parseInt(parts[0]);
+            const g = parseInt(parts[1]);
+            const b = parseInt(parts[2]);
+            
+            if (isNaN(r) || isNaN(g) || isNaN(b) || r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
+                alert('Invalid RGB values! Each value must be between 0 and 255');
+                return;
+            }
+            
+            // Convert RGB to hex
+            const hex = '#' + [r, g, b].map(x => {
+                const h = x.toString(16);
+                return h.length === 1 ? '0' + h : h;
+            }).join('');
+            
+            // Apply to color picker
+            document.getElementById('colorInput').value = hex;
+            updateColor();
+        }
+
+        // Allow Enter key to apply inputs
+        document.getElementById('hexInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') applyHexInput();
+        });
+        
+        document.getElementById('rgbInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') applyRgbInput();
+        });
+
                 colorInput.addEventListener('input', updateColor);
                 updateColor();
             </script>
@@ -350,7 +513,7 @@
             </div>
             <div class="info-card">
                 <strong>Can I enter a color code directly?</strong>
-                <p>Yes! You can paste any HEX, RGB, or HSL color code and the picker will display that color and convert it to other formats.</p>
+                <p>Yes! Use the "Quick Color Input" section at the top. Enter any HEX code (like #FF5733 or FF5733) or RGB value (like 255, 87, 51 or rgb(255, 87, 51)) and click Apply. The picker will display that color and convert it to all formats.</p>
             </div>
             <div class="info-card">
                 <strong>How do I copy color codes?</strong>
