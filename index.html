@@ -66,9 +66,13 @@
     <meta name="theme-color" content="#2563eb">
     <meta name="msapplication-TileColor" content="#2563eb">
     
+    <!-- Preload critical fonts to reduce layout shift -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <link rel="stylesheet" href="css/theme.css">
-    <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Material Icons with font-display swap to reduce CLS -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet">
     <!-- All styles are now globalized in css/theme.css -->
     
     <!-- Google AdSense -->
@@ -157,7 +161,7 @@
         <div class="main-content">
             <div class="container">
                 <div class="header-logo">
-                    <img src="assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo">
+                    <img src="assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo" width="1024" height="1024">
                 </div>
                 <h1>1page.tools</h1>
                 <p>Simple, fast, and free online tools for everyone. No sign-up, no clutter—just what you need, on one page.</p>
