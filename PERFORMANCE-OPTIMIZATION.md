@@ -150,29 +150,58 @@ Add this to `<head>` (I'll implement this now):
 
 ---
 
-### 5. **Enable Cloudflare Optimizations**
+### 5. **Cloudflare Optimizations** (Updated for 2025)
+
+**Important Note:** Cloudflare has deprecated Auto Minify and some image optimization features. Here's what **currently works**:
 
 **Log into Cloudflare Dashboard:**
 
-**Speed → Optimization:**
-- ✅ Auto Minify: Enable HTML, CSS, JavaScript
-- ✅ Brotli Compression: Enable
-- ✅ HTTP/2: Enable (should be on by default)
-- ✅ HTTP/3 (QUIC): Enable
-
-**Speed → Image Resizing:**
-- ✅ Polish: Lossy (reduces image sizes)
-- ✅ Mirage: Enable (lazy loads images)
-- ✅ WebP conversion: Enable (auto converts to WebP)
+**Speed → Optimization (What Still Works):**
+- ✅ **Brotli Compression**: Enable (compress text content)
+- ✅ **HTTP/2**: Enable (should be on by default)
+- ✅ **HTTP/3 (QUIC)**: Enable (faster protocol)
+- ✅ **Early Hints**: Enable (faster page loads)
+- ⚠️ **Auto Minify**: DEPRECATED - use build tools instead
+- ⚠️ **Mirage/Polish**: May be deprecated - check your plan
 
 **Caching → Configuration:**
-- Browser Cache TTL: 1 month (for static assets)
-- Cache Level: Standard
+- ✅ Browser Cache TTL: 1 year for images (31536000 seconds)
+- ✅ Browser Cache TTL: 1 month for CSS/JS (2592000 seconds)
+- ✅ Cache Level: Standard
+
+**Speed → Page Rules (Alternative to Auto Minify):**
+- Set caching rules for static assets
+- Bypass cache for dynamic content
 
 **Expected Impact:**
-- 20-30% faster load times
-- Auto image optimization
-- Better compression
+- 10-15% faster with Brotli
+- Better caching = faster return visits
+- HTTP/3 reduces latency
+
+---
+
+### **Alternative: Manual Minification (Recommended)**
+
+Since Cloudflare Auto Minify is deprecated, minify manually:
+
+**For CSS:**
+```bash
+# Using online tool
+Visit: https://cssminifier.com/
+Paste css/theme.css content
+Download minified version as theme.min.css
+```
+
+**For JavaScript:**
+```bash
+# If you add custom JS later
+Visit: https://jscompress.com/
+Minify your JS files
+```
+
+**For HTML:**
+- HTML minification is optional (minimal gains)
+- Focus on CSS/JS minification instead
 
 ---
 
