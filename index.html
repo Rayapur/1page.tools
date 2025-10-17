@@ -76,19 +76,24 @@
         .main-content{flex:1;min-width:0}
         .container{background:var(--container-bg);padding:2rem;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,0.10)}
         .header-logo{text-align:center;margin-bottom:1rem}
-        .site-logo{max-width:200px;width:200px;height:200px;display:block;margin:0 auto}
+        .site-logo{max-width:200px;width:200px;height:200px;display:block;margin:0 auto;aspect-ratio:1/1}
+        picture{display:block}
         h1{color:var(--text-color);text-align:center;font-size:2.5rem;margin:0.5rem 0;line-height:1.2}
-        p{margin:0.5rem 0}
+        p{margin:0.5rem 0;line-height:1.6}
         .sidebar{width:300px;flex-shrink:0}
-        .ad-container{margin-bottom:2rem;text-align:center;min-height:250px}
-        .ad-container.vertical{min-height:600px}
-        .ad-container.horizontal{min-height:90px}
+        .ad-container{margin-bottom:2rem;text-align:center;min-height:280px;background:#f5f5f5;border-radius:8px}
+        .ad-container.vertical{min-height:600px;background:#f5f5f5}
+        .ad-container.horizontal{min-height:100px;background:#f5f5f5}
         .theme-toggle{position:fixed;top:20px;right:20px;background:var(--button-bg);color:#fff;border:none;border-radius:50%;width:50px;height:50px;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center}
         .material-icons{font-family:'Material Icons';font-size:24px;width:24px;height:24px;display:inline-block}
         .tool-card,.info-card,.info-grid{min-height:100px}
         .tool-card{display:block;text-decoration:none}
         @media(max-width:968px){.sidebar{display:none}.page-wrapper{padding:1rem 0.5rem}.ad-container{min-height:50px}.ad-container.vertical{min-height:250px}.ad-container.horizontal{min-height:50px}h1{font-size:2rem}.site-logo{max-width:150px;width:150px;height:150px}}
     </style>
+    
+    <!-- Preload critical logo for LCP optimization -->
+    <link rel="preload" as="image" href="assets/images/1page-logo-mobile.png" media="(max-width: 768px)">
+    <link rel="preload" as="image" href="assets/images/1page-logo-small.png" media="(min-width: 769px)">
     
     <!-- Preload critical fonts to reduce layout shift -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -187,14 +192,17 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="container">
-                <div class="header-logo">
-                    <img src="assets/images/1page-logo-small.png" 
-                         alt="1Page Tools Logo" 
-                         class="site-logo" 
-                         width="200" 
-                         height="200"
-                         loading="eager"
-                         fetchpriority="high">
+        <div class="header-logo">
+            <picture>
+                <source media="(max-width: 768px)" srcset="assets/images/1page-logo-mobile.png" width="150" height="150">
+                <img src="assets/images/1page-logo-small.png" 
+                     alt="1Page Tools Logo" 
+                     class="site-logo" 
+                     width="200" 
+                     height="200"
+                     loading="eager"
+                     fetchpriority="high">
+            </picture>
                 </div>
                 <h1>1page.tools</h1>
                 <p>Simple, fast, and free online tools for everyone. No sign-up, no clutter—just what you need, on one page.</p>
