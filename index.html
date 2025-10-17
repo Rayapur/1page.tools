@@ -75,8 +75,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet">
     <!-- All styles are now globalized in css/theme.css -->
     
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
+    <!-- Google AdSense - deferred for performance -->
+    <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527668902044321"
             crossorigin="anonymous"></script>
     
     <!-- Structured Data -->
@@ -161,7 +161,13 @@
         <div class="main-content">
             <div class="container">
                 <div class="header-logo">
-                    <img src="assets/images/1page-logo.png" alt="1Page Tools Logo" class="site-logo" width="1024" height="1024">
+                    <img src="assets/images/1page-logo-small.png" 
+                         alt="1Page Tools Logo" 
+                         class="site-logo" 
+                         width="200" 
+                         height="200"
+                         loading="eager"
+                         fetchpriority="high">
                 </div>
                 <h1>1page.tools</h1>
                 <p>Simple, fast, and free online tools for everyone. No sign-up, no clutter—just what you need, on one page.</p>
