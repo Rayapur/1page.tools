@@ -1,6 +1,28 @@
 # Security Headers for 1page.tools
 # GitHub Pages _headers file
 
+# Cache static assets (images, CSS, JS) for better performance
+/assets/images/*
+  Cache-Control: public, max-age=31536000, immutable
+  
+/css/*
+  Cache-Control: public, max-age=2592000
+  
+/js/*
+  Cache-Control: public, max-age=2592000
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+  
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+  
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+  
+/*.ico
+  Cache-Control: public, max-age=31536000, immutable
+
 # Apply to all HTML files
 /*.html
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
