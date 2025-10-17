@@ -156,7 +156,7 @@ body {
 
 .ad-container.horizontal {
     margin: 2rem 0;
-    min-height: 250px; /* Reserve space for horizontal ads to prevent CLS */
+    min-height: 90px; /* Reduced min-height for mobile to prevent excessive layout shift */
 }
 
 /* AdSense responsive ads */
@@ -1545,7 +1545,15 @@ input[type="color"] {
     .ad-container {
         margin: 1rem auto;
         padding: 0.25rem;
-        min-height: 0;
+        min-height: 50px; /* Small reserve for mobile ads */
+    }
+    
+    .ad-container.vertical {
+        min-height: 250px; /* Smaller reserve on mobile */
+    }
+    
+    .ad-container.horizontal {
+        min-height: 50px; /* Minimal reserve for mobile horizontal ads */
     }
     
     .ad-banner,
