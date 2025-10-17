@@ -42,6 +42,116 @@
     <link rel="manifest" href="/assets/images/site.webmanifest">
     
     <link rel="stylesheet" href="../css/theme.css">
+    <style>
+        /* Simple Minutes Input Styles */
+        .simple-input-container {
+            text-align: center;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .simple-label {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .simple-input-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .simple-minutes-input {
+            width: 150px;
+            padding: 1rem;
+            font-size: 2rem;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        .simple-minutes-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-unit {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .btn-link {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            padding: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.9rem;
+            text-decoration: underline;
+            transition: opacity 0.2s;
+        }
+
+        .btn-link:hover {
+            opacity: 0.8;
+        }
+
+        .btn-link .material-icons {
+            font-size: 18px;
+        }
+
+        /* Advanced Mode Styles */
+        .advanced-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .advanced-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .simple-minutes-input {
+                width: 120px;
+                font-size: 1.5rem;
+            }
+
+            .simple-label {
+                font-size: 1rem;
+            }
+
+            .presets-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Dark Mode Toggle -->
@@ -83,34 +193,65 @@
                 <div class="time-digits" id="timeDisplay">00:00:00</div>
             </div>
 
-            <!-- Time Input -->
-            <div class="time-input" id="timeInput">
-                <div class="input-group">
-                    <label>Hours</label>
-                    <input type="number" id="hoursInput" min="0" max="23" value="0" class="time-input-field">
+            <!-- Simple Minutes Input -->
+            <div class="simple-input-container">
+                <label for="simpleMinutesInput" class="simple-label">Enter minutes:</label>
+                <div class="simple-input-wrapper">
+                    <input type="number" 
+                           id="simpleMinutesInput" 
+                           min="0" 
+                           max="1440" 
+                           value="5" 
+                           placeholder="5"
+                           class="simple-minutes-input"
+                           onchange="updateFromSimpleInput()">
+                    <span class="input-unit">minutes</span>
                 </div>
-                <div class="input-separator">:</div>
-                <div class="input-group">
-                    <label>Minutes</label>
-                    <input type="number" id="minutesInput" min="0" max="59" value="5" class="time-input-field">
+                <button class="btn-link" onclick="toggleAdvancedMode()">
+                    <i class="material-icons">settings</i>
+                    Advanced (Hours/Minutes/Seconds)
+                </button>
+            </div>
+
+            <!-- Advanced Time Input (Hidden by default) -->
+            <div class="time-input" id="timeInput" style="display: none;">
+                <div class="advanced-header">
+                    <h3>Custom Time</h3>
+                    <button class="btn-link" onclick="toggleAdvancedMode()">
+                        <i class="material-icons">close</i>
+                        Back to simple
+                    </button>
                 </div>
-                <div class="input-separator">:</div>
-                <div class="input-group">
-                    <label>Seconds</label>
-                    <input type="number" id="secondsInput" min="0" max="59" value="0" class="time-input-field">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Hours</label>
+                        <input type="number" id="hoursInput" min="0" max="23" value="0" class="time-input-field" onchange="updateFromAdvancedInput()">
+                    </div>
+                    <div class="input-separator">:</div>
+                    <div class="input-group">
+                        <label>Minutes</label>
+                        <input type="number" id="minutesInput" min="0" max="59" value="5" class="time-input-field" onchange="updateFromAdvancedInput()">
+                    </div>
+                    <div class="input-separator">:</div>
+                    <div class="input-group">
+                        <label>Seconds</label>
+                        <input type="number" id="secondsInput" min="0" max="59" value="0" class="time-input-field" onchange="updateFromAdvancedInput()">
+                    </div>
                 </div>
             </div>
 
             <!-- Quick Presets -->
             <div class="presets-container">
-                <h3>Quick Presets</h3>
+                <h3>Quick Set</h3>
                 <div class="presets-grid">
-                    <button class="btn btn-secondary" onclick="setPreset(1, 0, 0)">1 min</button>
-                    <button class="btn btn-secondary" onclick="setPreset(5, 0, 0)">5 min</button>
-                    <button class="btn btn-secondary" onclick="setPreset(10, 0, 0)">10 min</button>
-                    <button class="btn btn-secondary" onclick="setPreset(15, 0, 0)">15 min</button>
-                    <button class="btn btn-secondary" onclick="setPreset(30, 0, 0)">30 min</button>
-                    <button class="btn btn-secondary" onclick="setPreset(60, 0, 0)">1 hour</button>
+                    <button class="btn btn-secondary" onclick="setPresetSimple(1)">1 min</button>
+                    <button class="btn btn-secondary" onclick="setPresetSimple(5)">5 min</button>
+                    <button class="btn btn-secondary" onclick="setPresetSimple(10)">10 min</button>
+                    <button class="btn btn-secondary" onclick="setPresetSimple(15)">15 min</button>
+                    <button class="btn btn-secondary" onclick="setPresetSimple(20)">20 min</button>
+                    <button class="btn btn-secondary" onclick="setPresetSimple(30)">30 min</button>
+                    <button class="btn btn-secondary" onclick="setPresetSimple(45)">45 min</button>
+                    <button class="btn btn-secondary" onclick="setPresetSimple(60)">1 hour</button>
                 </div>
             </div>
 
@@ -176,6 +317,19 @@
         let lapCounter = 0;
         let laps = [];
 
+        // Simple preset function (minutes only)
+        function setPresetSimple(minutes) {
+            if (isRunning) return;
+            
+            document.getElementById('simpleMinutesInput').value = minutes;
+            document.getElementById('hoursInput').value = Math.floor(minutes / 60);
+            document.getElementById('minutesInput').value = minutes % 60;
+            document.getElementById('secondsInput').value = 0;
+            
+            updateTotalTime();
+        }
+
+        // Legacy preset function (for backward compatibility)
         function setPreset(minutes, seconds, hours = 0) {
             if (isRunning) return;
             
@@ -183,7 +337,59 @@
             document.getElementById('minutesInput').value = minutes;
             document.getElementById('secondsInput').value = seconds;
             
+            // Update simple input too
+            const totalMinutes = (hours * 60) + minutes + Math.floor(seconds / 60);
+            document.getElementById('simpleMinutesInput').value = totalMinutes;
+            
             updateTotalTime();
+        }
+
+        // Update from simple minutes input
+        function updateFromSimpleInput() {
+            if (isRunning) return;
+            
+            const totalMinutes = parseInt(document.getElementById('simpleMinutesInput').value) || 0;
+            
+            // Update advanced inputs
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            
+            document.getElementById('hoursInput').value = hours;
+            document.getElementById('minutesInput').value = minutes;
+            document.getElementById('secondsInput').value = 0;
+            
+            updateTotalTime();
+        }
+
+        // Update from advanced inputs
+        function updateFromAdvancedInput() {
+            if (isRunning) return;
+            
+            const hours = parseInt(document.getElementById('hoursInput').value) || 0;
+            const minutes = parseInt(document.getElementById('minutesInput').value) || 0;
+            const seconds = parseInt(document.getElementById('secondsInput').value) || 0;
+            
+            // Update simple input
+            const totalMinutes = (hours * 60) + minutes + Math.floor(seconds / 60);
+            document.getElementById('simpleMinutesInput').value = totalMinutes;
+            
+            updateTotalTime();
+        }
+
+        // Toggle between simple and advanced mode
+        function toggleAdvancedMode() {
+            const timeInput = document.getElementById('timeInput');
+            const simpleInput = document.querySelector('.simple-input-container');
+            
+            if (timeInput.style.display === 'none') {
+                // Show advanced
+                timeInput.style.display = 'block';
+                simpleInput.style.display = 'none';
+            } else {
+                // Show simple
+                timeInput.style.display = 'none';
+                simpleInput.style.display = 'block';
+            }
         }
 
         function updateTotalTime() {
