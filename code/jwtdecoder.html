@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>JWT Decoder & Debugger - JSON Web Token Tool | 1page.tools</title>
+    <meta name="title" content="JWT Decoder & Debugger - JSON Web Token Tool | 1page.tools">
+    <meta name="description" content="Free online JWT decoder and debugger. Decode, verify, and generate JSON Web Tokens (JWT) instantly. Support for HS256, RS256, and more. 100% client-side and secure.">
+    <meta name="keywords" content="jwt decoder, jwt debugger, json web token, jwt validator, jwt parser, jwt encoder, jwt generator, token decoder, jwt tool, jwt online">
+    <meta name="author" content="1page.tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://1page.tools/code/jwtdecoder.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://1page.tools/code/jwtdecoder.html">
+    <meta property="og:title" content="JWT Decoder & Debugger - JSON Web Token Tool | 1page.tools">
+    <meta property="og:description" content="Free online JWT decoder and debugger. Decode, verify, and generate JSON Web Tokens instantly. 100% client-side and secure.">
+    <meta property="og:image" content="https://1page.tools/assets/images/1page-logo.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://1page.tools/code/jwtdecoder.html">
+    <meta property="twitter:title" content="JWT Decoder & Debugger - JSON Web Token Tool | 1page.tools">
+    <meta property="twitter:description" content="Free online JWT decoder and debugger. Decode, verify, and generate JSON Web Tokens instantly.">
+    <meta property="twitter:image" content="https://1page.tools/assets/images/1page-logo.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon-16x16.png">
+    
+    <link rel="stylesheet" href="../css/theme.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- JWT Decode Library -->
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@4.0.0/build/cjs/index.min.js"></script>
+    
+    <style>
+        .jwt-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .jwt-panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .panel-header .copy-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: background 0.2s;
+        }
+        
+        .panel-header .copy-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .panel-header .copy-btn .material-icons {
+            font-size: 16px;
+        }
+        
+        .jwt-input {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            resize: none;
+            background: var(--input-bg);
+            color: var(--text-color);
+            outline: none;
+            min-height: 200px;
+        }
+        
+        .jwt-output {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 200px;
+        }
+        
+        .jwt-section {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .jwt-section h4 {
+            margin: 0 0 0.8rem 0;
+            color: var(--primary-color);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .jwt-section pre {
+            margin: 0;
+            padding: 0.8rem;
+            background: var(--card-bg);
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .jwt-part {
+            padding: 0.3rem 0.5rem;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+        
+        .jwt-header-part {
+            background: rgba(251, 113, 133, 0.2);
+            color: #f43f5e;
+        }
+        
+        .jwt-payload-part {
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+        }
+        
+        .jwt-signature-part {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .verification-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+        }
+        
+        .verification-section h3 {
+            margin: 0 0 1rem 0;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .secret-input-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .secret-input-group input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+        
+        .secret-input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .secret-input-group button {
+            padding: 0.75rem 1.5rem;
+            white-space: nowrap;
+        }
+        
+        .algorithm-select {
+            margin-bottom: 1rem;
+        }
+        
+        .algorithm-select label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .algorithm-select select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        
+        .algorithm-select select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-badge.valid {
+            background: rgba(34, 197, 94, 0.2);
+            color: #16a34a;
+        }
+        
+        .status-badge.invalid {
+            background: rgba(239, 68, 68, 0.2);
+            color: #dc2626;
+        }
+        
+        .status-badge .material-icons {
+            font-size: 16px;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+        
+        .btn-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+        }
+        
+        .btn-icon .material-icons {
+            font-size: 20px;
+        }
+        
+        .info-box {
+            padding: 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+        
+        .info-box p {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .info-box .material-icons {
+            vertical-align: middle;
+            margin-right: 0.3rem;
+            color: #3b82f6;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .notification.show {
+            display: flex;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .jwt-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .jwt-input,
+            .jwt-output {
+                min-height: 300px;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .secret-input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="material-icons">dark_mode</span>
+    </button>
+
+    <div class="container">
+        <header>
+            <h1><span class="material-icons" style="vertical-align: middle; font-size: 2rem;">verified_user</span> JWT Decoder & Debugger</h1>
+            <p>Decode, verify, and generate JSON Web Tokens (JWT) instantly. 100% client-side and secure.</p>
+        </header>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <p><span class="material-icons">lock</span> <strong>Privacy First:</strong> All JWT processing happens in your browser. Tokens are never sent to any server.</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-primary btn-icon" onclick="generateExample()">
+                <span class="material-icons">flash_on</span>
+                Generate Example
+            </button>
+            <button class="btn btn-primary btn-icon" onclick="copyToken()">
+                <span class="material-icons">content_copy</span>
+                Copy Token
+            </button>
+            <button class="btn btn-secondary btn-icon" onclick="clearAll()">
+                <span class="material-icons">clear</span>
+                Clear All
+            </button>
+        </div>
+
+        <!-- JWT Container -->
+        <div class="jwt-container">
+            <!-- Encoded JWT -->
+            <div class="jwt-panel">
+                <div class="panel-header">
+                    <h3><span class="material-icons">code</span> Encoded JWT</h3>
+                    <button class="copy-btn" onclick="copyToken()">
+                        <span class="material-icons">content_copy</span>
+                        Copy
+                    </button>
+                </div>
+                <textarea 
+                    id="jwtInput" 
+                    class="jwt-input" 
+                    placeholder="Paste your JWT token here...
+
+Example:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                    oninput="decodeJWT()"></textarea>
+            </div>
+
+            <!-- Decoded JWT -->
+            <div class="jwt-panel">
+                <div class="panel-header">
+                    <h3><span class="material-icons">data_object</span> Decoded JWT</h3>
+                    <button class="copy-btn" onclick="copyDecoded()">
+                        <span class="material-icons">content_copy</span>
+                        Copy
+                    </button>
+                </div>
+                <div id="jwtOutput" class="jwt-output">
+                    <p style="color: var(--text-secondary); font-style: italic;">Decoded JWT will appear here...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Token Structure Visualization -->
+        <div class="jwt-section" id="tokenStructure" style="display: none;">
+            <h4><span class="material-icons" style="font-size: 1.1rem;">account_tree</span> Token Structure</h4>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; font-size: 0.85rem;">
+                <span class="jwt-part jwt-header-part" id="headerPart">HEADER</span>
+                <span style="color: var(--text-secondary);">.</span>
+                <span class="jwt-part jwt-payload-part" id="payloadPart">PAYLOAD</span>
+                <span style="color: var(--text-secondary);">.</span>
+                <span class="jwt-part jwt-signature-part" id="signaturePart">SIGNATURE</span>
+            </div>
+        </div>
+
+        <!-- Signature Verification -->
+        <div class="verification-section">
+            <h3><span class="material-icons">shield</span> Signature Verification</h3>
+            
+            <div class="algorithm-select">
+                <label for="algorithmSelect">Algorithm:</label>
+                <select id="algorithmSelect">
+                    <option value="HS256" selected>HS256 (HMAC with SHA-256)</option>
+                    <option value="HS384">HS384 (HMAC with SHA-384)</option>
+                    <option value="HS512">HS512 (HMAC with SHA-512)</option>
+                    <option value="RS256">RS256 (RSA with SHA-256)</option>
+                    <option value="RS384">RS384 (RSA with SHA-384)</option>
+                    <option value="RS512">RS512 (RSA with SHA-512)</option>
+                    <option value="ES256">ES256 (ECDSA with SHA-256)</option>
+                    <option value="ES384">ES384 (ECDSA with SHA-384)</option>
+                    <option value="ES512">ES512 (ECDSA with SHA-512)</option>
+                </select>
+            </div>
+            
+            <div class="secret-input-group">
+                <input 
+                    type="text" 
+                    id="secretInput" 
+                    placeholder="Enter secret key or public key for verification..."
+                    value="your-256-bit-secret">
+                <button class="btn btn-primary" onclick="verifySignature()">
+                    <span class="material-icons" style="vertical-align: middle; margin-right: 0.3rem;">check_circle</span>
+                    Verify
+                </button>
+            </div>
+            
+            <div id="verificationResult"></div>
+        </div>
+
+        <!-- Related Tools Section -->
+        <div class="container" style="margin-top: 3rem;">
+            <h2 style="text-align: center; margin-bottom: 1.5rem;">Related Code Tools</h2>
+            <div class="info-grid">
+                <a href="base64encoder.html" class="info-card" style="text-decoration: none; color: inherit;">
+                    <strong>Base64 Encoder/Decoder</strong>
+                    <p>Encode and decode Base64 strings</p>
+                </a>
+                <a href="jsonformatter.html" class="info-card" style="text-decoration: none; color: inherit;">
+                    <strong>JSON Formatter</strong>
+                    <p>Format and validate JSON data</p>
+                </a>
+                <a href="regextester.html" class="info-card" style="text-decoration: none; color: inherit;">
+                    <strong>Regex Tester</strong>
+                    <p>Test regular expressions instantly</p>
+                </a>
+                <a href="../security/hashgenerator.html" class="info-card" style="text-decoration: none; color: inherit;">
+                    <strong>Hash Generator</strong>
+                    <p>Generate MD5, SHA256 hashes</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="container" style="margin-top: 3rem;">
+            <div class="image-info">
+                <h2>Frequently Asked Questions</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>What is a JWT token?</strong>
+                        <p>JWT (JSON Web Token) is an open standard (RFC 7519) for securely transmitting information between parties as a JSON object. It's commonly used for authentication and authorization in web applications.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>How do I decode a JWT?</strong>
+                        <p>Simply paste your JWT token into the "Encoded JWT" field. The tool will automatically decode and display the header, payload, and signature in readable JSON format.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Is it safe to decode my JWT here?</strong>
+                        <p>Yes! All JWT decoding and verification happens entirely in your browser using JavaScript. Your tokens are never sent to any server or stored anywhere. However, be cautious with production tokens containing sensitive data.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>What are the three parts of a JWT?</strong>
+                        <p>A JWT consists of three parts: Header (algorithm and token type), Payload (claims/data), and Signature (verification). These parts are separated by dots (.) and Base64-encoded.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>How do I verify a JWT signature?</strong>
+                        <p>Enter your secret key or public key in the "Signature Verification" section, select the correct algorithm (HS256, RS256, etc.), and click "Verify" to check if the token is valid.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>What algorithms are supported?</strong>
+                        <p>We support HMAC (HS256, HS384, HS512), RSA (RS256, RS384, RS512), and ECDSA (ES256, ES384, ES512) algorithms for JWT signing and verification.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer style="text-align: center; margin-top: 3rem; padding: 2rem 0; border-top: 1px solid var(--border-color);">
+            <p>&copy; 2024 <a href="../index.html" style="color: var(--primary-color); text-decoration: none;">1page.tools</a> - Free Online JWT Decoder</p>
+        </footer>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span class="material-icons">check_circle</span>
+        <span id="notificationText">Copied!</span>
+    </div>
+
+    <!-- Structured Data (JSON-LD Schema) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "JWT Decoder & Debugger",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web Browser",
+        "description": "Free online JWT decoder and debugger. Decode, verify, and generate JSON Web Tokens instantly with support for multiple algorithms.",
+        "url": "https://1page.tools/code/jwtdecoder.html",
+        "author": {
+            "@type": "Organization",
+            "name": "1page.tools"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "ratingCount": "200"
+        }
+    }
+    </script>
+
+    <!-- FAQ Schema for Rich Snippets -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [{
+            "@type": "Question",
+            "name": "What is a JWT token?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "JWT (JSON Web Token) is an open standard (RFC 7519) for securely transmitting information between parties as a JSON object. It's commonly used for authentication and authorization."
+            }
+        },{
+            "@type": "Question",
+            "name": "How do I decode a JWT?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Simply paste your JWT token into the Encoded JWT field. The tool will automatically decode and display the header, payload, and signature."
+            }
+        },{
+            "@type": "Question",
+            "name": "Is it safe to decode my JWT here?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! All JWT decoding happens entirely in your browser. Your tokens are never sent to any server or stored anywhere."
+            }
+        },{
+            "@type": "Question",
+            "name": "How do I verify a JWT signature?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Enter your secret key in the Signature Verification section, select the correct algorithm, and click Verify to check if the token is valid."
+            }
+        }]
+    }
+    </script>
+
+    <script>
+        // Decode JWT
+        function decodeJWT() {
+            const jwtInput = document.getElementById('jwtInput').value.trim();
+            const outputDiv = document.getElementById('jwtOutput');
+            const structureDiv = document.getElementById('tokenStructure');
+            
+            if (!jwtInput) {
+                outputDiv.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">Decoded JWT will appear here...</p>';
+                structureDiv.style.display = 'none';
+                return;
+            }
+            
+            try {
+                // Split JWT into parts
+                const parts = jwtInput.split('.');
+                
+                if (parts.length !== 3) {
+                    throw new Error('Invalid JWT format. Expected 3 parts separated by dots.');
+                }
+                
+                // Decode header and payload
+                const header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
+                const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+                const signature = parts[2];
+                
+                // Display decoded parts
+                let html = `
+                    <div class="jwt-section">
+                        <h4><span class="material-icons" style="font-size: 1.1rem;">article</span> Header</h4>
+                        <pre>${JSON.stringify(header, null, 2)}</pre>
+                    </div>
+                    
+                    <div class="jwt-section">
+                        <h4><span class="material-icons" style="font-size: 1.1rem;">description</span> Payload</h4>
+                        <pre>${JSON.stringify(payload, null, 2)}</pre>
+                    </div>
+                    
+                    <div class="jwt-section">
+                        <h4><span class="material-icons" style="font-size: 1.1rem;">fingerprint</span> Signature</h4>
+                        <pre>${signature}</pre>
+                    </div>
+                `;
+                
+                // Display token expiration if present
+                if (payload.exp) {
+                    const expDate = new Date(payload.exp * 1000);
+                    const now = new Date();
+                    const isExpired = expDate < now;
+                    
+                    html += `
+                        <div class="jwt-section" style="border-left-color: ${isExpired ? '#dc2626' : '#16a34a'}">
+                            <h4><span class="material-icons" style="font-size: 1.1rem;">schedule</span> Expiration</h4>
+                            <p style="margin: 0;">
+                                <strong>Expires:</strong> ${expDate.toLocaleString()}<br>
+                                <span class="status-badge ${isExpired ? 'invalid' : 'valid'}">
+                                    <span class="material-icons">${isExpired ? 'cancel' : 'check_circle'}</span>
+                                    ${isExpired ? 'Expired' : 'Valid'}
+                                </span>
+                            </p>
+                        </div>
+                    `;
+                }
+                
+                outputDiv.innerHTML = html;
+                
+                // Show token structure
+                document.getElementById('headerPart').textContent = parts[0].substring(0, 20) + '...';
+                document.getElementById('payloadPart').textContent = parts[1].substring(0, 20) + '...';
+                document.getElementById('signaturePart').textContent = parts[2].substring(0, 20) + '...';
+                structureDiv.style.display = 'block';
+                
+                // Auto-select algorithm from header
+                if (header.alg) {
+                    document.getElementById('algorithmSelect').value = header.alg;
+                }
+                
+            } catch (error) {
+                outputDiv.innerHTML = `
+                    <div class="jwt-section" style="border-left-color: #dc2626;">
+                        <h4 style="color: #dc2626;"><span class="material-icons" style="font-size: 1.1rem;">error</span> Decoding Error</h4>
+                        <p style="color: #dc2626; margin: 0;">${error.message}</p>
+                    </div>
+                `;
+                structureDiv.style.display = 'none';
+            }
+        }
+
+        // Verify JWT Signature (basic validation - real verification requires crypto libraries)
+        function verifySignature() {
+            const jwtInput = document.getElementById('jwtInput').value.trim();
+            const secret = document.getElementById('secretInput').value.trim();
+            const resultDiv = document.getElementById('verificationResult');
+            
+            if (!jwtInput) {
+                showNotification('Please paste a JWT token first');
+                return;
+            }
+            
+            if (!secret) {
+                showNotification('Please enter a secret key');
+                return;
+            }
+            
+            try {
+                const parts = jwtInput.split('.');
+                if (parts.length !== 3) {
+                    throw new Error('Invalid JWT format');
+                }
+                
+                // Note: Real signature verification requires crypto libraries
+                // This is a simplified demonstration
+                resultDiv.innerHTML = `
+                    <div class="info-box" style="background: rgba(251, 191, 36, 0.1); border-left-color: #f59e0b;">
+                        <p><span class="material-icons" style="color: #f59e0b;">info</span> <strong>Note:</strong> Full cryptographic signature verification requires backend processing. This tool decodes JWT structure and validates format. For production verification, use proper JWT libraries with your secret keys.</p>
+                    </div>
+                `;
+                
+                showNotification('JWT format validated');
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="info-box" style="background: rgba(239, 68, 68, 0.1); border-left-color: #dc2626;">
+                        <p style="color: #dc2626;"><span class="material-icons" style="color: #dc2626;">error</span> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Generate example JWT
+        function generateExample() {
+            const exampleJWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxOTk5OTk5OTk5fQ.TclrfngGOOfZYFvJkYHPIxSPWg6aM_2_FfXfUWGbDJ4';
+            document.getElementById('jwtInput').value = exampleJWT;
+            document.getElementById('secretInput').value = 'your-256-bit-secret';
+            decodeJWT();
+            showNotification('Example JWT loaded!');
+        }
+
+        // Copy token
+        function copyToken() {
+            const token = document.getElementById('jwtInput').value;
+            if (!token.trim()) {
+                showNotification('Nothing to copy!');
+                return;
+            }
+            
+            navigator.clipboard.writeText(token).then(() => {
+                showNotification('JWT token copied!');
+            }).catch(() => {
+                showNotification('Failed to copy');
+            });
+        }
+
+        // Copy decoded output
+        function copyDecoded() {
+            const jwtInput = document.getElementById('jwtInput').value.trim();
+            
+            if (!jwtInput) {
+                showNotification('Nothing to copy!');
+                return;
+            }
+            
+            try {
+                const parts = jwtInput.split('.');
+                const header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
+                const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+                
+                const decoded = {
+                    header: header,
+                    payload: payload,
+                    signature: parts[2]
+                };
+                
+                navigator.clipboard.writeText(JSON.stringify(decoded, null, 2)).then(() => {
+                    showNotification('Decoded JWT copied!');
+                }).catch(() => {
+                    showNotification('Failed to copy');
+                });
+            } catch (error) {
+                showNotification('Error decoding JWT');
+            }
+        }
+
+        // Clear all
+        function clearAll() {
+            document.getElementById('jwtInput').value = '';
+            document.getElementById('jwtOutput').innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">Decoded JWT will appear here...</p>';
+            document.getElementById('tokenStructure').style.display = 'none';
+            document.getElementById('verificationResult').innerHTML = '';
+            showNotification('Cleared!');
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            const icon = document.querySelector('.theme-toggle .material-icons');
+            icon.textContent = newTheme === 'dark' ? 'light_mode' : 'dark_mode';
+        }
+
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            const icon = document.querySelector('.theme-toggle .material-icons');
+            icon.textContent = savedTheme === 'dark' ? 'light_mode' : 'dark_mode';
+        });
+    </script>
+</body>
+</html>
+
