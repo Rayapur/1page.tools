@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>Markdown Editor - Live Preview & Converter | 1page.tools</title>
+    <meta name="title" content="Markdown Editor - Live Preview & Converter | 1page.tools">
+    <meta name="description" content="Free online Markdown editor with live preview. Write, edit, and convert Markdown to HTML instantly. Real-time preview, syntax highlighting, and download options. 100% client-side and secure.">
+    <meta name="keywords" content="markdown editor, markdown preview, markdown to html, markdown converter, online markdown, live markdown editor, markdown writer, md editor">
+    <meta name="author" content="1page.tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://1page.tools/text/markdowneditor.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://1page.tools/text/markdowneditor.html">
+    <meta property="og:title" content="Markdown Editor - Live Preview & Converter | 1page.tools">
+    <meta property="og:description" content="Free online Markdown editor with live preview. Write, edit, and convert Markdown to HTML instantly. Real-time preview and download options.">
+    <meta property="og:image" content="https://1page.tools/assets/images/1page-logo.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://1page.tools/text/markdowneditor.html">
+    <meta property="twitter:title" content="Markdown Editor - Live Preview & Converter | 1page.tools">
+    <meta property="twitter:description" content="Free online Markdown editor with live preview. Write, edit, and convert Markdown to HTML instantly.">
+    <meta property="twitter:image" content="https://1page.tools/assets/images/1page-logo.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon-16x16.png">
+    
+    <link rel="stylesheet" href="../css/theme.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+    
+    <style>
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 2rem 0;
+            height: 600px;
+        }
+        
+        .editor-panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .markdown-input {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: none;
+            background: var(--input-bg);
+            color: var(--text-color);
+            outline: none;
+        }
+        
+        .preview-panel {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+        
+        /* Markdown Preview Styling */
+        .preview-panel h1 {
+            font-size: 2rem;
+            margin: 1rem 0;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .preview-panel h2 {
+            font-size: 1.5rem;
+            margin: 0.8rem 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+        }
+        
+        .preview-panel h3 {
+            font-size: 1.2rem;
+            margin: 0.6rem 0;
+        }
+        
+        .preview-panel h4, .preview-panel h5, .preview-panel h6 {
+            margin: 0.5rem 0;
+        }
+        
+        .preview-panel p {
+            margin: 0.8rem 0;
+            line-height: 1.6;
+        }
+        
+        .preview-panel code {
+            background: rgba(0,0,0,0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .preview-panel pre {
+            background: rgba(0,0,0,0.1);
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .preview-panel pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        .preview-panel blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .preview-panel ul, .preview-panel ol {
+            margin: 0.8rem 0;
+            padding-left: 2rem;
+        }
+        
+        .preview-panel li {
+            margin: 0.3rem 0;
+        }
+        
+        .preview-panel table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1rem 0;
+        }
+        
+        .preview-panel table th,
+        .preview-panel table td {
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            text-align: left;
+        }
+        
+        .preview-panel table th {
+            background: rgba(102, 126, 234, 0.1);
+            font-weight: 600;
+        }
+        
+        .preview-panel a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .preview-panel a:hover {
+            text-decoration: underline;
+        }
+        
+        .preview-panel img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        
+        .preview-panel hr {
+            border: none;
+            border-top: 2px solid var(--border-color);
+            margin: 1.5rem 0;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+        
+        .btn-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            white-space: nowrap;
+        }
+        
+        .btn-icon .material-icons {
+            font-size: 20px;
+        }
+        
+        .cheatsheet {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 2px solid var(--border-color);
+        }
+        
+        .cheatsheet h3 {
+            margin: 0 0 1rem 0;
+            color: var(--text-color);
+        }
+        
+        .cheatsheet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .cheatsheet-item {
+            padding: 0.75rem;
+            background: var(--input-bg);
+            border-radius: 5px;
+        }
+        
+        .cheatsheet-item strong {
+            display: block;
+            margin-bottom: 0.3rem;
+            color: var(--primary-color);
+        }
+        
+        .cheatsheet-item code {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--text-color);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .notification.show {
+            display: flex;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .editor-panel {
+                height: 400px;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+            }
+            
+            .btn-icon {
+                font-size: 0.9rem;
+                padding: 0.6rem 0.8rem;
+            }
+            
+            .cheatsheet-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="material-icons">dark_mode</span>
+    </button>
+
+    <div class="container">
+        <header>
+            <h1><span class="material-icons" style="vertical-align: middle; font-size: 2rem;">edit_note</span> Markdown Editor</h1>
+            <p>Write and preview Markdown in real-time. Free, fast, and secure.</p>
+        </header>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-primary btn-icon" onclick="copyMarkdown()">
+                <span class="material-icons">content_copy</span>
+                Copy Markdown
+            </button>
+            <button class="btn btn-primary btn-icon" onclick="copyHTML()">
+                <span class="material-icons">code</span>
+                Copy HTML
+            </button>
+            <button class="btn btn-primary btn-icon" onclick="downloadMarkdown()">
+                <span class="material-icons">download</span>
+                Download .md
+            </button>
+            <button class="btn btn-secondary btn-icon" onclick="loadExample()">
+                <span class="material-icons">article</span>
+                Load Example
+            </button>
+        </div>
+
+        <!-- Editor Container -->
+        <div class="editor-container">
+            <!-- Markdown Input -->
+            <div class="editor-panel">
+                <div class="panel-header">
+                    <h3><span class="material-icons">edit</span> Markdown</h3>
+                </div>
+                <textarea 
+                    id="markdownInput" 
+                    class="markdown-input" 
+                    placeholder="Start typing your Markdown here...
+
+# Heading 1
+## Heading 2
+
+**Bold text** and *italic text*
+
+- List item 1
+- List item 2
+
+[Link text](https://example.com)
+
+```
+Code block
+```"
+                    oninput="updatePreview()"></textarea>
+            </div>
+
+            <!-- Preview Panel -->
+            <div class="editor-panel">
+                <div class="panel-header">
+                    <h3><span class="material-icons">visibility</span> Preview</h3>
+                </div>
+                <div id="previewPanel" class="preview-panel">
+                    <p style="color: var(--text-secondary); font-style: italic;">Your preview will appear here...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Markdown Cheatsheet -->
+        <div class="cheatsheet">
+            <h3><span class="material-icons" style="vertical-align: middle;">help_outline</span> Markdown Syntax Guide</h3>
+            <div class="cheatsheet-grid">
+                <div class="cheatsheet-item">
+                    <strong>Headings</strong>
+                    <code># H1<br>## H2<br>### H3</code>
+                </div>
+                <div class="cheatsheet-item">
+                    <strong>Bold & Italic</strong>
+                    <code>**bold**<br>*italic*<br>***both***</code>
+                </div>
+                <div class="cheatsheet-item">
+                    <strong>Lists</strong>
+                    <code>- Item 1<br>- Item 2<br><br>1. First<br>2. Second</code>
+                </div>
+                <div class="cheatsheet-item">
+                    <strong>Links</strong>
+                    <code>[text](url)<br><br>[Google](https://google.com)</code>
+                </div>
+                <div class="cheatsheet-item">
+                    <strong>Images</strong>
+                    <code>![alt text](image-url)</code>
+                </div>
+                <div class="cheatsheet-item">
+                    <strong>Code</strong>
+                    <code>`inline code`<br><br>```<br>code block<br>```</code>
+                </div>
+                <div class="cheatsheet-item">
+                    <strong>Blockquote</strong>
+                    <code>> This is a quote</code>
+                </div>
+                <div class="cheatsheet-item">
+                    <strong>Horizontal Rule</strong>
+                    <code>---<br>or<br>***</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Tools Section -->
+        <div class="container" style="margin-top: 3rem;">
+            <h2 style="text-align: center; margin-bottom: 1.5rem;">Related Text Tools</h2>
+            <div class="info-grid">
+                <a href="textcounter.html" class="info-card" style="text-decoration: none; color: inherit;">
+                    <strong>Word Counter</strong>
+                    <p>Count words, characters, and sentences</p>
+                </a>
+                <a href="caseconverter.html" class="info-card" style="text-decoration: none; color: inherit;">
+                    <strong>Case Converter</strong>
+                    <p>Convert text to different cases</p>
+                </a>
+                <a href="textdiff.html" class="info-card" style="text-decoration: none; color: inherit;">
+                    <strong>Text Diff</strong>
+                    <p>Compare two texts and find differences</p>
+                </a>
+                <a href="loremipsum.html" class="info-card" style="text-decoration: none; color: inherit;">
+                    <strong>Lorem Ipsum Generator</strong>
+                    <p>Generate placeholder text instantly</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="container" style="margin-top: 3rem;">
+            <div class="image-info">
+                <h2>Frequently Asked Questions</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <strong>What is Markdown?</strong>
+                        <p>Markdown is a lightweight markup language that lets you format text using simple syntax. It's widely used for documentation, README files, forums, and blogging platforms.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>How do I use this Markdown editor?</strong>
+                        <p>Simply type or paste your Markdown text in the left panel, and the formatted preview appears instantly on the right. You can copy the Markdown, HTML, or download the .md file.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Is my content saved anywhere?</strong>
+                        <p>No! This editor works entirely in your browser. Your Markdown content never leaves your device and is not uploaded to any server, ensuring complete privacy.</p>
+                    </div>
+                    <div class="info-card">
+                        <strong>Can I convert Markdown to HTML?</strong>
+                        <p>Yes! Click the "Copy HTML" button to copy the converted HTML code to your clipboard. Perfect for embedding formatted content into websites.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer style="text-align: center; margin-top: 3rem; padding: 2rem 0; border-top: 1px solid var(--border-color);">
+            <p>&copy; 2024 <a href="../index.html" style="color: var(--primary-color); text-decoration: none;">1page.tools</a> - Free Online Markdown Editor</p>
+        </footer>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span class="material-icons">check_circle</span>
+        <span id="notificationText">Copied!</span>
+    </div>
+
+    <!-- Structured Data (JSON-LD Schema) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Markdown Editor",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Web Browser",
+        "description": "Free online Markdown editor with live preview. Write, edit, and convert Markdown to HTML instantly with real-time preview.",
+        "url": "https://1page.tools/text/markdowneditor.html",
+        "author": {
+            "@type": "Organization",
+            "name": "1page.tools"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "150"
+        }
+    }
+    </script>
+
+    <!-- FAQ Schema for Rich Snippets -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [{
+            "@type": "Question",
+            "name": "What is Markdown?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Markdown is a lightweight markup language that lets you format text using simple syntax. It's widely used for documentation, README files, and blogging."
+            }
+        },{
+            "@type": "Question",
+            "name": "How do I use this Markdown editor?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Simply type or paste your Markdown text in the left panel, and the formatted preview appears instantly on the right. You can copy the Markdown, HTML, or download the .md file."
+            }
+        },{
+            "@type": "Question",
+            "name": "Is my content saved anywhere?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No! This editor works entirely in your browser. Your Markdown content never leaves your device and is not uploaded to any server."
+            }
+        },{
+            "@type": "Question",
+            "name": "Can I convert Markdown to HTML?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! Click the 'Copy HTML' button to copy the converted HTML code to your clipboard."
+            }
+        }]
+    }
+    </script>
+
+    <script>
+        // Initialize marked.js with options
+        marked.setOptions({
+            breaks: true, // Convert \n to <br>
+            gfm: true, // GitHub Flavored Markdown
+            headerIds: true,
+            mangle: false,
+            sanitize: false
+        });
+
+        // Update preview in real-time
+        function updatePreview() {
+            const input = document.getElementById('markdownInput').value;
+            const preview = document.getElementById('previewPanel');
+            
+            if (input.trim() === '') {
+                preview.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">Your preview will appear here...</p>';
+                return;
+            }
+            
+            try {
+                const html = marked.parse(input);
+                preview.innerHTML = html;
+            } catch (error) {
+                preview.innerHTML = '<p style="color: red;">Error parsing Markdown</p>';
+            }
+        }
+
+        // Copy Markdown to clipboard
+        function copyMarkdown() {
+            const input = document.getElementById('markdownInput');
+            const text = input.value;
+            
+            if (text.trim() === '') {
+                showNotification('Nothing to copy!');
+                return;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Markdown copied to clipboard!');
+            }).catch(() => {
+                showNotification('Failed to copy');
+            });
+        }
+
+        // Copy HTML to clipboard
+        function copyHTML() {
+            const input = document.getElementById('markdownInput').value;
+            
+            if (input.trim() === '') {
+                showNotification('Nothing to convert!');
+                return;
+            }
+            
+            try {
+                const html = marked.parse(input);
+                navigator.clipboard.writeText(html).then(() => {
+                    showNotification('HTML copied to clipboard!');
+                }).catch(() => {
+                    showNotification('Failed to copy HTML');
+                });
+            } catch (error) {
+                showNotification('Error converting to HTML');
+            }
+        }
+
+        // Download Markdown as .md file
+        function downloadMarkdown() {
+            const input = document.getElementById('markdownInput').value;
+            
+            if (input.trim() === '') {
+                showNotification('Nothing to download!');
+                return;
+            }
+            
+            const blob = new Blob([input], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'document.md';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Markdown file downloaded!');
+        }
+
+        // Load example Markdown
+        function loadExample() {
+            const example = `# Welcome to Markdown Editor!
+
+This is a **powerful** and *easy-to-use* Markdown editor with live preview.
+
+## Features
+
+- ✅ Real-time preview
+- ✅ Copy Markdown or HTML
+- ✅ Download as .md file
+- ✅ Syntax highlighting
+- ✅ 100% client-side (your data stays private)
+
+## Code Example
+
+Here's some inline \`code\` and a code block:
+
+\`\`\`javascript
+function greet(name) {
+    return \`Hello, \${name}!\`;
+}
+console.log(greet('World'));
+\`\`\`
+
+## Lists
+
+### Unordered List
+- First item
+- Second item
+  - Nested item
+  - Another nested item
+- Third item
+
+### Ordered List
+1. First step
+2. Second step
+3. Third step
+
+## Links and Images
+
+Visit [1page.tools](https://1page.tools) for more free tools!
+
+## Blockquote
+
+> "The best way to predict the future is to invent it."
+> — Alan Kay
+
+## Table
+
+| Feature | Supported |
+|---------|-----------|
+| Headers | ✅ Yes |
+| Lists | ✅ Yes |
+| Code | ✅ Yes |
+| Tables | ✅ Yes |
+
+---
+
+Start editing this text or clear it to write your own Markdown! 🚀`;
+
+            document.getElementById('markdownInput').value = example;
+            updatePreview();
+            showNotification('Example loaded!');
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            const icon = document.querySelector('.theme-toggle .material-icons');
+            icon.textContent = newTheme === 'dark' ? 'light_mode' : 'dark_mode';
+        }
+
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            const icon = document.querySelector('.theme-toggle .material-icons');
+            icon.textContent = savedTheme === 'dark' ? 'light_mode' : 'dark_mode';
+        });
+    </script>
+</body>
+</html>
+

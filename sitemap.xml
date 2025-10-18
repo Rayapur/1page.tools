@@ -319,6 +319,12 @@
         <priority>0.8</priority>
     </url>
     <url>
+        <loc>https://1page.tools/text/markdowneditor.html</loc>
+        <lastmod>2025-10-18T12:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
         <loc>https://1page.tools/web/favicongenerator.html</loc>
         <lastmod>2025-10-16T12:00:00+00:00</lastmod>
         <changefreq>monthly</changefreq>
