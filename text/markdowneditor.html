@@ -33,6 +33,14 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon-16x16.png">
     
+    <!-- Theme Persistence - Load before page renders to prevent flash -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
     <link rel="stylesheet" href="../css/theme.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
@@ -322,6 +330,8 @@
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
         <span class="material-icons">dark_mode</span>
     </button>
+
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
 
     <div class="container">
         <header>
@@ -658,7 +668,7 @@ Here's some inline \`code\` and a code block:
 
 \`\`\`javascript
 function greet(name) {
-    return \`Hello, \${name}!\`;
+    return 'Hello, ' + name + '!';
 }
 console.log(greet('World'));
 \`\`\`

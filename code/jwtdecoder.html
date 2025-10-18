@@ -33,6 +33,14 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon-16x16.png">
     
+    <!-- Theme Persistence - Load before page renders to prevent flash -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
     <link rel="stylesheet" href="../css/theme.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
@@ -365,6 +373,8 @@
         <span class="material-icons">dark_mode</span>
     </button>
 
+    <a href="../index.html" class="back-button" title="Back to Home"></a>
+
     <div class="container">
         <header>
             <h1><span class="material-icons" style="vertical-align: middle; font-size: 2rem;">verified_user</span> JWT Decoder & Debugger</h1>
@@ -431,12 +441,13 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4
         <!-- Token Structure Visualization -->
         <div class="jwt-section" id="tokenStructure" style="display: none;">
             <h4><span class="material-icons" style="font-size: 1.1rem;">account_tree</span> Token Structure</h4>
+            <p style="margin: 0 0 0.8rem 0; font-size: 0.9rem; color: var(--text-secondary);">Your JWT is composed of three Base64-encoded parts separated by dots:</p>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; font-size: 0.85rem;">
-                <span class="jwt-part jwt-header-part" id="headerPart">HEADER</span>
+                <span class="jwt-part jwt-header-part" id="headerPart" title="Algorithm and token type">HEADER</span>
                 <span style="color: var(--text-secondary);">.</span>
-                <span class="jwt-part jwt-payload-part" id="payloadPart">PAYLOAD</span>
+                <span class="jwt-part jwt-payload-part" id="payloadPart" title="Claims and data">PAYLOAD</span>
                 <span style="color: var(--text-secondary);">.</span>
-                <span class="jwt-part jwt-signature-part" id="signaturePart">SIGNATURE</span>
+                <span class="jwt-part jwt-signature-part" id="signaturePart" title="Signature for verification">SIGNATURE</span>
             </div>
         </div>
 
