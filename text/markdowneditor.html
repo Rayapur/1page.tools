@@ -45,7 +45,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!-- Marked.js for Markdown parsing -->
-    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
         .editor-container {
@@ -561,13 +561,15 @@ Code block
     </script>
 
     <script>
-        // Initialize marked.js with options
-        marked.setOptions({
-            breaks: true, // Convert \n to <br>
-            gfm: true, // GitHub Flavored Markdown
-            headerIds: true,
-            mangle: false,
-            sanitize: false
+        // Wait for marked to load, then initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof marked !== 'undefined') {
+                // Configure marked with GFM (GitHub Flavored Markdown)
+                marked.setOptions({
+                    breaks: true,
+                    gfm: true
+                });
+            }
         });
 
         // Update preview in real-time
@@ -581,10 +583,17 @@ Code block
             }
             
             try {
+                // Check if marked is loaded
+                if (typeof marked === 'undefined') {
+                    preview.innerHTML = '<p style="color: red;">Markdown library not loaded. Please refresh the page.</p>';
+                    return;
+                }
+                
                 const html = marked.parse(input);
                 preview.innerHTML = html;
             } catch (error) {
-                preview.innerHTML = '<p style="color: red;">Error parsing Markdown</p>';
+                console.error('Markdown parse error:', error);
+                preview.innerHTML = '<p style="color: red;">Error parsing Markdown: ' + error.message + '</p>';
             }
         }
 
@@ -614,6 +623,11 @@ Code block
                 return;
             }
             
+            if (typeof marked === 'undefined') {
+                showNotification('Markdown library not loaded');
+                return;
+            }
+            
             try {
                 const html = marked.parse(input);
                 navigator.clipboard.writeText(html).then(() => {
@@ -622,7 +636,8 @@ Code block
                     showNotification('Failed to copy HTML');
                 });
             } catch (error) {
-                showNotification('Error converting to HTML');
+                console.error('Markdown parse error:', error);
+                showNotification('Error converting to HTML: ' + error.message);
             }
         }
 
@@ -650,6 +665,7 @@ Code block
 
         // Load example Markdown
         function loadExample() {
+            const codeFence = '```';
             const example = `# Welcome to Markdown Editor!
 
 This is a **powerful** and *easy-to-use* Markdown editor with live preview.
@@ -666,12 +682,12 @@ This is a **powerful** and *easy-to-use* Markdown editor with live preview.
 
 Here's some inline \`code\` and a code block:
 
-\`\`\`javascript
+${codeFence}javascript
 function greet(name) {
     return 'Hello, ' + name + '!';
 }
 console.log(greet('World'));
-\`\`\`
+${codeFence}
 
 ## Lists
 
