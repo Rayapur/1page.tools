@@ -45,7 +45,9 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!-- Marked.js for Markdown parsing -->
-    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+    <script src="https://unpkg.com/marked@4.3.0/marked.min.js" 
+            onload="console.log('Marked.js loaded successfully')" 
+            onerror="console.error('Failed to load Marked.js')"></script>
     
     <style>
         .editor-container {
@@ -561,14 +563,51 @@ Code block
     </script>
 
     <script>
+        // Basic markdown parser fallback
+        function basicMarkdownParse(markdown) {
+            let html = markdown;
+            
+            // Code blocks (must be before inline code)
+            html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+            
+            // Headers
+            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            
+            // Bold
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Italic
+            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            // Inline code
+            html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+            
+            // Links
+            html = html.replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2">$1</a>');
+            
+            // Unordered lists
+            html = html.replace(/^\s*[-*+] (.*)$/gim, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+            
+            // Line breaks
+            html = html.replace(/\n\n/g, '</p><p>');
+            html = html.replace(/\n/g, '<br>');
+            
+            return '<p>' + html + '</p>';
+        }
+
         // Wait for marked to load, then initialize
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof marked !== 'undefined') {
-                // Configure marked with GFM (GitHub Flavored Markdown)
+                console.log('Using Marked.js for parsing');
                 marked.setOptions({
                     breaks: true,
                     gfm: true
                 });
+            } else {
+                console.warn('Marked.js not loaded, using basic parser fallback');
             }
         });
 
@@ -583,17 +622,25 @@ Code block
             }
             
             try {
-                // Check if marked is loaded
-                if (typeof marked === 'undefined') {
-                    preview.innerHTML = '<p style="color: red;">Markdown library not loaded. Please refresh the page.</p>';
-                    return;
+                let html;
+                
+                // Try marked.js first, fallback to basic parser
+                if (typeof marked !== 'undefined' && typeof marked.parse === 'function') {
+                    html = marked.parse(input);
+                } else {
+                    console.log('Using fallback parser');
+                    html = basicMarkdownParse(input);
                 }
                 
-                const html = marked.parse(input);
                 preview.innerHTML = html;
             } catch (error) {
                 console.error('Markdown parse error:', error);
-                preview.innerHTML = '<p style="color: red;">Error parsing Markdown: ' + error.message + '</p>';
+                // Try fallback parser
+                try {
+                    preview.innerHTML = basicMarkdownParse(input);
+                } catch (fallbackError) {
+                    preview.innerHTML = '<p style="color: red;">Error parsing Markdown: ' + error.message + '</p>';
+                }
             }
         }
 
@@ -623,13 +670,16 @@ Code block
                 return;
             }
             
-            if (typeof marked === 'undefined') {
-                showNotification('Markdown library not loaded');
-                return;
-            }
-            
             try {
-                const html = marked.parse(input);
+                let html;
+                
+                // Try marked.js first, fallback to basic parser
+                if (typeof marked !== 'undefined' && typeof marked.parse === 'function') {
+                    html = marked.parse(input);
+                } else {
+                    html = basicMarkdownParse(input);
+                }
+                
                 navigator.clipboard.writeText(html).then(() => {
                     showNotification('HTML copied to clipboard!');
                 }).catch(() => {
